@@ -9,7 +9,6 @@ import javax.persistence.Id;
 public class BankEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-
     private Long id;
     private String userName, password;
     private Long amount;

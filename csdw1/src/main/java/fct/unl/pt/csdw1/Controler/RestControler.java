@@ -26,7 +26,6 @@ public class RestControler {
 
         @RequestMapping(method=POST,value="/register",consumes = "application/json")
         public ResponseEntity<String> createNew(@RequestBody RegisterDao dao){
-                System.out.println("Uname "+dao.userName+ " pass "+dao.password+" amount "+dao.amount);
                 if(bS.registerUser(dao.userName,dao.password, dao.amount) == null)
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
