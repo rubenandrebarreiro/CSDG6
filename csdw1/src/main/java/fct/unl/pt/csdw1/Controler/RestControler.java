@@ -1,6 +1,8 @@
 package fct.unl.pt.csdw1.Controler;
 
-import fct.unl.pt.csdw1.Daos.BankAccountDao;
+import fct.unl.pt.csdw1.Daos.LoginDao;
+import fct.unl.pt.csdw1.Daos.RegisterDao;
+import fct.unl.pt.csdw1.Daos.RegisterhDao;
 import fct.unl.pt.csdw1.Entities.BankEntity;
 import fct.unl.pt.csdw1.Services.BankService;
 import org.json.JSONObject;
@@ -39,11 +41,16 @@ public class RestControler {
                 return new ResponseEntity<>(htmlContentString, HttpStatus.OK);
         }
 
-        @RequestMapping(method=POST,value="/create",consumes = "application/json")
-        public ResponseEntity<String> createNew(@RequestBody BankAccountDao dao){
-                if(bS.createUser(dao.owner,dao.amount) == null)
-                        return new ResponseEntity<>("A client already exists with the name "+ dao.owner , HttpStatus.CONFLICT);
-                return new ResponseEntity<>("Created a new account for "+ dao.owner , HttpStatus.OK);
+        @RequestMapping(method=POST,value="/register",consumes = "application/json")
+        public ResponseEntity<String> createNew(@RequestBody RegisterDao dao){
+                if(bS.registerUser(dao.userName,dao.password, dao.amount) == null)
+                        return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
+                return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
+        }
+
+        @RequestMapping(method=POST,value="/login",consumes = "application/json")
+        public ResponseEntity<String> createNew(@RequestBody LoginDao dao){
+                return null;
         }
 
         @GetMapping(path="/all")
