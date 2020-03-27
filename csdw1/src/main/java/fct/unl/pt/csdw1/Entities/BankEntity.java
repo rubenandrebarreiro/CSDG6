@@ -11,13 +11,14 @@ public class BankEntity {
     @GeneratedValue(strategy= GenerationType.AUTO)
 
     private Long id;
-    private String ownerName;
+    private String userName, password;
     private Long amount;
 
     protected BankEntity(){};
 
-    public BankEntity(String ownerName, Long amount){
-        this.ownerName = ownerName;
+    public BankEntity(String userName, String password, Long amount){
+        this.userName = userName;
+        this.password = password;
         this.amount = amount;
     }
 
@@ -26,8 +27,10 @@ public class BankEntity {
     }
 
     public String getOwnerName(){
-        return ownerName;
+        return userName;
     }
+
+    public String getPassword(){return password;}
 
     public Long getAmount(){
         return amount;

@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 public interface BankRepo extends CrudRepository<BankEntity, Long> {
-    Optional<BankEntity> findByOwnerName(String ownerName);
+    Optional<BankEntity> findByUserName(String userName);
 }

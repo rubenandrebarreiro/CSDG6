@@ -4,10 +4,9 @@ import fct.unl.pt.csdw1.Entities.BankEntity;
 import fct.unl.pt.csdw1.Repositories.BankRepo;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,21 +18,24 @@ public class BankService {
         this.bankRepo = bankRepo;
     }
 
-    public BankEntity createUser(String ownerName, Long amount){
-        if(bankRepo.findByOwnerName(ownerName).isPresent())
-            return bankRepo.save(new BankEntity(ownerName, amount));
+    public BankEntity registerUser(String userName, String password, Long amount){
+        if(bankRepo.findByUserName(userName).isPresent()) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            return bankRepo.save(new BankEntity(userName, passwordEncoder.encode(password), amount));
+        }
         else
             return null;
     }
+
 
     public Iterable<BankEntity> getAllBankAcc(){
         return bankRepo.findAll();
     }
 
     public JSONObject transferMoney(String from, String to, long amount){
-        Optional<BankEntity> beFrom = bankRepo.findByOwnerName(from);
+        Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
         if(beFrom.isPresent()){
-            Optional<BankEntity> beTo = bankRepo.findByOwnerName(to);
+            Optional<BankEntity> beTo = bankRepo.findByUserName(to);
             if(beTo.isPresent()){
                 if(amount>0){
                     BankEntity b = beFrom.get();
@@ -58,7 +60,7 @@ public class BankService {
     }
 
     public JSONObject createMoney(String who,long amount){
-        Optional<BankEntity> be = bankRepo.findByOwnerName(who);
+        Optional<BankEntity> be = bankRepo.findByUserName(who);
         if(be.isPresent()){
             BankEntity b = be.get();
             b.updateAmount(b.getAmount()+amount);
@@ -69,7 +71,7 @@ public class BankService {
     }
 
     public long currentAmount(String who){
-        Optional<BankEntity> be = bankRepo.findByOwnerName(who);
+        Optional<BankEntity> be = bankRepo.findByUserName(who);
         if(be.isPresent()){
             BankEntity b = be.get();
             return b.getAmount();
