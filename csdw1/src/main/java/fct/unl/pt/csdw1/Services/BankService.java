@@ -19,7 +19,7 @@ public class BankService {
     }
 
     public BankEntity registerUser(String userName, String password, Long amount){
-        if(bankRepo.findByUserName(userName).isPresent()) {
+        if(!bankRepo.findByUserName(userName).isPresent()) {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             return bankRepo.save(new BankEntity(userName, passwordEncoder.encode(password), amount));
         }
