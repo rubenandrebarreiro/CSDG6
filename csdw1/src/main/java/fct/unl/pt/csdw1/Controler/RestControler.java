@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.Iterator;
@@ -18,6 +15,7 @@ import java.util.Iterator;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
+@RequestMapping(value = "/")
 public class RestControler {
         private final BankService bS;
         @Autowired
@@ -41,12 +39,12 @@ public class RestControler {
         }
 
         @RequestMapping(method=POST,value="/create",consumes = "application/json")
-        public ResponseEntity<String> createNew(BankAccountDao dao){
+        public ResponseEntity<String> createNew(@RequestBody BankAccountDao dao){
                 bS.createUser(dao.owner,dao.amount);
                 return new ResponseEntity<>("Created a new account for "+ dao.owner , HttpStatus.OK);
         }
 
-        @GetMapping(path="/getAll")
+        @GetMapping(path="/all")
         public ResponseEntity<String> getAll(){
                 String response="";
                 Iterator<BankEntity> it = this.bS.getAllBankAcc().iterator();
