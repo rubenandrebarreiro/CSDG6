@@ -32,4 +32,8 @@ public class BankEntity {
     public Long getAmount(){
         return amount;
     }
+
+    public void updateAmount(long amount){
+        this.amount += amount;
+    }
 }

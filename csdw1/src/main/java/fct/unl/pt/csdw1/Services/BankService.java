@@ -2,9 +2,11 @@ package fct.unl.pt.csdw1.Services;
 
 import fct.unl.pt.csdw1.Entities.BankEntity;
 import fct.unl.pt.csdw1.Repositories.BankRepo;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,11 +20,61 @@ public class BankService {
     }
 
     public BankEntity createUser(String ownerName, Long amount){
-        return bankRepo.save(new BankEntity(ownerName, amount));
+        if(bankRepo.findByOwnerName(ownerName).isPresent())
+            return bankRepo.save(new BankEntity(ownerName, amount));
+        else
+            return null;
     }
 
     public Iterable<BankEntity> getAllBankAcc(){
         return bankRepo.findAll();
+    }
+
+    public JSONObject transferMoney(String from, String to, long amount){
+        Optional<BankEntity> beFrom = bankRepo.findByOwnerName(from);
+        if(beFrom.isPresent()){
+            Optional<BankEntity> beTo = bankRepo.findByOwnerName(to);
+            if(beTo.isPresent()){
+                if(amount>0){
+                    BankEntity b = beFrom.get();
+                    if(b.getAmount()-amount>=0) {
+                        b.updateAmount(-amount);
+                        bankRepo.save(b);
+                        b = beTo.get();
+                        b.updateAmount(amount);
+                        bankRepo.save(b);
+                        return new JSONObject().put("Success", "True");
+                    }else
+                        return new JSONObject().put("error", "From account doesn't have enough money").put("errorID",3);
+                }else{
+                    return new JSONObject().put("error", "Amount<0").put("errorID",2);
+                }
+            }else{
+                return new JSONObject().put("error", "To account doesn't exist").put("errorID",1);
+            }
+        }else{
+            return new JSONObject().put("error", "From account doesn't exist").put("errorID",0);
+        }
+    }
+
+    public JSONObject createMoney(String who,long amount){
+        Optional<BankEntity> be = bankRepo.findByOwnerName(who);
+        if(be.isPresent()){
+            BankEntity b = be.get();
+            b.updateAmount(b.getAmount()+amount);
+            bankRepo.save(b);
+            return new JSONObject().put("Success","True").put("amount",b.getAmount());
+        }else
+            return new JSONObject().put("error","User not found "+who);
+    }
+
+    public long currentAmount(String who){
+        Optional<BankEntity> be = bankRepo.findByOwnerName(who);
+        if(be.isPresent()){
+            BankEntity b = be.get();
+            return b.getAmount();
+        }else
+            return -1;
     }
 
 }
