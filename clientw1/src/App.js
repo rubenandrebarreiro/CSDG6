@@ -7,6 +7,7 @@ import CostumNavBar from './components/CostumNavBar';
 import Home from './components/Home';
 import CostumCreateMoney from './components/CostumCreateMoney';
 import CostumTransfereMoney from './components/CostumTransfereMoney';
+import CostumRegister from './components/CostumRegister';
 
 class App extends Component {
   render() {
@@ -21,6 +22,9 @@ class App extends Component {
               </Route>
               <Route path="/transfere">
                 <CostumTransfereMoney />
+              </Route>
+              <Route path="/register">
+                <CostumRegister />
               </Route>
             </Switch>
         </BrowserRouter>
