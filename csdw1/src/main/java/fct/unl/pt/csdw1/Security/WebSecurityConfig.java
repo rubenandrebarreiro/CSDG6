@@ -31,11 +31,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/login","/register").permitAll()
+        http.
+                csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/register","login").permitAll()
+                .and()
+                .authorizeRequests()
                 .and()
                 .formLogin()
-                .defaultSuccessUrl("/all", true)
+                .defaultSuccessUrl("http://localhost:3000/", true)
                 .permitAll()
                 .and()
                 .logout()

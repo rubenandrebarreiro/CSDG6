@@ -15,17 +15,24 @@ class CostumRegister extends Component {
 			pw2.value = ""
 			alert("Passwords dont match!")
 		}else{
+			let obj = {
+				"userName": u.value,
+				"password":pw1.value,
+				"amount": 0
+			}
+			console.log(obj)
 			fetch("register",{
+				headers: {
+      				'Content-Type': 'application/json'
+    			},
 				method: "POST",
-				body:{
-					"userName": u,
-					"passWord":pw1,
-					"amount": 0
-				}
-			}).catch((response) =>{return response.json})
-			.catch((json) =>{
+				body:JSON.stringify(obj)
+			}).then((response) =>{
+				return response.json
+			}).then((json) =>{
 				console.log(json)
-			})
+				location.replace("http://localhost:8080/login");
+			}).catch((error)=>{console.err(error)})
 		}
 	}
 
