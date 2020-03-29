@@ -4,6 +4,10 @@ import {Form,Button} from 'react-bootstrap';
 import '../App.css';
 
 class CostumTransfereMoney extends Component {
+	componentDidMount(){
+		if(localStorage.getItem("username") === "")
+			location.replace("http://localhost:8080/login");
+	}
   render() {
     return (
     	<div className="App">
