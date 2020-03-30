@@ -24,10 +24,11 @@ class CostumNavBar extends Component {
      fetch("amount?who="+localStorage.getItem("username")).then((response)=>{
         return response.text()
       }).then((text) =>this.setState({amount:text}))
-      .catch((error)=>location.replace("/login"))
+      .catch((error)=>{alert(error.text());location.replace("/login")})
   }
 
-  logout(){
+  logout(e){
+    e.preventDefault();
     localStorage.clear();
     fetch("/logout");
     window.location="/login";
@@ -43,8 +44,8 @@ class CostumNavBar extends Component {
         </Nav>
         <Form inline>
           <Nav.Link >{this.state.amount} €</Nav.Link>
-          <Button onClick={this.update}variant="outline-dark">Update</Button>
-          <Button onClick={this.logout}variant="outline-dark">LOGOUT</Button>
+          <Button onClick={(e)=>this.update(e)}variant="outline-dark">Update</Button>
+          <Button onClick={(e)=>this.logout(e)}variant="outline-dark">LOGOUT</Button>
         </Form>
       </Navbar>
     );

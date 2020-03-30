@@ -9,7 +9,8 @@ class CostumCreateMoney extends Component {
 			location.replace("/login");
 	}
 
-	createMoney(){
+	createMoney(e){
+		e.preventDefault();
 		let money = document.getElementById("money");
 		if(money.value > 0)
 			fetch("money?who="+localStorage.getItem("username"),{headers: {'Content-Type': 'application/json'},method:"PUT",body : JSON.stringify({"amount":money.value})})

@@ -9,7 +9,8 @@ class CostumTransfereMoney extends Component {
 			location.replace("/login");
 	}
 
-	transferMoney(){
+	transferMoney(e){
+		e.preventDefault();
 		let dest = document.getElementById("dest");
 		let amount = document.getElementById("amount");
 		if(amount.value > 0 && dest.value!=="")
@@ -25,10 +26,10 @@ class CostumTransfereMoney extends Component {
     	<div className="App">
     		<CostumNavBar/>
     		<div className="App horizontalMargin30">
-		        <Form onSubmit={(e)=>this.createMoney(e)>
+		        <Form onSubmit={(e)=>this.transferMoney(e)}>
 				  <Form.Group >
 				    <Form.Label>Destination Username:</Form.Label>
-				    <Form.Control id="dest"type="text" placeholder="Enter username" />
+				    <Form.Control id="dest" type="text" placeholder="Enter username" />
 				  </Form.Group>
 
 				  <Form.Group >
