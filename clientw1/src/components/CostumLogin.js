@@ -11,7 +11,7 @@ class CostumLogin extends Component {
 		let u = document.getElementById("uName");
 		let pw1 = document.getElementById("pw1");
 		fetch("/login?username="+u.value+"&password="+pw1.value,{method: "POST"})
-		.then((response)=>{location.replace("http://localhost:3000/")})
+		.then((response)=>{localStorage.setItem("username", u.value);location.replace("http://localhost:3000/")})
 		.catch((error)=>{pw1.value="";alert(error.text())})
 	}
 	

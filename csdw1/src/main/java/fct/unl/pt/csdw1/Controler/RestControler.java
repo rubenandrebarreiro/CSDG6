@@ -31,10 +31,6 @@ public class RestControler {
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
         }
 
-        @RequestMapping(method=POST,value="/login",consumes = "application/json")
-        public ResponseEntity<String> createNew(@RequestBody LoginDao dao){
-                return null;
-        }
 
         @GetMapping(path="/all")
         public ResponseEntity<String> getAll(){

@@ -7,28 +7,44 @@ class CostumNavBar extends Component {
     super(props);
     this.state = {
       money : 0,
-      username: localStorage.getItem("username")
+      username: localStorage.getItem("username"),
+      amount: 0
     }
   }
 
   componentDidMount(){
-    fetch("amount").then((response)=>{
-      return response.text()
-    }).then((text) =>console.log(text))
-    .catch((error)=>location.replace("http://localhost:8080/login"))
+    if(localStorage.getItem("username")==="")
+      location.replace("/login")
+    else{
+      this.update()
+    }
+  }
+
+  update(){
+     fetch("amount?who="+localStorage.getItem("username")).then((response)=>{
+        return response.text()
+      }).then((text) =>this.setState({amount:text}))
+      .catch((error)=>location.replace("/login"))
+  }
+
+  logout(){
+    localStorage.clear();
+    fetch("/logout");
+    window.location="/login";
   }
 
   render() {
     return (
-      <Navbar bg="dark" variant="dark">
+      <Navbar bg="warning" expand="lg">
         <Navbar.Brand>{this.state.username}</Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link href="create">Create Money</Nav.Link>
           <Nav.Link href="transfere">Transfere Money</Nav.Link>
         </Nav>
         <Form inline>
-          <Nav.Link >0</Nav.Link>
-          <Button variant="outline-info">Update</Button>
+          <Nav.Link >{this.state.amount} €</Nav.Link>
+          <Button onClick={this.update}variant="outline-dark">Update</Button>
+          <Button onClick={this.logout}variant="outline-dark">LOGOUT</Button>
         </Form>
       </Navbar>
     );

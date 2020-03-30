@@ -6,23 +6,32 @@ import '../App.css';
 class CostumCreateMoney extends Component {
 	componentDidMount(){
 		if(localStorage.getItem("username") === "")
-			location.replace("http://localhost:8080/login");
+			location.replace("/login");
+	}
+
+	createMoney(){
+		let money = document.getElementById("money");
+		if(money.value > 0)
+			fetch("money?who="+localStorage.getItem("username"),{headers: {'Content-Type': 'application/json'},method:"PUT",body : JSON.stringify({"amount":money.value})})
+			.then(window.location = "/")
+			.catch((error)=>alert(error.text()))
+		money.value = 0;
 	}
   render() {
     return (
     	<div>
     		<CostumNavBar/>
     		<div className="App horizontalMargin30">
-		        <Form>
-				  <Form.Group controlId="formBasicEmail">
+		        <Form onSubmit={(e)=>this.createMoney(e)}>
+				  <Form.Group>
 				    <Form.Label>Amount to generate:</Form.Label>
-				    <Form.Control type="number" placeholder="0" />
+				    <Form.Control id="money" type="number" placeholder="0" />
 				    <Form.Text className="text-muted">
 				      To test
 				    </Form.Text>
 				  </Form.Group>
-				  <Button variant="primary" type="submit">
-				    Submit
+				  <Button variant="warning" type="submit">
+				    Generate
 				  </Button>
 				</Form>
 			</div>
