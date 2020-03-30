@@ -1,7 +1,6 @@
 package fct.unl.pt.csdw1.Repositories;
 
 import fct.unl.pt.csdw1.Entities.BankEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
