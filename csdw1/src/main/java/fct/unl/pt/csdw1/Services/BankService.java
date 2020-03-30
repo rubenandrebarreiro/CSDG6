@@ -27,7 +27,6 @@ public class BankService {
             return null;
     }
 
-
     public Iterable<BankEntity> getAllBankAcc(){
         return bankRepo.findAll();
     }
