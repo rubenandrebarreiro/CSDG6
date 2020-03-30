@@ -2,7 +2,6 @@ package fct.unl.pt.csdw1.Security;
 
 import fct.unl.pt.csdw1.Entities.BankEntity;
 import fct.unl.pt.csdw1.Repositories.BankRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
