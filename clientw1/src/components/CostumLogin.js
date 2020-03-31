@@ -10,8 +10,13 @@ class CostumLogin extends Component {
 		e.preventDefault();
 		let u = document.getElementById("uName");
 		let pw1 = document.getElementById("pw1");
-		fetch("/login?username="+u.value+"&password="+pw1.value,{method: "POST"})
-		.then((response)=>{localStorage.setItem("username", u.value);location.replace("http://localhost:3000/")})
+		fetch("/login",{
+				headers: {
+      				'Content-Type': 'application/json'
+    			},
+				method: "POST",
+				body:JSON.stringify({username:u.value,password:pw1.value})})
+		.then((response)=>{localStorage.setItem("username", u.value);localStorage.setItem("auth",response.headers.get("authorization"));location.replace("http://localhost:3000/")})
 		.catch((error)=>{pw1.value="";alert(error.text())})
 	}
 	
