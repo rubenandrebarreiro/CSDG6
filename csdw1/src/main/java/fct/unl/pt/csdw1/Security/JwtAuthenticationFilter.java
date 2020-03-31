@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         JSONObject json = null;
         try {
             jsonString = request.getReader().lines().collect(Collectors.joining());
+            System.out.println(request.getPathInfo());
             json = new JSONObject(jsonString);
         } catch (IOException e) {
             e.printStackTrace();

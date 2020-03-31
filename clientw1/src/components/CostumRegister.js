@@ -32,7 +32,7 @@ class CostumRegister extends Component {
 			}).then((response) =>{
 				return response.json
 			}).then((json) =>{
-				location.replace("/login");
+				location.replace("/signin");
 			}).catch((error)=>{alert(error)})
 		}
 	}

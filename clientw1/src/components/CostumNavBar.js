@@ -14,7 +14,7 @@ class CostumNavBar extends Component {
 
   componentDidMount(){
     if(localStorage.getItem("username")==="")
-      location.replace("/login")
+      location.replace("/signin")
     else{
       this.update()
     }
@@ -24,14 +24,14 @@ class CostumNavBar extends Component {
      fetch("amount?who="+localStorage.getItem("username"),{headers:{"authorization":localStorage.getItem("auth")}}).then((response)=>{
         return response.text()
       }).then((text) =>this.setState({amount:text}))
-      .catch((error)=>{alert(error.text());location.replace("/login")})
+      .catch((error)=>{alert(error.text());location.replace("/signin")})
   }
 
   logout(e){
     e.preventDefault();
     localStorage.clear();
     fetch("/logout");
-    window.location="/login";
+    window.location="/signin";
   }
 
   render() {

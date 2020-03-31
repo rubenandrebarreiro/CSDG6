@@ -27,7 +27,7 @@ class App extends Component {
               <Route path="/register">
                 <CostumRegister />
               </Route>
-              <Route path="/login">
+              <Route path="/signin">
                 <CostumLogin />
               </Route>
             </Switch>
