@@ -31,7 +31,10 @@ public class RestControler {
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
         }
 
-
+        @GetMapping(path="/test")
+        public ResponseEntity<String> test() {
+                return new ResponseEntity<>("IT WORKS WITH TOKEN", HttpStatus.OK);
+        }
         @GetMapping(path="/all")
         public ResponseEntity<String> getAll(){
                 String response="";
