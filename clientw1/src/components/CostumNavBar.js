@@ -21,7 +21,7 @@ class CostumNavBar extends Component {
   }
 
   update(){
-     fetch("amount?who="+localStorage.getItem("username")).then((response)=>{
+     fetch("amount?who="+localStorage.getItem("username"),{headers:{"authorization":localStorage.getItem("auth")}}).then((response)=>{
         return response.text()
       }).then((text) =>this.setState({amount:text}))
       .catch((error)=>{alert(error.text());location.replace("/login")})
