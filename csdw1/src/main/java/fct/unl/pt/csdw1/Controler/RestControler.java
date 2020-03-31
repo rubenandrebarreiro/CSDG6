@@ -36,13 +36,13 @@ public class RestControler {
                 return new ResponseEntity<>("IT WORKS WITH TOKEN", HttpStatus.OK);
         }
         @GetMapping(path="/all")
-        public ResponseEntity<String> getAll(){
-                String response="";
+        public ResponseEntity<JSONObject> getAll(){
+                JSONObject response = new JSONObject();
                 Iterator<BankEntity> it = this.bS.getAllBankAcc().iterator();
                 BankEntity bankEntity = null;
                 while(it.hasNext()) {
                         bankEntity = it.next();
-                        response += bankEntity.getOwnerName() + " -> " + bankEntity.getAmount() + "€\n";
+                        response.put(bankEntity.getOwnerName(), bankEntity.getAmount());
                 }
                 return new ResponseEntity<>(response, HttpStatus.OK);
         }
