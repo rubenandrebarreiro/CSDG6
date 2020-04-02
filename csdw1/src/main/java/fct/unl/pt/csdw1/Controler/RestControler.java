@@ -5,6 +5,7 @@ import fct.unl.pt.csdw1.Daos.LoginDao;
 import fct.unl.pt.csdw1.Daos.RegisterDao;
 import fct.unl.pt.csdw1.Entities.BankEntity;
 import fct.unl.pt.csdw1.Services.BankService;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,12 +38,12 @@ public class RestControler {
         }
         @GetMapping(path="/all")
         public ResponseEntity<JSONObject> getAll(){
-                JSONObject response = new JSONObject();
+                JSONArray response = new JSONArray();
                 Iterator<BankEntity> it = this.bS.getAllBankAcc().iterator();
                 BankEntity bankEntity = null;
                 while(it.hasNext()) {
                         bankEntity = it.next();
-                        response.put(bankEntity.getOwnerName(), bankEntity.getAmount());
+                        response.put(new JSONObject().put(bankEntity.getOwnerName(),bankEntity.getAmount()));
                 }
                 return new ResponseEntity<>(response, HttpStatus.OK);
         }
