@@ -40,7 +40,8 @@ class CostumNavBar extends Component {
         <Navbar.Brand>{this.state.username}</Navbar.Brand>
         <Nav className="mr-auto">
           <Nav.Link href="create">Create Money</Nav.Link>
-          <Nav.Link href="transfere">Transfere Money</Nav.Link>
+          <Nav.Link href="transfere">Transfer Money</Nav.Link>
+          <Nav.Link href="all">List of All Users</Nav.Link>
         </Nav>
         <Form inline>
           <Nav.Link >{this.state.amount} €</Nav.Link>
