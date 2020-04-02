@@ -36,16 +36,17 @@ public class RestControler {
         public ResponseEntity<String> test() {
                 return new ResponseEntity<>("IT WORKS WITH TOKEN", HttpStatus.OK);
         }
-        @GetMapping(path="/all")
-        public ResponseEntity<JSONObject> getAll(){
+
+        @RequestMapping(method = GET, value = "/all",produces={"application/json"})
+        public ResponseEntity<String> getAll(){
                 JSONArray response = new JSONArray();
                 Iterator<BankEntity> it = this.bS.getAllBankAcc().iterator();
                 BankEntity bankEntity = null;
                 while(it.hasNext()) {
                         bankEntity = it.next();
-                        response.put(new JSONObject().put(bankEntity.getOwnerName(),bankEntity.getAmount()));
+                        response.put(new JSONObject().put("username",bankEntity.getOwnerName()).put("amount", bankEntity.getAmount()));
                 }
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>(response.toString(), HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/amount",params ={"who"})

@@ -9,6 +9,7 @@ import CostumCreateMoney from './components/CostumCreateMoney';
 import CostumTransfereMoney from './components/CostumTransfereMoney';
 import CostumRegister from './components/CostumRegister';
 import CostumLogin from './components/CostumLogin';
+import All from './components/All';
 
 class App extends Component {
   render() {
@@ -30,7 +31,10 @@ class App extends Component {
               <Route path="/signin">
                 <CostumLogin />
               </Route>
-            </Switch>
+            <Route path="/all">
+              <All />
+            </Route>
+          </Switch>
         </BrowserRouter>
     );
   }
