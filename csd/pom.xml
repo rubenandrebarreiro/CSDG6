@@ -95,6 +95,12 @@
 			<version>0.9.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.github.bft-smart/library -->
+		<dependency>
+			<groupId>com.github.bft-smart</groupId>
+			<artifactId>library</artifactId>
+			<version>master-v1.1-beta-g6215ec8-87</version>
+		</dependency>
 
 	</dependencies>
 
