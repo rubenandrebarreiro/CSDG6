@@ -26,11 +26,8 @@ public class BankService extends DefaultSingleRecoverable {
 
     @Autowired
     public BankService(int replicaID, BankRepo bankRepo) {
-
         this.bankRepo = bankRepo;
-
         logger = Logger.getLogger(BankService.class.getName());
-
         new ServiceReplica(replicaID, this, this);
 
     }
@@ -81,7 +78,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                         amount = (Long) receivedRequestObjectInput.readObject();
 
-                        BankEntity bankEntity = this.registerUser(username, password, amount);
+                        BankEntity bankEntity = BankServiceHelper.registerUser(username, password, amount, bankRepo);
 
                         if ( bankEntity != null ) {
 
@@ -103,7 +100,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                         amount = (Long) receivedRequestObjectInput.readObject();
 
-                        JSONObject jsonObject = this.createMoney(who, amount);
+                        JSONObject jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
 
                         requestReplyObjectOutput.writeObject(jsonObject);
 
@@ -129,7 +126,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                         if ( ( amount > 0 ) && ( ( beFrom.get().getAmount() - amount ) >= 0 ) ) {
 
-                            JSONObject jsonObject = this.transferMoney(from, to, amount);
+                            JSONObject jsonObject = BankServiceHelper.transferMoney(from, to, amount, bankRepo);
 
                             requestReplyObjectOutput.writeObject(jsonObject);
 
@@ -212,7 +209,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                     if ( this.bankRepo.findByUserName(username).isPresent() ) {
 
-                        BankEntity userBankEntity = this.findUser(username);
+                        BankEntity userBankEntity = BankServiceHelper.findUser(username, bankRepo);
 
                         requestReplyObjectOutput.writeObject(userBankEntity);
 
@@ -224,7 +221,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                 case LIST_ALL_BANK_ACCOUNTS:
 
-                    for ( BankEntity userBankEntity: this.getAllBankAcc() ) {
+                    for ( BankEntity userBankEntity: BankServiceHelper.getAllBankAcc(bankRepo) ) {
 
                         requestReplyObjectOutput.writeObject(userBankEntity);
 
@@ -240,7 +237,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                     if ( this.bankRepo.findByUserName(who).isPresent() ) {
 
-                        long amount = this.currentAmount(who);
+                        long amount = BankServiceHelper.currentAmount(who, bankRepo);
 
                         requestReplyObjectOutput.writeObject(amount);
 
@@ -336,133 +333,6 @@ public class BankService extends DefaultSingleRecoverable {
     }
 
 
-    public BankEntity registerUser(String username, String password, Long amount) {
 
-        if(!bankRepo.findByUserName(username).isPresent()) {
-
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-            return bankRepo.save(new BankEntity(username, passwordEncoder.encode(password), amount));
-
-        }
-        else {
-
-            return null;
-
-        }
-
-    }
-
-    public BankEntity findUser(String username) {
-
-        if ( this.bankRepo.findByUserName(username).isPresent() ) {
-
-            return this.bankRepo.findByUserName(username).get();
-
-        }
-
-        return null;
-
-    }
-
-    public Iterable<BankEntity> getAllBankAcc(){
-
-        return bankRepo.findAll();
-
-    }
-
-    public JSONObject transferMoney(String from, String to, long amount) {
-
-        Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
-
-        if(beFrom.isPresent()){
-
-            Optional<BankEntity> beTo = bankRepo.findByUserName(to);
-
-            if(beTo.isPresent()){
-
-                if(amount > 0) {
-
-                    BankEntity b = beFrom.get();
-
-                    if ( ( b.getAmount() - amount ) >= 0 ) {
-
-                        b.updateAmount(-amount);
-
-                        bankRepo.save(b);
-                        b = beTo.get();
-
-                        b.updateAmount(amount);
-                        bankRepo.save(b);
-
-                        return new JSONObject().put("Success", "True");
-
-                    }
-                    else {
-
-                        return new JSONObject().put("error", "From account doesn't have enough money").put("errorID", 3);
-
-                    }
-                }
-                else {
-
-                    return new JSONObject().put("error", "Amount<0").put("errorID",2);
-
-                }
-
-            }
-            else {
-
-                return new JSONObject().put("error", "To account doesn't exist").put("errorID",1);
-
-            }
-
-        }
-        else {
-
-            return new JSONObject().put("error", "From account doesn't exist").put("errorID",0);
-
-        }
-
-    }
-
-    public JSONObject createMoney(String who,long amount){
-
-        Optional<BankEntity> be = bankRepo.findByUserName(who);
-
-        if( be.isPresent() ) {
-
-            BankEntity b = be.get();
-
-            b.updateAmount(b.getAmount()+amount);
-            bankRepo.save(b);
-
-            return new JSONObject().put("Success","True").put("amount",b.getAmount());
-
-        }
-        else
-
-            return new JSONObject().put("error","User not found "+who);
-
-    }
-
-    public long currentAmount(String who) {
-
-        Optional<BankEntity> be = bankRepo.findByUserName(who);
-
-        if (be.isPresent()) {
-
-            BankEntity b = be.get();
-
-            return b.getAmount();
-
-        }
-        else {
-
-            return -1;
-
-        }
-
-    }
 
 }
