@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.github.bft-smart:library:master-v1.1-beta-g6215ec8-87">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/bft-smart/library/master-v1.1-beta-g6215ec8-87/library-master-v1.1-beta-g6215ec8-87.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/bft-smart/library/master-v1.1-beta-g6215ec8-87/library-master-v1.1-beta-g6215ec8-87-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/bft-smart/library/master-v1.1-beta-g6215ec8-87/library-master-v1.1-beta-g6215ec8-87-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,7 +1,6 @@
-package fct.unl.pt.csd.Controler;
+package fct.unl.pt.csd.Controller;
 
 import fct.unl.pt.csd.Daos.BankAccountDao;
-import fct.unl.pt.csd.Daos.LoginDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
 import fct.unl.pt.csd.Entities.BankEntity;
 import fct.unl.pt.csd.Services.BankService;
@@ -18,17 +17,23 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(value = "/")
-public class RestControler {
+public class RestAPIController {
+
         private final BankService bS;
+
         @Autowired
-        public RestControler(final BankService bS ) {
+        public RestAPIController(final BankService bS ) {
+
                 this.bS = bS;
+
         }
 
         @RequestMapping(method=POST,value="/register",consumes = "application/json")
-        public ResponseEntity<String> createNew(@RequestBody RegisterDao dao){
+        public ResponseEntity<String> createNew(@RequestBody RegisterDao dao) {
+
                 if(bS.registerUser(dao.userName,dao.password, dao.amount) == null)
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
+
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
         }
 
