@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 
 @Service
 public class BankService extends DefaultSingleRecoverable {
@@ -221,7 +222,14 @@ public class BankService extends DefaultSingleRecoverable {
 
                 case LIST_ALL_BANK_ACCOUNTS:
 
-                    for ( BankEntity userBankEntity: BankServiceHelper.getAllBankAcc(bankRepo) ) {
+                    Iterable<BankEntity> usersBankEntities = this.getAllBankAcc();
+
+                    int numTotalUserBankEntities =
+                            (int) StreamSupport.stream(usersBankEntities.spliterator(), false).count();
+
+                    requestReplyObjectOutput.writeObject(numTotalUserBankEntities);
+
+                    for ( BankEntity userBankEntity: usersBankEntities ) {
 
                         requestReplyObjectOutput.writeObject(userBankEntity);
 
