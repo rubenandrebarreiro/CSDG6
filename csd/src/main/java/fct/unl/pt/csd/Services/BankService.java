@@ -222,7 +222,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                 case LIST_ALL_BANK_ACCOUNTS:
 
-                    Iterable<BankEntity> usersBankEntities = this.getAllBankAcc();
+                    Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
 
                     int numTotalUserBankEntities =
                             (int) StreamSupport.stream(usersBankEntities.spliterator(), false).count();
