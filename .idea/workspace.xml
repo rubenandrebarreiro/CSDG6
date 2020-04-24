@@ -20,15 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a9e43f7f-4f2a-4df2-a67c-0641fac45bd0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/csd/src/main/java/fct/unl/pt/csd/Enumerations/BankServiceRequestType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/commons-codec-1.5.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/core-0.1.4.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/netty-all-4.0.25.Final.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/slf4j-api-1.5.8.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/slf4j-jdk14-1.5.8.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/csd/src/main/java/fct/unl/pt/csd/Controller/ClientRequestHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/csd/src/main/java/fct/unl/pt/csd/BftSmart/RequestHanler.java" beforeDir="false" afterPath="$PROJECT_DIR$/csd/src/main/java/fct/unl/pt/csd/BftSmart/RequestHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/csd/src/main/java/fct/unl/pt/csd/Controler/RestControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/csd/src/main/java/fct/unl/pt/csd/Controller/RestAPIController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/csd/src/main/java/fct/unl/pt/csd/Services/BankService.java" beforeDir="false" afterPath="$PROJECT_DIR$/csd/src/main/java/fct/unl/pt/csd/Services/BankService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -97,6 +90,14 @@
       <updated>1585258733547</updated>
       <workItem from="1585258737922" duration="212000" />
     </task>
+    <task id="LOCAL-00001" summary="BFT Smart integration (Server/Service Replicas and Ordered/Unordered Operations)">
+      <created>1587753348836</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1587753348836</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -113,6 +114,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="BFT Smart integration (Server/Service Replicas and Ordered/Unordered Operations)" />
+    <option name="LAST_COMMIT_MESSAGE" value="BFT Smart integration (Server/Service Replicas and Ordered/Unordered Operations)" />
   </component>
   <component name="WindowStateProjectService">
     <state x="440" y="114" key="#Project_Structure" timestamp="1587212887330">
@@ -144,13 +149,17 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="440" y="114" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1587213188812" />
+    <state x="552" y="272" key="Vcs.Push.Dialog.v2" timestamp="1587753365858">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="552" y="272" key="Vcs.Push.Dialog.v2/0.0.1920.1080@0.0.1920.1080" timestamp="1587753365858" />
     <state x="84" y="153" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1587749667103">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="84" y="153" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1080@0.0.1920.1080" timestamp="1587749667103" />
-    <state x="1103" y="240" width="672" height="678" key="search.everywhere.popup" timestamp="1587753123290">
+    <state x="1103" y="240" width="672" height="678" key="search.everywhere.popup" timestamp="1587755504161">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="1103" y="240" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1587753123290" />
+    <state x="1103" y="240" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1587755504161" />
   </component>
 </project>
