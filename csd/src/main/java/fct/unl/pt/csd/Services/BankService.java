@@ -8,7 +8,6 @@ import fct.unl.pt.csd.Enumerations.BankServiceRequestType;
 import fct.unl.pt.csd.Repositories.BankRepo;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;

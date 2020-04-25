@@ -19,19 +19,18 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping(value = "/")
 public class RestAPIController {
 
-        private final BankService bS;
+        //private final BankService bS;
+        private final ClientRequestHandler cR;
 
         @Autowired
-        public RestAPIController(final BankService bS ) {
-
-                this.bS = bS;
-
+        public RestAPIController(final ClientRequestHandler cR) {
+                this.cR = cR;
         }
 
         @RequestMapping(method=POST,value="/register",consumes = "application/json")
         public ResponseEntity<String> createNew(@RequestBody RegisterDao dao) {
 
-                if(bS.registerUser(dao.userName,dao.password, dao.amount) == null)
+                if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount) == null)
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
 
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
@@ -45,7 +44,7 @@ public class RestAPIController {
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
         public ResponseEntity<String> getAll(){
                 JSONArray response = new JSONArray();
-                Iterator<BankEntity> it = this.bS.getAllBankAcc().iterator();
+                Iterator<BankEntity> it = this.cR.invokeListAllBankAccounts().iterator();
                 BankEntity bankEntity = null;
                 while(it.hasNext()) {
                         bankEntity = it.next();
@@ -56,7 +55,7 @@ public class RestAPIController {
 
         @RequestMapping(method = GET, value = "/amount",params ={"who"})
         public ResponseEntity<String> getAmountOfUser(@RequestParam("who") String who){
-                long b = bS.currentAmount(who);
+                long b = cR.invokeCheckCurrentAmount(who);
                 if(b == -1)
                         return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>(b+"", HttpStatus.OK);
@@ -64,7 +63,7 @@ public class RestAPIController {
 
         @RequestMapping(method = PUT, value = "/amount",params ={"from","to"})
         public ResponseEntity<String> transferMoney(@RequestParam("from") String from,@RequestParam("to") String to,@RequestBody BankAccountDao dao){
-                JSONObject js = bS.transferMoney(from,to,dao.amount);
+                JSONObject js = cR.invokeTransferMoney(from,to,dao.amount);
                 if(!js.has("error"))
                         return new ResponseEntity<>("Transfer successful", HttpStatus.OK);
                 int err = js.getInt("errorID");
@@ -79,8 +78,8 @@ public class RestAPIController {
         }
 
         @RequestMapping(method = PUT, value = "/money",params ={"who"})
-        public ResponseEntity<String> createMoney(@RequestParam("who") String who,@RequestBody BankAccountDao dao){
-                JSONObject js = bS.createMoney(who,dao.amount);
+        public ResponseEntity<String> createMoney(@RequestParam("who") String who,@RequestBody Long amount){
+                JSONObject js = cR.invokeCreateMoney(who,amount);
                 if(js.has("error"))
                         return new ResponseEntity<>(js.getString("error"), HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>(js.getString("amount"), HttpStatus.OK);
