@@ -3,7 +3,6 @@ package fct.unl.pt.csd.Controller;
 import fct.unl.pt.csd.Daos.BankAccountDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
 import fct.unl.pt.csd.Entities.BankEntity;
-import fct.unl.pt.csd.Services.BankService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -95,11 +95,11 @@
 			<version>0.9.1</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.github.bft-smart/library -->
+		<!-- https://mvnrepository.com/artifact/com.jd.blockchain/bft-smart -->
 		<dependency>
-			<groupId>com.github.bft-smart</groupId>
-			<artifactId>library</artifactId>
-			<version>master-v1.1-beta-g6215ec8-87</version>
+			<groupId>com.jd.blockchain</groupId>
+			<artifactId>bft-smart</artifactId>
+			<version>0.0.8.RELEASE</version>
 		</dependency>
 
 	</dependencies>

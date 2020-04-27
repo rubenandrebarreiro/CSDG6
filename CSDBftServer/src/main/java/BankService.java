@@ -1,14 +1,9 @@
-package fct.unl.pt.csd.Services;
-
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ServiceReplica;
+import bftsmart.tom.server.RequestVerifier;
+import bftsmart.tom.server.defaultservices.DefaultReplier;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
-import fct.unl.pt.csd.Entities.BankEntity;
-import fct.unl.pt.csd.Enumerations.BankServiceRequestType;
-import fct.unl.pt.csd.Repositories.BankRepo;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.Optional;
@@ -16,21 +11,43 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.StreamSupport;
 
-@Service
 public class BankService extends DefaultSingleRecoverable {
 
-    private BankRepo bankRepo;
+    private BankRepositorie bankRepo;
 
     private final Logger logger;
 
-
-    @Autowired
-    public BankService(int replicaID, BankRepo bankRepo) {
-        this.bankRepo = bankRepo;
+    public BankService(int replicaID) {
+        this.bankRepo = new BankRepositorie();
         logger = Logger.getLogger(BankService.class.getName());
-        new ServiceReplica(replicaID, this, this);
+        new ServiceReplica(replicaID, "config",this, this,(RequestVerifier)null, new DefaultReplier());
 
     }
+
+	public static void main(String[] args){
+        if(args.length < 1) {
+            /*
+                System.out.println("Use: java CounterServer <processId>");
+                System.exit(-1);
+            */
+            /*String s;
+            Process p;
+            try {
+                p = Runtime.getRuntime().exec("ls -aF");
+                BufferedReader br = new BufferedReader(
+                        new InputStreamReader(p.getInputStream()));
+                while ((s = br.readLine()) != null)
+                    System.out.println("line: " + s);
+                p.waitFor();
+                System.out.println ("exit: " + p.exitValue());
+                p.destroy();
+            } catch (Exception e) {}*/
+            new BankService(0);
+        } else {
+            new BankService(Integer.parseInt(args[0]));
+        }
+    }
+
 
     @Override
     public byte[] appExecuteOrdered(byte[] commandBytes, MessageContext messageContext) {
@@ -328,7 +345,7 @@ public class BankService extends DefaultSingleRecoverable {
         )
         {
 
-            this.bankRepo = (BankRepo) snapshotObjectInput.readObject();
+            this.bankRepo = (BankRepositorie) snapshotObjectInput.readObject();
 
         }
         catch (IOException | ClassNotFoundException snapshotException) {
