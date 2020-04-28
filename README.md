@@ -1,6 +1,10 @@
 # NOVA Crypto Banking Service
 ## A Banking Service with Cryptocurrency for New University of Lisbon
 
+***
+
+***
+
 ### Description
 * The **_NOVA Crypto Banking Service_** it’s a **Banking Service with Cryptocurrencies for New University of Lisbon**.
 * It’s a **Byzantine Fault-Tolerant** platform, using distributed **Consensus Proofs Agreements** on all the operations/transactions of the system.
@@ -50,25 +54,28 @@
 
 ### Authors
 
-#### Bruno Vicente Santos
-* E-mail:
-  * 
+* #### Bruno Vicente Santos
+  * **_E-mail_**:
+    * 
 
-#### Filipe Miguel Santos
-* E-mail:
-  * 
+* #### Filipe Miguel Santos
+  * **_E-mail_**:
+    * 
 
-
-#### Rúben André Barreiro
-* E-mail:
-  * r.barreiro@campus.fct.unl.pt
+* #### Rúben André Barreiro
+  * **_Personal Page_**:
+    * [**_http://rubenandrebarreiro.github.io/_**](http://rubenandrebarreiro.github.io/)
+  * **_E-mail_**:
+    * [**_r.barreiro@campus.fct.unl.pt_**](mailto: r.barreiro@campus.fct.unl.pt)
 
 ***
 
 ### Supervisor
 
-#### Henrique João Domingos
-* E-mail:
-  * hj@fct.unl.pt
+* #### Henrique João Domingos
+  * **_Personal Page_**:
+    * [**_https://asc.di.fct.unl.pt/~hj/_**](https://asc.di.fct.unl.pt/~hj/)
+  * **_E-mail_**:
+    * [**_hj@fct.unl.pt_**](mailto: hj@fct.unl.pt)
   
 ***
