@@ -1,7 +1,8 @@
 # NOVA Crypto Banking Service
 ## A Banking Service with Cryptocurrency for New University of Lisbon
 
-***
+![https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/JPGs/banner-1.jpg?token=AIXAYR5SGDZ4YYHBSOJ5RZK6WGJ7G](https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/JPGs/banner-1.jpg?token=AIXAYR5SGDZ4YYHBSOJ5RZK6WGJ7G)
+######  NOVA Crypto Banking Service A Banking Service with Cryptocurrency for New University of Lisbon) - Banner #1
 
 ***
 
@@ -52,15 +53,26 @@
 
 ***
 
+### Currency
+* Our system uses a **cryptocurrency**, called **_NOVA Coin_**, represented as following:
+
+<img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/PNGs/nova-coin-1.png?token=AIXAYRYQJDMOKTICNQBE2326WGKQE" alt="NOVA Coin" height="200" width="200">
+<br>
+
+#### And now, my friends, let's start to make money transactions with our NOVA Coin!!!
+#### Good business for all!!!
+
+***
+
 ### Authors
 
 * #### Bruno Vicente Santos
   * **_E-mail_**:
-    * 
+    * [**_bv.santos@campus.fct.unl.pt_**](mailto:bv.santos@campus.fct.unl.pt)
 
 * #### Filipe Miguel Santos
   * **_E-mail_**:
-    * 
+    * [**_fmpi.santos@campus.fct.unl.pt_**](mailto:fmpi.santos@campus.fct.unl.pt)
 
 * #### Rúben André Barreiro
   * **_Personal Page_**:
