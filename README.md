@@ -123,7 +123,12 @@
 ### Our Currency - The NOVA Coin
 * Our system uses a **cryptocurrency**, called **_NOVA Coin_**, represented as following:
 
-<img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/assets/PNGs/nova-coin-1.png?token=AIXAYR5HTADQBYCWFMUQQSK6WGOXW" alt="NOVA Coin" height="200" width="200">
+<img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/assets/PNGs/nova-coin-1.png?token=AIXAYR5HTADQBYCWFMUQQSK6WGOXW" alt="NOVA Coin" height="200" width="200"> &nbsp;&nbsp; <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/assets/PNGs/nova-coin-2.png?token=AIXAYR3MUTSSX7TFFSL3B5S6WG7OQ" alt="NOVA Coin" height="200" width="200">
+
+  * _Forged in [**_FCT NOVA (Faculty of Sciences and Technology of New University of Lisbon / NOVA School of Science and Technology_**](https://www.fct.unl.pt/), in 2020_;
+  * _Our Motto_:
+    * **_Omnis Civitas Contra Se Divisa Non Stabit_** (_Latin_);
+    * **_Any city divided against itself will not remain_** (_English_);
 
 #### And now, my friends, let's start to make money transactions with our _NOVA Coin_!!!
 #### Good business for all!!!
