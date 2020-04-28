@@ -22,13 +22,13 @@
   
   
     * **_Client Web App_**:
-      * A Web App/Interface for the Clients/Users, built in [**_Node.js_**](https://nodejs.org/), [**_React.js_**](https://reactjs.org/) and [**_JavaScript_**](https://www.javascript.com/);
+      * A [**_React.js_**](https://reactjs.org/) **Web Application/Interface** for the **Clients/Users**, built in [**_Node.js_**](https://nodejs.org/), and [**_JavaScript_**](https://www.javascript.com/);
       * Click [**_here_**](https://github.com/fmpisantos/CSDG6/tree/master/clientw1) to see its content:
         * [**_https://github.com/fmpisantos/CSDG6/tree/master/clientw1_**](https://github.com/fmpisantos/CSDG6/tree/master/clientw1)
     
     
     * **_Server's (Proxy's) REST API_**:
-      * A [**_Spring_**](https://spring.io/) **aplication** using [**_RESTful/REST (Representational State Transfer)_**](https://restfulapi.net/) **API** for the interactions between the **_Client/User_** and the **_Server (Proxy)_**, responsible for the **mapping of the correct and valid states** of the **System**, derived from the operations of the **_Clients/Users_**;
+      * A [**_Spring_**](https://spring.io/) **Application/Interface** using [**_RESTful/REST (Representational State Transfer)_**](https://restfulapi.net/) **API** for the interactions between the **_Client/User_** and the **_Server (Proxy)_**, responsible for the **mapping of the correct and valid states** of the **System**, derived from the operations of the **_Clients/Users_**;
       * Click [**_here_**](https://github.com/fmpisantos/CSDG6/tree/master/csd) to see its content:
         * [**_https://github.com/fmpisantos/CSDG6/tree/master/csd_**](https://github.com/fmpisantos/CSDG6/tree/master/csd)
     
