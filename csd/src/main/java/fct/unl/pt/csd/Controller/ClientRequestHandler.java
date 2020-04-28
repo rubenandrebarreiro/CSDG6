@@ -105,14 +105,14 @@ public class ClientRequestHandler implements UserDetailsService {
 
                 ) {
 
-            requestToSendObjectOutput.writeObject(BankServiceRequestType.CREATE_MONEY);
+            requestToSendObjectOutput.writeObject("CREATE_MONEY");
             requestToSendObjectOutput.writeObject(who);
             requestToSendObjectOutput.writeObject(amount);
 
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 
-            byte[] requestReply = this.serviceProxy.invokeOrdered(requestToSendByteArrayOutputStream.toByteArray());
+            byte[] requestReply = this.serviceProxy.invokeUnordered(requestToSendByteArrayOutputStream.toByteArray());
 
             if (requestReply.length == 0) {
 
@@ -154,7 +154,7 @@ public class ClientRequestHandler implements UserDetailsService {
 
                 ) {
 
-            requestToSendObjectOutput.writeObject(BankServiceRequestType.TRANSFER_MONEY);
+            requestToSendObjectOutput.writeObject("TRANSFER_MONEY");
             requestToSendObjectOutput.writeObject(from);
             requestToSendObjectOutput.writeObject(to);
             requestToSendObjectOutput.writeObject(amount);
@@ -228,7 +228,6 @@ public class ClientRequestHandler implements UserDetailsService {
                     ) {
 
                 JSONObject j = new JSONObject(receivedRequestReplyObjectInput.readObject().toString());
-                System.out.println(j.toString());
                 return new BankEntity(j.getString("username"),j.getString("password"),j.getLong("amount"));
 
             }

@@ -68,7 +68,7 @@ public class BankServiceHelper {
 
     }
 
-    protected static JSONObject createMoney(String who, long amount, BankRepositorie bankRepo) {
+    protected static JSONObject createMoney(String who, Long amount, BankRepositorie bankRepo) {
 
         Optional<BankEntity> be = bankRepo.findByUserName(who);
 
