@@ -28,7 +28,6 @@ public class BankEntity implements Serializable {
     }
 
     public void updateAmount(long amount){
-        System.out.println("A "+amount);
         this.amount += amount;
     }
 

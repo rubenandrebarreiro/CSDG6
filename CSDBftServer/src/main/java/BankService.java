@@ -92,11 +92,12 @@ public class BankService extends DefaultSingleRecoverable {
                 case "CREATE_MONEY":
 
                     who = (String) receivedRequestObjectInput.readObject();
-
+                    logger.info(who);
                     if ( this.bankRepo.findByUserName(who).isPresent() ) {
 
                         amount = (Long) receivedRequestObjectInput.readObject();
-
+                        logger.info(who);
+                        logger.info(String.valueOf(amount));
                         JSONObject jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
 
             requestReplyObjectOutput.writeObject(jsonObject.toString());
