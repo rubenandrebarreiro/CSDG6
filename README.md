@@ -1,8 +1,8 @@
 # NOVA Crypto Banking Service
-## A Banking Service with Cryptocurrency for New University of Lisbon
+## A Banking Service with Cryptocurrencies for New University of Lisbon
 
 ![https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/JPGs/banner-1.jpg?token=AIXAYR5SGDZ4YYHBSOJ5RZK6WGJ7G](https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/JPGs/banner-1.jpg?token=AIXAYR5SGDZ4YYHBSOJ5RZK6WGJ7G)
-######  NOVA Crypto Banking Service A Banking Service with Cryptocurrency for New University of Lisbon) - Banner #1
+######  NOVA Crypto Banking Service A Banking Service with Cryptocurrencies for New University of Lisbon) - Banner #1
 
 ***
 
