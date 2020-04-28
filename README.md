@@ -46,7 +46,7 @@
 ***
 
 ### Instructions
-1. **Cloning the project**:
+1. **Cloning the project**:   
    * Clone the project, doing the following command in a **_Terminal_**/**_Prompt_** (e.g., [**_Git Bash_**](https://git-scm.com/)):
      * ```
        git clone https://github.com/fmpisantos/CSDG6.git
