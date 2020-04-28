@@ -57,7 +57,6 @@
 * Our system uses a **cryptocurrency**, called **_NOVA Coin_**, represented as following:
 
 <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/PNGs/nova-coin-1.png?token=AIXAYRYQJDMOKTICNQBE2326WGKQE" alt="NOVA Coin" height="200" width="200">
-<br>
 
 #### And now, my friends, let's start to make money transactions with our NOVA Coin!!!
 #### Good business for all!!!
