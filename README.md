@@ -1,7 +1,7 @@
 # NOVA Crypto Banking Service
 ## A Banking Service with Cryptocurrencies for New University of Lisbon
 
-![https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/JPGs/banner-1.jpg?token=AIXAYR5SGDZ4YYHBSOJ5RZK6WGJ7G](https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/JPGs/banner-1.jpg?token=AIXAYR5SGDZ4YYHBSOJ5RZK6WGJ7G)
+![https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/banner/JPGs/banner-1.jpg?token=AIXAYR3EBPLQT452CHOL2YC6WGPBY](https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/banner/JPGs/banner-1.jpg?token=AIXAYR3EBPLQT452CHOL2YC6WGPBY)
 ######  NOVA Crypto Banking Service A Banking Service with Cryptocurrencies for New University of Lisbon) - Banner #1
 
 ***
@@ -46,10 +46,15 @@
 ***
 
 ### Instructions
-* Clone the project, by doing the following command in a **_Terminal_**/**_Prompt_**:
-  ```
-  git clone https://github.com/fmpisantos/CSDG6.git
-  ```
+1. **Cloning the project**:
+  * Clone the project, doing the following command in a **_Terminal_**/**_Prompt_** (e.g., [**_Git Bash_**](https://git-scm.com/)):
+    * ```
+      git clone https://github.com/fmpisantos/CSDG6.git
+      ```
+  * You should see the following output:
+    <br><br>
+    <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/clone-project-1.jpg?token=AIXAYR4KIUU2GN2Z44XWERS6WGPSK" alt="Instructions - Cloning the Project #1" height="250" width="375">&nbsp;&nbsp;
+    <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/clone-project-2.jpg?token=AIXAYR525U2TKPY6MX7GSQC6WGQH4" alt="Instructions - Cloning the Project #2" height="250" width="375">
   
 * In order to build and run this application, you must initialize/start the main components of the system, doing the following steps:
   1. Start the **_Byzantine Fault-Tolerant Server (State Machine Replica)_**:
@@ -58,10 +63,10 @@
 
 ***
 
-### Currency
+### Our Currency - The NOVA Coin
 * Our system uses a **cryptocurrency**, called **_NOVA Coin_**, represented as following:
 
-<img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/PNGs/nova-coin-1.png?token=AIXAYRYQJDMOKTICNQBE2326WGKQE" alt="NOVA Coin" height="200" width="200">
+<img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/assets/PNGs/nova-coin-1.png?token=AIXAYR5HTADQBYCWFMUQQSK6WGOXW" alt="NOVA Coin" height="200" width="200">
 
 #### And now, my friends, let's start to make money transactions with our _NOVA Coin_!!!
 #### Good business for all!!!
@@ -93,5 +98,3 @@
     * [**_https://asc.di.fct.unl.pt/~hj/_**](https://asc.di.fct.unl.pt/~hj/)
   * **_E-mail_**:
     * [**_hj@fct.unl.pt_**](mailto:hj@fct.unl.pt)
-  
-***
