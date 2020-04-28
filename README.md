@@ -47,20 +47,29 @@
 
 ### Instructions
 1. **Cloning the project**:
-  * Clone the project, doing the following command in a **_Terminal_**/**_Prompt_** (e.g., [**_Git Bash_**](https://git-scm.com/)):
-    * ```
-      git clone https://github.com/fmpisantos/CSDG6.git
-      ```
-  * You should see the following output:
-    <br><br>
-    <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/clone-project-1.jpg?token=AIXAYR4KIUU2GN2Z44XWERS6WGPSK" alt="Instructions - Cloning the Project #1" height="250" width="375">&nbsp;&nbsp;
-    <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/clone-project-2.jpg?token=AIXAYR525U2TKPY6MX7GSQC6WGQH4" alt="Instructions - Cloning the Project #2" height="250" width="375">
+   * Clone the project, doing the following command in a **_Terminal_**/**_Prompt_** (e.g., [**_Git Bash_**](https://git-scm.com/)):
+     * ```
+       git clone https://github.com/fmpisantos/CSDG6.git
+       ```
+   * You should see the following output:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/clone-project-1.jpg?token=AIXAYR4KIUU2GN2Z44XWERS6WGPSK" alt="Instructions - Cloning the Project #1" height="250" width="375">&nbsp;&nbsp;
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/clone-project-2.jpg?token=AIXAYR525U2TKPY6MX7GSQC6WGQH4" alt="Instructions - Cloning the Project #2" height="250" width="375">
+   * This will create a **Project's Structure** with **3 (three) main components**, similar to the following:
+     ``` bash
+     CSDG6
+     ├── clientw1
+     ├── csd
+     ├── CSDBftServer
+     ```
+   * The previously mentioned **3 (three) main components** of the **Project's Structure**, are the following:
+     * **_Byzantine Fault-Tolerant Server (State Machine Replica)_**;
+     * **_Server's (Proxy's) REST API_**;
+     * **_Client React.js/Node.js Web App_**;
   
-* In order to build and run this application, you must initialize/start the main components of the system, doing the following steps:
-  1. Start the **_Byzantine Fault-Tolerant Server (State Machine Replica)_**:
-  2. Start the **_Server's (Proxy's) REST API_**:
-  3. Start the **_Client Web App_**:
-
+2. **Starting the _Byzantine Fault-Tolerant Server (State Machine Replica)_**:
+   
+  
 ***
 
 ### Our Currency - The NOVA Coin
