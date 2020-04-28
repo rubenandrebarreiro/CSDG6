@@ -14,9 +14,17 @@ class CostumTransfereMoney extends Component {
 		let dest = document.getElementById("dest");
 		let amount = document.getElementById("amount");
 		if(amount.value > 0 && dest.value!=="")
-			fetch("amount?from="+localStorage.getItem("username")+"&to="+dest.value,{headers: {'Content-Type': 'application/json',"authorization":localStorage.getItem("auth")},method:"PUT",body : JSON.stringify({"amount":amount.value})})
-			.then(window.location = "/")
-			.catch((error)=>alert(error.text()))
+			fetch("amount?from="+localStorage.getItem("username")+"&to="+dest.value,
+				{
+					headers: {'Content-Type': 'application/json',
+					"authorization":localStorage.getItem("auth")
+				},
+					method:"PUT",
+					body : JSON.stringify({"amount":amount.value})
+			})
+			.then((response)=>{return response.text()})
+			.then((text)=>window.location = "/")
+			.catch((error)=>alert(error.error()))
 		dest.value = "";
 		amount.value = 0;
 	}

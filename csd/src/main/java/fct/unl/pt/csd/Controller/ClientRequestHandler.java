@@ -103,7 +103,7 @@ public class ClientRequestHandler implements UserDetailsService {
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 
-            byte[] requestReply = this.serviceProxy.invokeUnordered(requestToSendByteArrayOutputStream.toByteArray());
+            byte[] requestReply = this.serviceProxy.invokeOrdered(requestToSendByteArrayOutputStream.toByteArray());
 
             if (requestReply.length == 0) {
 
