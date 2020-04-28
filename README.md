@@ -39,7 +39,7 @@
     
     
     * **_Byzantine Fault-Tolerant Server (State Machine Replica)_**:
-      * A **_Byzantine Fault-Tolerant Server_**, **replicated** and **distributed** for all the **heterogeneous nodes** of the **System**, in a **decentralized** fashion, **keeping the current valid state and data of the global system**, storing it at **Back-end Persistent Databases**, using [**_H2_**](https://www.h2database.com/);
+      * A [**_Bft-SMaRt_**](https://bft-smart.github.io/library/) based **_Byzantine Fault-Tolerant Server_**, **replicated** and **distributed** for all the **heterogeneous nodes** of the **System**, in a **decentralized** fashion, **keeping the current valid state and data of the global system**, storing it at **Back-end Persistent Databases**, using [**_H2_**](https://www.h2database.com/);
       * Click [**_here_**](https://github.com/fmpisantos/CSDG6/tree/master/CSDBftServer) to see its content:
         * [**_https://github.com/fmpisantos/CSDG6/tree/master/CSDBftServer_**](https://github.com/fmpisantos/CSDG6/tree/master/CSDBftServer)
 
