@@ -144,7 +144,7 @@
      Channel active
      (...)
      ```
-     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-10.jpg?token=AIXAYR2QG72KVY6SDWQDALC6WGZNO" alt="Instructions - Starting the Server's (Proxy's) REST API #5" height="150" width="400">
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-rest-proxy-server-6.jpg?token=AIXAYR2FHAV4JEOLGVFRYO26WHHMO" alt="Instructions - Starting the Server's (Proxy's) REST API #6" height="150" width="400">
   
 ***
 
