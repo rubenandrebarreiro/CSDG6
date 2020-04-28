@@ -1,17 +1,10 @@
 package fct.unl.pt.csd.Controller;
 
 import bftsmart.tom.ServiceProxy;
-import bftsmart.tom.server.RequestVerifier;
-import bftsmart.tom.server.defaultservices.DefaultReplier;
-import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
-import bftsmart.tom.util.Extractor;
 import fct.unl.pt.csd.Entities.BankEntity;
-import fct.unl.pt.csd.Enumerations.BankServiceRequestType;
 import fct.unl.pt.csd.Security.MyUserDetails;
-import fct.unl.pt.csd.Security.MyUserDetails2;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -357,6 +349,6 @@ public class ClientRequestHandler implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         BankEntity e = invokeFindUser(username);
-        return new MyUserDetails2(username,e == null? Optional.empty():Optional.of(e));
+        return new MyUserDetails(username,e == null? Optional.empty():Optional.of(e));
     }
 }

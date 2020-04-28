@@ -36,7 +36,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         JSONObject json = null;
         try {
             jsonString = request.getReader().lines().collect(Collectors.joining());
-            System.out.println(request.getPathInfo());
             json = new JSONObject(jsonString);
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,7 +52,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain, Authentication authentication) {
         //MyUserDetails user = ((MyUserDetails) authentication.getPrincipal());
-        MyUserDetails2 user = ((MyUserDetails2) authentication.getPrincipal());
+        MyUserDetails user = ((MyUserDetails) authentication.getPrincipal());
         List<String> roles = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)

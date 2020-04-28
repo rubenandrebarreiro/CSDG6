@@ -15,9 +15,9 @@ public class MyUserDetails implements UserDetails {
     private String userName;
     private String passWord;
 
-    public MyUserDetails(String userName,final BankRepo bankRepo){
+    public MyUserDetails(String userName,Optional<BankEntity> e1){
         this.userName = userName;
-        Optional<BankEntity> e = bankRepo.findByUserName(userName);
+        Optional<BankEntity> e = e1;
         this.passWord = e.isPresent()?e.get().getPassword():null;
     }
 
