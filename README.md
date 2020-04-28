@@ -7,7 +7,7 @@
 
 ### Description
 * The **_NOVA Crypto Banking Service_** it’s a **Banking Service with Cryptocurrencies for New University of Lisbon**.
-* It’s a **Byzantine Fault-Tolerant** platform, using distributed **Consensus Proofs Agreements** on all the operations/transactions of the system.
+* It’s a **Byzantine Fault-Tolerant** platform, using distributed **Consensus Proofs Agreements** on all the **operations/transactions** of the system.
 
 ***
 
