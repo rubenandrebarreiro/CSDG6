@@ -24,12 +24,13 @@ public class RestAPIController {
         @Autowired
         public RestAPIController(final ClientRequestHandler cR) {
                 this.cR = cR;
+                cR.setUsername("FilipeCOCÓ");
         }
 
         @RequestMapping(method=POST,value="/register",consumes = "application/json")
         public ResponseEntity<String> createNew(@RequestBody RegisterDao dao) {
 
-                if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount) == null)
+                if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount).equals(""))
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
 
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
@@ -37,17 +38,18 @@ public class RestAPIController {
 
         @GetMapping(path="/test")
         public ResponseEntity<String> test() {
-                return new ResponseEntity<>("IT WORKS WITH TOKEN", HttpStatus.OK);
+                BankEntity e = this.cR.invokeFindUser("FilipeCOCO");
+                return new ResponseEntity<>(e.getOwnerName(), HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
         public ResponseEntity<String> getAll(){
                 JSONArray response = new JSONArray();
-                Iterator<BankEntity> it = this.cR.invokeListAllBankAccounts().iterator();
-                BankEntity bankEntity = null;
+                Iterator<JSONObject> it = this.cR.invokeListAllBankAccounts().iterator();
+                JSONObject bankEntity = null;
                 while(it.hasNext()) {
                         bankEntity = it.next();
-                        response.put(new JSONObject().put("username",bankEntity.getOwnerName()).put("amount", bankEntity.getAmount()));
+                        response.put(bankEntity);
                 }
                 return new ResponseEntity<>(response.toString(), HttpStatus.OK);
         }

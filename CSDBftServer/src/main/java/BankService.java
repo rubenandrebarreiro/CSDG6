@@ -6,43 +6,29 @@ import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.StreamSupport;
 
 public class BankService extends DefaultSingleRecoverable {
 
     private BankRepositorie bankRepo;
+    private int id;
 
     private final Logger logger;
 
     public BankService(int replicaID) {
+        this.id = replicaID;
         this.bankRepo = new BankRepositorie();
         logger = Logger.getLogger(BankService.class.getName());
-        new ServiceReplica(replicaID, "config",this, this,(RequestVerifier)null, new DefaultReplier());
-
+        ServiceReplica s = new ServiceReplica(replicaID, "config",this, this,(RequestVerifier)null, new DefaultReplier());
+        this.bankRepo.load(id);
     }
 
 	public static void main(String[] args){
         if(args.length < 1) {
-            /*
-                System.out.println("Use: java CounterServer <processId>");
-                System.exit(-1);
-            */
-            /*String s;
-            Process p;
-            try {
-                p = Runtime.getRuntime().exec("ls -aF");
-                BufferedReader br = new BufferedReader(
-                        new InputStreamReader(p.getInputStream()));
-                while ((s = br.readLine()) != null)
-                    System.out.println("line: " + s);
-                p.waitFor();
-                System.out.println ("exit: " + p.exitValue());
-                p.destroy();
-            } catch (Exception e) {}*/
-            new BankService(0);
+
         } else {
             new BankService(Integer.parseInt(args[0]));
         }
@@ -51,6 +37,8 @@ public class BankService extends DefaultSingleRecoverable {
 
     @Override
     public byte[] appExecuteOrdered(byte[] commandBytes, MessageContext messageContext) {
+
+        logger.info("Ordered");
 
         byte[] requestReply = null;
 
@@ -69,10 +57,7 @@ public class BankService extends DefaultSingleRecoverable {
 
         )
         {
-
-            BankServiceRequestType bankServiceRequestType =
-                            (BankServiceRequestType) receivedRequestObjectInput.readObject();
-
+            String bankServiceRequestType = receivedRequestObjectInput.readObject().toString();
             String username;
             String who;
 
@@ -85,22 +70,17 @@ public class BankService extends DefaultSingleRecoverable {
 
             switch (bankServiceRequestType) {
 
-                case REGISTER_USER:
+                case "REGISTER_USER":
 
                     username = (String) receivedRequestObjectInput.readObject();
-
                     if ( !this.bankRepo.findByUserName(username).isPresent() ) {
 
                         password = (String) receivedRequestObjectInput.readObject(); // TODO no plaintext here!!!!
-
                         amount = (Long) receivedRequestObjectInput.readObject();
-
                         BankEntity bankEntity = BankServiceHelper.registerUser(username, password, amount, bankRepo);
-
                         if ( bankEntity != null ) {
-
-                            requestReplyObjectOutput.writeObject( bankEntity );
-
+                            logger.info("Created new user (on replica "+this.id+"): "+bankEntity.getOwnerName());
+                            requestReplyObjectOutput.writeObject( bankEntity.getOwnerName() );
                             hasRequestReply = true;
 
                         }
@@ -109,7 +89,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                     break;
 
-                case CREATE_MONEY:
+                case "CREATE_MONEY":
 
                     who = (String) receivedRequestObjectInput.readObject();
 
@@ -119,63 +99,63 @@ public class BankService extends DefaultSingleRecoverable {
 
                         JSONObject jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
 
-                        requestReplyObjectOutput.writeObject(jsonObject);
+            requestReplyObjectOutput.writeObject(jsonObject.toString());
 
-                        hasRequestReply = true;
+            hasRequestReply = true;
 
-                    }
+        }
 
-                    break;
+        break;
 
-                case TRANSFER_MONEY:
+        case "TRANSFER_MONEY":
 
-                    from = (String) receivedRequestObjectInput.readObject();
+        from = (String) receivedRequestObjectInput.readObject();
 
-                    Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
+        Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
 
-                    to = (String) receivedRequestObjectInput.readObject();
+        to = (String) receivedRequestObjectInput.readObject();
 
-                    Optional<BankEntity> beTo = bankRepo.findByUserName(to);
+        Optional<BankEntity> beTo = bankRepo.findByUserName(to);
 
-                    if ( ( beFrom.isPresent() ) && ( beTo.isPresent() ) ) {
+        if ( ( beFrom.isPresent() ) && ( beTo.isPresent() ) ) {
 
-                        amount = (Long) receivedRequestObjectInput.readObject();
+            amount = (Long) receivedRequestObjectInput.readObject();
 
-                        if ( ( amount > 0 ) && ( ( beFrom.get().getAmount() - amount ) >= 0 ) ) {
+            if ( ( amount > 0 ) && ( ( beFrom.get().getAmount() - amount ) >= 0 ) ) {
 
-                            JSONObject jsonObject = BankServiceHelper.transferMoney(from, to, amount, bankRepo);
+                JSONObject jsonObject = BankServiceHelper.transferMoney(from, to, amount, bankRepo);
 
-                            requestReplyObjectOutput.writeObject(jsonObject);
+                requestReplyObjectOutput.writeObject(jsonObject.toString());
 
-                            hasRequestReply = true;
-
-                        }
-
-                    }
-
-                    break;
-
-                default:
-
-                    logger.log(Level.WARNING, "Unsupported Ordered Operation!!!");
-
-            }
-
-            if (hasRequestReply) {
-
-                requestReplyObjectOutput.flush();
-                requestReplyByteArrayOutputStream.flush();
-
-                requestReply = requestReplyByteArrayOutputStream.toByteArray();
-
-            }
-            else {
-
-                requestReply = new byte[0];
+                hasRequestReply = true;
 
             }
 
         }
+
+        break;
+
+        default:
+
+        logger.log(Level.WARNING, "Unsupported Ordered Operation!!!");
+
+    }
+
+            if (hasRequestReply) {
+
+        requestReplyObjectOutput.flush();
+        requestReplyByteArrayOutputStream.flush();
+
+        requestReply = requestReplyByteArrayOutputStream.toByteArray();
+
+    }
+            else {
+
+        requestReply = new byte[0];
+
+    }
+
+}
         catch (IOException | ClassNotFoundException executeOrderedException) {
 
             logger.log
@@ -185,7 +165,7 @@ public class BankService extends DefaultSingleRecoverable {
                     );
 
         }
-
+        bankRepo.save(this.id);
         return requestReply;
 
     }
@@ -193,6 +173,7 @@ public class BankService extends DefaultSingleRecoverable {
     @Override
     public byte[] appExecuteUnordered(byte[] commandBytes, MessageContext messageContext) {
 
+        logger.info("UnOrdered");
         byte[] requestReply = null;
 
         boolean hasRequestReply = false;
@@ -211,8 +192,8 @@ public class BankService extends DefaultSingleRecoverable {
         )
         {
 
-            BankServiceRequestType bankServiceRequestType =
-                    (BankServiceRequestType) receivedRequestObjectInput.readObject();
+            String bankServiceRequestType =
+                     receivedRequestObjectInput.readObject().toString();
 
             String username;
 
@@ -220,42 +201,44 @@ public class BankService extends DefaultSingleRecoverable {
 
             switch (bankServiceRequestType) {
 
-                case FIND_USER:
-
+                case "FIND_USER":
                     username = (String) receivedRequestObjectInput.readObject();
 
                     if ( this.bankRepo.findByUserName(username).isPresent() ) {
 
                         BankEntity userBankEntity = BankServiceHelper.findUser(username, bankRepo);
 
-                        requestReplyObjectOutput.writeObject(userBankEntity);
-
+                        requestReplyObjectOutput.writeObject(userBankEntity.getJSON().toString());
+                        logger.info("User tried to login: "+username);
                         hasRequestReply = true;
 
                     }
 
                     break;
 
-                case LIST_ALL_BANK_ACCOUNTS:
+                case "LIST_ALL_BANK_ACCOUNTS":
 
-                    Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
+                    Iterator<BankEntity> it = bankRepo.iterator();
+                    //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
 
-                    int numTotalUserBankEntities =
-                            (int) StreamSupport.stream(usersBankEntities.spliterator(), false).count();
+                    int numTotalUserBankEntities = bankRepo.getSize();
 
                     requestReplyObjectOutput.writeObject(numTotalUserBankEntities);
 
-                    for ( BankEntity userBankEntity: usersBankEntities ) {
-
-                        requestReplyObjectOutput.writeObject(userBankEntity);
-
+                    while(it.hasNext()) {
+                        BankEntity i = it.next();
+                        requestReplyObjectOutput.writeObject(i.getJSONSecure().toString());
                     }
+                    /*for ( BankEntity userBankEntity: usersBankEntities ) {
+
+                        requestReplyObjectOutput.writeObject(userBankEntity.getJSONSecure().toString());
+                    }*/
 
                     hasRequestReply = true;
 
                     break;
 
-                case CHECK_CURRENT_AMOUNT:
+                case "CHECK_CURRENT_AMOUNT":
 
                     who = (String) receivedRequestObjectInput.readObject();
 
@@ -301,7 +284,7 @@ public class BankService extends DefaultSingleRecoverable {
                     );
 
         }
-
+        bankRepo.save(this.id);
         return requestReply;
 
     }
@@ -355,8 +338,5 @@ public class BankService extends DefaultSingleRecoverable {
         }
 
     }
-
-
-
 
 }

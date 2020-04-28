@@ -1,45 +1,63 @@
 package fct.unl.pt.csd.Controller;
 
 import bftsmart.tom.ServiceProxy;
+import bftsmart.tom.server.RequestVerifier;
+import bftsmart.tom.server.defaultservices.DefaultReplier;
+import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
+import bftsmart.tom.util.Extractor;
 import fct.unl.pt.csd.Entities.BankEntity;
 import fct.unl.pt.csd.Enumerations.BankServiceRequestType;
+import fct.unl.pt.csd.Security.MyUserDetails;
+import fct.unl.pt.csd.Security.MyUserDetails2;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+
 @Service
-public class ClientRequestHandler {
+public class ClientRequestHandler implements UserDetailsService {
 
     private String username;
 
     private ServiceProxy serviceProxy;
 
     @Autowired
-    public ClientRequestHandler(String username) {
+    public ClientRequestHandler() {
 
-        this.username = username;
-        this.serviceProxy = new ServiceProxy(username.hashCode()); // TODO ID Client??
+        //this.username = username;
+        // TODO ID Client??
 
     }
 
-    public BankEntity invokeCreateNew(String username, String password, Long amount) {
+    protected void setUsername(String username) {
+        this.username = username;
+        this.serviceProxy = new ServiceProxy(1014, "config");
+    }
+
+    protected String invokeCreateNew(String username, String password, Long amount) {
 
         try
-        (
+                (
 
-                ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
-                ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
+                        ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
 
-        )
-        {
+                ) {
 
-            requestToSendObjectOutput.writeObject(BankServiceRequestType.REGISTER_USER);
+            requestToSendObjectOutput.writeObject("REGISTER_USER");
             requestToSendObjectOutput.writeObject(username);
-            requestToSendObjectOutput.writeObject(password);
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            requestToSendObjectOutput.writeObject(passwordEncoder.encode(password));
             requestToSendObjectOutput.writeObject(amount);
 
             requestToSendObjectOutput.flush();
@@ -49,46 +67,43 @@ public class ClientRequestHandler {
 
             if (requestReply.length == 0) {
 
-                return null;
+                return "";
 
             }
 
             try
-            (
-                    ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
-                            new ByteArrayInputStream(requestReply);
+                    (
+                            ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
+                                    new ByteArrayInputStream(requestReply);
 
-                    ObjectInput receivedRequestReplyObjectInput =
-                            new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
-            )
-            {
+                            ObjectInput receivedRequestReplyObjectInput =
+                                    new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
+                    ) {
 
-                return (BankEntity) receivedRequestReplyObjectInput.readObject();
+                return receivedRequestReplyObjectInput.readObject().toString();
 
             }
 
-        }
-        catch (IOException | ClassNotFoundException registerUserException) {
+        } catch (IOException | ClassNotFoundException registerUserException) {
 
             System.out.println("Exception in registration of a New User/Client: " +
-                               registerUserException.getMessage());
+                    registerUserException.getMessage());
 
         }
 
-        return null;
+        return "";
 
     }
 
-    public JSONObject invokeCreateMoney(String who, Long amount) {
+    protected JSONObject invokeCreateMoney(String who, Long amount) {
 
         try
-        (
+                (
 
-                ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
-                ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
+                        ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
 
-        )
-        {
+                ) {
 
             requestToSendObjectOutput.writeObject(BankServiceRequestType.CREATE_MONEY);
             requestToSendObjectOutput.writeObject(who);
@@ -112,18 +127,16 @@ public class ClientRequestHandler {
 
                             ObjectInput receivedRequestReplyObjectInput =
                                     new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
-                    )
-            {
+                    ) {
 
-                return (JSONObject) receivedRequestReplyObjectInput.readObject();
+                return new JSONObject(receivedRequestReplyObjectInput.readObject().toString());
 
             }
 
-        }
-        catch (IOException | ClassNotFoundException createMoneyException) {
+        } catch (IOException | ClassNotFoundException createMoneyException) {
 
             System.out.println("Exception in creation of Money by User/Client: " +
-                               createMoneyException.getMessage());
+                    createMoneyException.getMessage());
 
         }
 
@@ -131,16 +144,15 @@ public class ClientRequestHandler {
 
     }
 
-    public JSONObject invokeTransferMoney(String from, String to, Long amount) {
+    protected JSONObject invokeTransferMoney(String from, String to, Long amount) {
 
         try
-        (
+                (
 
-                ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
-                ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
+                        ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
 
-        )
-        {
+                ) {
 
             requestToSendObjectOutput.writeObject(BankServiceRequestType.TRANSFER_MONEY);
             requestToSendObjectOutput.writeObject(from);
@@ -165,18 +177,16 @@ public class ClientRequestHandler {
 
                             ObjectInput receivedRequestReplyObjectInput =
                                     new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
-                    )
-            {
+                    ) {
 
-                return (JSONObject) receivedRequestReplyObjectInput.readObject();
+                return new JSONObject(receivedRequestReplyObjectInput.readObject().toString());
 
             }
 
-        }
-        catch (IOException | ClassNotFoundException transferMoneyException) {
+        } catch (IOException | ClassNotFoundException transferMoneyException) {
 
             System.out.println("Exception in Transfer Money From an User/Client to another User/Client: " +
-                               transferMoneyException.getMessage());
+                    transferMoneyException.getMessage());
 
         }
 
@@ -184,18 +194,17 @@ public class ClientRequestHandler {
 
     }
 
-    public BankEntity invokeFindUser(String username) {
+    protected BankEntity invokeFindUser(String username) {
 
         try
-        (
+                (
 
-                ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
-                ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
+                        ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
 
-        )
-        {
+                ) {
 
-            requestToSendObjectOutput.writeObject(BankServiceRequestType.FIND_USER);
+            requestToSendObjectOutput.writeObject("FIND_USER");
             requestToSendObjectOutput.writeObject(username);
 
             requestToSendObjectOutput.flush();
@@ -210,21 +219,21 @@ public class ClientRequestHandler {
             }
 
             try
-            (
-                    ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
-                            new ByteArrayInputStream(requestReply);
+                    (
+                            ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
+                                    new ByteArrayInputStream(requestReply);
 
-                    ObjectInput receivedRequestReplyObjectInput =
-                            new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
-            )
-            {
+                            ObjectInput receivedRequestReplyObjectInput =
+                                    new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
+                    ) {
 
-                return (BankEntity) receivedRequestReplyObjectInput.readObject();
+                JSONObject j = new JSONObject(receivedRequestReplyObjectInput.readObject().toString());
+                System.out.println(j.toString());
+                return new BankEntity(j.getString("username"),j.getString("password"),j.getLong("amount"));
 
             }
 
-        }
-        catch (IOException | ClassNotFoundException registerUserException) {
+        } catch (IOException | ClassNotFoundException registerUserException) {
 
             System.out.println("Exception in registration of a New User/Client: " +
                     registerUserException.getMessage());
@@ -235,18 +244,17 @@ public class ClientRequestHandler {
 
     }
 
-    public Iterable<BankEntity> invokeListAllBankAccounts() {
+    protected Iterable<JSONObject> invokeListAllBankAccounts() {
 
         try
-        (
+                (
 
-                ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
-                ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
+                        ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
 
-        )
-        {
+                ) {
 
-            requestToSendObjectOutput.writeObject(BankServiceRequestType.LIST_ALL_BANK_ACCOUNTS);
+            requestToSendObjectOutput.writeObject("LIST_ALL_BANK_ACCOUNTS");
 
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
@@ -260,34 +268,32 @@ public class ClientRequestHandler {
             }
 
             try
-            (
-                    ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
-                            new ByteArrayInputStream(requestReply);
+                    (
+                            ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
+                                    new ByteArrayInputStream(requestReply);
 
-                    ObjectInput receivedRequestReplyObjectInput =
-                            new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
-            )
-            {
+                            ObjectInput receivedRequestReplyObjectInput =
+                                    new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
+                    ) {
 
                 int numTotalUserBankEntities = (int) receivedRequestReplyObjectInput.readObject();
 
-                List<BankEntity> usersBankEntities = new ArrayList<>();
-
-                for(int currentUserBankEntity = 0; currentUserBankEntity < numTotalUserBankEntities; currentUserBankEntity++) {
-
-                    usersBankEntities.add((BankEntity) receivedRequestReplyObjectInput.readObject());
-
+                List<JSONObject> usersBankEntities = new ArrayList<>();
+                System.out.println(numTotalUserBankEntities);
+                for (int currentUserBankEntity = 0; currentUserBankEntity < numTotalUserBankEntities; currentUserBankEntity++) {
+                    JSONObject j = new JSONObject(receivedRequestReplyObjectInput.readObject().toString());
+                    System.out.println(j.toString());
+                    usersBankEntities.add(j);
                 }
 
                 return usersBankEntities;
 
             }
 
-        }
-        catch (IOException | ClassNotFoundException listAllBankAccountsException) {
+        } catch (IOException | ClassNotFoundException listAllBankAccountsException) {
 
             System.out.println("Exception in Listing All Bank Accounts: " +
-                               listAllBankAccountsException.getMessage());
+                    listAllBankAccountsException.getMessage());
 
         }
 
@@ -295,18 +301,17 @@ public class ClientRequestHandler {
 
     }
 
-    public Long invokeCheckCurrentAmount(String username) {
+    protected Long invokeCheckCurrentAmount(String username) {
 
         try
-        (
+                (
 
-                ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
-                ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
+                        ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
 
-        )
-        {
+                ) {
 
-            requestToSendObjectOutput.writeObject(BankServiceRequestType.CHECK_CURRENT_AMOUNT);
+            requestToSendObjectOutput.writeObject("CHECK_CURRENT_AMOUNT");
             requestToSendObjectOutput.writeObject(username);
 
             requestToSendObjectOutput.flush();
@@ -321,21 +326,19 @@ public class ClientRequestHandler {
             }
 
             try
-            (
-                    ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
-                            new ByteArrayInputStream(requestReply);
+                    (
+                            ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
+                                    new ByteArrayInputStream(requestReply);
 
-                    ObjectInput receivedRequestReplyObjectInput =
-                            new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
-            )
-            {
+                            ObjectInput receivedRequestReplyObjectInput =
+                                    new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
+                    ) {
 
                 return (long) receivedRequestReplyObjectInput.readObject();
 
             }
 
-        }
-        catch (IOException | ClassNotFoundException registerUserException) {
+        } catch (IOException | ClassNotFoundException registerUserException) {
 
             System.out.println("Exception in registration of a New User/Client: " +
                     registerUserException.getMessage());
@@ -346,10 +349,15 @@ public class ClientRequestHandler {
 
     }
 
-    public void terminateClientRequestHandlerSession() {
+    protected void terminateClientRequestHandlerSession() {
 
         this.serviceProxy.close();
 
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        BankEntity e = invokeFindUser(username);
+        return new MyUserDetails2(username,e == null? Optional.empty():Optional.of(e));
+    }
 }

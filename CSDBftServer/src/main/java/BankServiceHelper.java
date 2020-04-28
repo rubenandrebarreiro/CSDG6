@@ -1,5 +1,4 @@
 import org.json.JSONObject;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -7,35 +6,14 @@ public class BankServiceHelper {
 
     protected static BankEntity registerUser(String username, String password, Long amount, BankRepositorie bankRepo) {
 
-        if(!bankRepo.findByUserName(username).isPresent()) {
-
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-            return bankRepo.save(new BankEntity(username, passwordEncoder.encode(password), amount));
-
-        }
-        else {
-
-            return null;
-
-        }
-
+        return bankRepo.save(new BankEntity(username, password, amount));
     }
 
     protected static BankEntity findUser(String username, BankRepositorie bankRepo) {
-
-        if ( bankRepo.findByUserName(username).isPresent() ) {
-
             return bankRepo.findByUserName(username).get();
-
-        }
-
-        return null;
-
     }
 
-    protected static Iterable<BankEntity> getAllBankAcc(BankRepositorie bankRepo){
-
+    protected static Iterable<BankEntity> getAllBankAcc(BankRepositorie bankRepo) {
         return bankRepo.findAll();
 
     }
@@ -43,17 +21,17 @@ public class BankServiceHelper {
     protected static JSONObject transferMoney(String from, String to, long amount, BankRepositorie bankRepo) {
         Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
 
-        if(beFrom.isPresent()){
+        if (beFrom.isPresent()) {
 
             Optional<BankEntity> beTo = bankRepo.findByUserName(to);
 
-            if(beTo.isPresent()){
+            if (beTo.isPresent()) {
 
-                if(amount > 0) {
+                if (amount > 0) {
 
                     BankEntity b = beFrom.get();
 
-                    if ( ( b.getAmount() - amount ) >= 0 ) {
+                    if ((b.getAmount() - amount) >= 0) {
 
                         b.updateAmount(-amount);
 
@@ -65,52 +43,47 @@ public class BankServiceHelper {
 
                         return new JSONObject().put("Success", "True");
 
-                    }
-                    else {
+                    } else {
 
                         return new JSONObject().put("error", "From account doesn't have enough money").put("errorID", 3);
 
                     }
+                } else {
+
+                    return new JSONObject().put("error", "Amount<0").put("errorID", 2);
+
                 }
-                else {
 
-                    return new JSONObject().put("error", "Amount<0").put("errorID",2);
+            } else {
 
-                }
-
-            }
-            else {
-
-                return new JSONObject().put("error", "To account doesn't exist").put("errorID",1);
+                return new JSONObject().put("error", "To account doesn't exist").put("errorID", 1);
 
             }
 
-        }
-        else {
+        } else {
 
-            return new JSONObject().put("error", "From account doesn't exist").put("errorID",0);
+            return new JSONObject().put("error", "From account doesn't exist").put("errorID", 0);
 
         }
 
     }
 
-    protected static JSONObject createMoney(String who,long amount, BankRepositorie bankRepo){
+    protected static JSONObject createMoney(String who, long amount, BankRepositorie bankRepo) {
 
         Optional<BankEntity> be = bankRepo.findByUserName(who);
 
-        if( be.isPresent() ) {
+        if (be.isPresent()) {
 
             BankEntity b = be.get();
 
-            b.updateAmount(b.getAmount()+amount);
+            b.updateAmount(b.getAmount() + amount);
             bankRepo.save(b);
 
-            return new JSONObject().put("Success","True").put("amount",b.getAmount());
+            return new JSONObject().put("Success", "True").put("amount", b.getAmount());
 
-        }
-        else
+        } else
 
-            return new JSONObject().put("error","User not found "+who);
+            return new JSONObject().put("error", "User not found " + who);
 
     }
 
@@ -119,8 +92,7 @@ public class BankServiceHelper {
         if (be.isPresent()) {
             BankEntity b = be.get();
             return b.getAmount();
-        }
-        else {
+        } else {
 
             return -1;
 

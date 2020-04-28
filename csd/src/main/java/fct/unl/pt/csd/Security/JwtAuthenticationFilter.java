@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain, Authentication authentication) {
         //MyUserDetails user = ((MyUserDetails) authentication.getPrincipal());
-        MyUserDetails user = ((MyUserDetails) authentication.getPrincipal());
+        MyUserDetails2 user = ((MyUserDetails2) authentication.getPrincipal());
         List<String> roles = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)

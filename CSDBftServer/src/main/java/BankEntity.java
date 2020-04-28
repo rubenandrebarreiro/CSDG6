@@ -1,10 +1,11 @@
+import org.json.JSONObject;
 
-public class BankEntity {
+import java.io.Serializable;
+
+public class BankEntity implements Serializable {
     private Long id;
     private String userName, password;
     private Long amount;
-
-    protected BankEntity(){};
 
     public BankEntity(String userName, String password, Long amount){
         this.userName = userName;
@@ -28,5 +29,13 @@ public class BankEntity {
 
     public void updateAmount(long amount){
         this.amount += amount;
+    }
+
+    public JSONObject getJSON(){
+        return new JSONObject().put("username",getOwnerName()).put("password",this.password).put("amount",getAmount());
+    }
+
+    public JSONObject getJSONSecure(){
+        return new JSONObject().put("username",getOwnerName()).put("amount",getAmount());
     }
 }
