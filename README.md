@@ -58,7 +58,7 @@
 
 <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/PNGs/nova-coin-1.png?token=AIXAYRYQJDMOKTICNQBE2326WGKQE" alt="NOVA Coin" height="200" width="200">
 
-#### And now, my friends, let's start to make money transactions with our NOVA Coin!!!
+#### And now, my friends, let's start to make money transactions with our _NOVA Coin_!!!
 #### Good business for all!!!
 
 ***
