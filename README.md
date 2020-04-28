@@ -68,7 +68,39 @@
      * **_Client React.js/Node.js Web App_**;
   
 2. **Starting the _Byzantine Fault-Tolerant Server (State Machine Replica)_**:
+   * Open the **_CSDBftServer_**, in the **Project's Structure**'s folder, as a **Project**, in your **IDE** (e.g., [**_JetBrains' IntelliJ IDEA_**](https://www.jetbrains.com/idea/)), as demonstrated following:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-1.jpg?token=AIXAYRZ27KQPJTWFPF5RYYS6WGW7I" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #1" height="250" width="210">
    
+   * Open the **_BankService_** **_Java_** class, as demonstrated following:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-2.jpg?token=AIXAYR7SJXVMZZWCKFUIOWS6WGXOW" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #2" height="250" width="210">
+   
+   * Create a **Main configuration** to the **_BankService_** **_Java_** class, as demonstrated following:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-3.jpg?token=AIXAYR6KB6235KA3SLDM2DS6WGXYA" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #3" height="81" width="288"> <br> <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-4.jpg?token=AIXAYR6IDYPKW2SQWJ77MXS6WGXYM" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #4" height="81" width="288"> <br> <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-5.jpg?token=AIXAYR4MQ3IYTZVROUXGBE26WGXY2" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #5" height="81" width="288">
+   * Configure a custom **Main Configuration**, giving as **Program argument**, one of the **Replica's ID** defined in the **_Hosts' Configuration_** ([**_Hosts.config_**](https://github.com/fmpisantos/CSDG6/blob/master/CSDBftServer/config/hosts.config) file), click **Apply** and then, **OK**, as demonstrated next:
+   <br><br>
+   <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-6.jpg?token=AIXAYR5ANPP2ZW3NYITLMSS6WGZFG" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #6" height="200" width="150"> &nbsp;&nbsp; <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-7.jpg?token=AIXAYR3X4RK74WADZ4U4KYS6WGZGW" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #7" height="200" width="150"> &nbsp;&nbsp; <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-8.jpg?token=AIXAYR6SCACGXJLFEQQG5WS6WGZIK" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #8" height="200" width="150"> &nbsp;&nbsp; <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-9.jpg?token=AIXAYR3MFTSERFBYI3B7ZKK6WGZJW" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #9" height="200" width="150">
+   
+   * Run the **Main Configuration** for the **_BankService_** **_Java_** class, created previously;
+   
+   * The output should look something similar to the following:
+     ```batch
+     -- Using view stored on disk
+     -- Using view stored on disk
+     -- ID = 0
+     -- N = 4
+     -- F = 1
+     -- Port = 11000
+     -- requestTimeout = 2000
+     -- maxBatch = 400
+     -- Using MACs
+     -- In current view: ID:0; F:1; Processes:0(/127.0.0.1:11000),1(/127.0.0.1:11010),2(/127.0.0.1:11020),3(/127.0.0.1:11030),
+     ```
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-10.jpg?token=AIXAYR2QG72KVY6SDWQDALC6WGZNO" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #10" height="150" width="400">
+  
+  * Repeat the process for the number of **Replicas** of the **System**, which you want to create, as long as they are defined in the **_Hosts' Configuration_** ([**_Hosts.config_**](https://github.com/fmpisantos/CSDG6/blob/master/CSDBftServer/config/hosts.config) file), always providing the **Replica's ID**, as a **Program Argument** to the **Main Configuration** of the **_BankService_** **_Java_** class;
   
 ***
 
