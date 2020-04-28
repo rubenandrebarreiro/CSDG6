@@ -24,7 +24,7 @@
     * **_Client Web App_**:
       * A Web App/Interface for the Clients/Users, built in [**_Node.js_**](https://nodejs.org/), [**_React.js_**](https://reactjs.org/) and [**_JavaScript_**](https://www.javascript.com/);
       * Click [**_here_**](https://github.com/fmpisantos/CSDG6/tree/master/clientw1) to see its content:
-        * [https://github.com/fmpisantos/CSDG6/tree/master/clientw1](https://github.com/fmpisantos/CSDG6/tree/master/clientw1)
+        * [**_https://github.com/fmpisantos/CSDG6/tree/master/clientw1_**](https://github.com/fmpisantos/CSDG6/tree/master/clientw1)
     
     
     * **_Server's (Proxy's) REST API_**:
