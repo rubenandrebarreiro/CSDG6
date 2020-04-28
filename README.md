@@ -66,7 +66,7 @@
   * **_Personal Page_**:
     * [**_http://rubenandrebarreiro.github.io/_**](http://rubenandrebarreiro.github.io/)
   * **_E-mail_**:
-    * [**_r.barreiro@campus.fct.unl.pt_**](mailto: r.barreiro@campus.fct.unl.pt)
+    * [**_r.barreiro@campus.fct.unl.pt_**](mailto:r.barreiro@campus.fct.unl.pt)
 
 ***
 
@@ -76,6 +76,6 @@
   * **_Personal Page_**:
     * [**_https://asc.di.fct.unl.pt/~hj/_**](https://asc.di.fct.unl.pt/~hj/)
   * **_E-mail_**:
-    * [**_hj@fct.unl.pt_**](mailto: hj@fct.unl.pt)
+    * [**_hj@fct.unl.pt_**](mailto:hj@fct.unl.pt)
   
 ***
