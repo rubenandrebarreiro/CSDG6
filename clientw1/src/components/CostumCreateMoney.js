@@ -13,7 +13,9 @@ class CostumCreateMoney extends Component {
 		e.preventDefault();
 		let money = document.getElementById("money");
 		if(money.value > 0)
-			fetch("money?who="+localStorage.getItem("username"),{headers: {'Content-Type': 'application/json',"authorization":localStorage.getItem("auth")},method:"PUT",body : JSON.stringify({"amount":money.value})})
+			fetch("money?who="+localStorage.getItem("username"),{headers: {'Content-Type': 'application/json',"authorization":localStorage.getItem("auth")},method:"PUT",body : JSON.stringify({"amount":amount.value})})
+
+			//fetch("money?who="+localStorage.getItem("username"),{headers: {'Content-Type': 'application/json',"authorization":localStorage.getItem("auth")},method:"PUT",body : JSON.stringify({"amount":parseFloat(money.value)})})
 			.then(window.location = "/")
 			.catch((error)=>alert(error.text()))
 		money.value = 0;

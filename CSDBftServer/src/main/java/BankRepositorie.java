@@ -8,9 +8,11 @@ import java.util.Optional;
 public class BankRepositorie implements Serializable {
 
     private Map<String, BankEntity> users;
+    public int version;
 
     public BankRepositorie() {
         this.users = new HashMap<String, BankEntity>();
+        this.version=0;
     }
 
     public Optional<BankEntity> findByUserName(String userName) {
@@ -41,10 +43,14 @@ public class BankRepositorie implements Serializable {
     }
 
     protected void save(int id){
+        this.version ++;
         try {
+            File yourFile = new File("/users"+id+".ser");
+            yourFile.createNewFile();
             FileOutputStream fileOut =
                     new FileOutputStream("/users"+id+".ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.write(version);
             out.writeObject(users);
             out.close();
             fileOut.close();
@@ -58,6 +64,7 @@ public class BankRepositorie implements Serializable {
         try {
             FileInputStream fileIn = new FileInputStream("/users"+id+".ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
+            this.version = in.readInt();
             this.users = (HashMap<String,BankEntity>) in.readObject();
             in.close();
             fileIn.close();

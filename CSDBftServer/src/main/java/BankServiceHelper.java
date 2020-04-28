@@ -76,8 +76,7 @@ public class BankServiceHelper {
 
             BankEntity b = be.get();
 
-            b.updateAmount(b.getAmount() + amount);
-            bankRepo.save(b);
+            b.updateAmount(amount);
 
             return new JSONObject().put("Success", "True").put("amount", b.getAmount());
 

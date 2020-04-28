@@ -96,7 +96,6 @@ public class ClientRequestHandler implements UserDetailsService {
     }
 
     protected JSONObject invokeCreateMoney(String who, Long amount) {
-
         try
                 (
 
@@ -105,7 +104,7 @@ public class ClientRequestHandler implements UserDetailsService {
 
                 ) {
 
-            requestToSendObjectOutput.writeObject(BankServiceRequestType.CREATE_MONEY);
+            requestToSendObjectOutput.writeObject("CREATE_MONEY");
             requestToSendObjectOutput.writeObject(who);
             requestToSendObjectOutput.writeObject(amount);
 
@@ -154,7 +153,7 @@ public class ClientRequestHandler implements UserDetailsService {
 
                 ) {
 
-            requestToSendObjectOutput.writeObject(BankServiceRequestType.TRANSFER_MONEY);
+            requestToSendObjectOutput.writeObject("TRANSFER_MONEY");
             requestToSendObjectOutput.writeObject(from);
             requestToSendObjectOutput.writeObject(to);
             requestToSendObjectOutput.writeObject(amount);

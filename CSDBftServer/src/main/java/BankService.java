@@ -198,6 +198,7 @@ public class BankService extends DefaultSingleRecoverable {
             String username;
 
             String who;
+            Long amount;
 
             switch (bankServiceRequestType) {
 
@@ -244,7 +245,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                     if ( this.bankRepo.findByUserName(who).isPresent() ) {
 
-                        long amount = BankServiceHelper.currentAmount(who, bankRepo);
+                        amount = BankServiceHelper.currentAmount(who, bankRepo);
 
                         requestReplyObjectOutput.writeObject(amount);
 
@@ -300,7 +301,7 @@ public class BankService extends DefaultSingleRecoverable {
         )
         {
 
-            snapshotObjectOutput.writeObject(this.bankRepo);
+            snapshotObjectOutput.writeObject(this.bankRepo.version);
 
             return snapshotByteArrayOutputStream.toByteArray();
 
@@ -328,7 +329,7 @@ public class BankService extends DefaultSingleRecoverable {
         )
         {
 
-            this.bankRepo = (BankRepositorie) snapshotObjectInput.readObject();
+            this.bankRepo.version = (int) snapshotObjectInput.readObject();
 
         }
         catch (IOException | ClassNotFoundException snapshotException) {

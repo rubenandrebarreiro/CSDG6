@@ -1,6 +1,7 @@
 package fct.unl.pt.csd.Controller;
 
 import fct.unl.pt.csd.Daos.BankAccountDao;
+import fct.unl.pt.csd.Daos.CreateMoneyDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
 import fct.unl.pt.csd.Entities.BankEntity;
 import org.json.JSONArray;
@@ -62,7 +63,7 @@ public class RestAPIController {
                 return new ResponseEntity<>(b+"", HttpStatus.OK);
         }
 
-        @RequestMapping(method = PUT, value = "/amount",params ={"from","to"})
+        @RequestMapping(method = PUT, value = "/amount",params ={"from","to"},consumes = "application/json")
         public ResponseEntity<String> transferMoney(@RequestParam("from") String from,@RequestParam("to") String to,@RequestBody BankAccountDao dao){
                 JSONObject js = cR.invokeTransferMoney(from,to,dao.amount);
                 if(!js.has("error"))
@@ -78,12 +79,13 @@ public class RestAPIController {
                 }
         }
 
-        @RequestMapping(method = PUT, value = "/money",params ={"who"})
-        public ResponseEntity<String> createMoney(@RequestParam("who") String who,@RequestBody Long amount){
-                JSONObject js = cR.invokeCreateMoney(who,amount);
+        @RequestMapping(method = PUT, value = "/money",params ={"who"},consumes = "application/json")
+        public ResponseEntity<String> createMoney(@RequestParam("who") String who,@RequestBody CreateMoneyDao amount){
+                System.out.println(amount.amount);
+                JSONObject js = cR.invokeCreateMoney(who,amount.amount);
                 if(js.has("error"))
                         return new ResponseEntity<>(js.getString("error"), HttpStatus.NOT_FOUND);
-                return new ResponseEntity<>(js.getString("amount"), HttpStatus.OK);
+                return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
 
 }
