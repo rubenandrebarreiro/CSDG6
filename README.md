@@ -102,6 +102,22 @@
   
   * Repeat the process for the number of **Replicas** of the **System**, which you want to create, as long as they are defined in the **_Hosts' Configuration_** ([**_Hosts.config_**](https://github.com/fmpisantos/CSDG6/blob/master/CSDBftServer/config/hosts.config) file), always providing the **Replica's ID**, as a **Program Argument** to the **Main Configuration** of the **_BankService_** **_Java_** class;
   
+  * As you can see the _**Key Exchange/Agreement_** for the **Consensus Proofs Agreements** between the active **Replicas**, are made, using the **_Diffie-Hellman Key Exchange/Agreement_**:
+     ```batch
+     -- Using view stored on disk
+     -- Using view stored on disk
+     -- Diffie-Hellman complete with 0
+     -- ID = 1
+     -- N = 4
+     -- F = 1
+     -- Port = 11010
+     -- requestTimeout = 2000
+     -- maxBatch = 400
+     -- Using MACs
+     -- In current view: ID:0; F:1; Processes:0(/127.0.0.1:11000),1(/127.0.0.1:11010),2(/127.0.0.1:11020),3(/127.0.0.1:11030),
+     ```
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-11.jpg?token=AIXAYRYJ3DMB2AY2BHKGX7C6WG472" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #11" height="150" width="400">
+  
 ***
 
 ### Our Currency - The NOVA Coin
