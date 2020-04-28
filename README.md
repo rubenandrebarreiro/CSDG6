@@ -16,7 +16,7 @@
 
 ***
 
-### Instructions
+### Composition/Services of the System
 * #### Platform's Components (Modules):
   * Our platform it's composed by **3 (three) main components (or modules)**:
   
@@ -40,3 +40,35 @@
 
 ***
 
+### Instructions
+* In order to build and run this application, you must initialize/start the main components of the system, doing the following steps:
+  1. Start the **_Byzantine Fault-Tolerant Server (State Machine Replica)_**:
+  2. Start the **_Server's (Proxy's) REST API_**:
+  3. Start the **_Client Web App_**:
+
+***
+
+### Authors
+
+#### Bruno Vicente Santos
+* E-mail:
+  * 
+
+#### Filipe Miguel Santos
+* E-mail:
+  * 
+
+
+#### Rúben André Barreiro
+* E-mail:
+  * r.barreiro@campus.fct.unl.pt
+
+***
+
+### Supervisor
+
+#### Henrique João Domingos
+* E-mail:
+  * hj@fct.unl.pt
+  
+***
