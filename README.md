@@ -65,7 +65,7 @@
    * The previously mentioned **3 (three) main components** of the **Project's Structure**, are the following:
      * **_Byzantine Fault-Tolerant Server (State Machine Replica)_**;
      * **_Server's (Proxy's) REST API_**;
-     * **_Client React.js/Node.js Web App_**;
+     * **_Client's/User's React.js/Node.js Web App_**;
   
 2. **Starting the _Byzantine Fault-Tolerant Server (State Machine Replica)_**:
    * Open the **_CSDBftServer_**, in the **Project's Structure**'s folder, as a **Project**, in your **IDE** (e.g., [**_JetBrains' IntelliJ IDEA_**](https://www.jetbrains.com/idea/)), as demonstrated following:
@@ -117,6 +117,34 @@
      -- In current view: ID:0; F:1; Processes:0(/127.0.0.1:11000),1(/127.0.0.1:11010),2(/127.0.0.1:11020),3(/127.0.0.1:11030),
      ```
      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-11.jpg?token=AIXAYRYJ3DMB2AY2BHKGX7C6WG472" alt="Instructions - Starting the Byzantine Fault-Tolerant Server (State Machine Replica) #11" height="150" width="400">
+  
+3. **Starting the _Server's (Proxy's) REST API_**:  
+  * Open the **_csd_**, in the **Project's Structure**'s folder, as a **Project**, in your **IDE** (e.g., [**_JetBrains' IntelliJ IDEA_**](https://www.jetbrains.com/idea/)), as demonstrated following:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-rest-proxy-server-1.jpg?token=AIXAYRYX5BJATULUADEHEZS6WHDCG" alt="Instructions - Starting the Server's (Proxy's) REST API #1" height="250" width="210">
+   
+   * Open the **_CsdApplication_** **_Java_** class, as demonstrated following:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-rest-proxy-server-2.jpg?token=AIXAYR6QUUR4ZXQUCS4NXD26WHDGM" alt="Instructions - Starting the Server's (Proxy's) REST API #2" height="250" width="210">
+   
+   * Run the **Main configuration** to the **_CsdApplication_** **_Java_** class, as demonstrated following:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-rest-proxy-server-3.jpg?token=AIXAYR53U542JF464HANNYS6WHDL6" alt="Instructions - Starting the Server's (Proxy's) REST API #3" height="81" width="288"> <br> <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-rest-proxy-server-4.jpg?token=AIXAYR5ZL7F7PFMIQIJA7Q26WHDNY" alt="Instructions - Starting the Server's (Proxy's) REST API #4" height="81" width="288"> <br> <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-rest-proxy-server-5.jpg?token=AIXAYR477UYG62TIGJRBCTS6WHDR2" alt="Instructions - Starting the Server's (Proxy's) REST API #5" height="81" width="288">
+   
+   * During the resulting output, you should be able to see the **Server's (Proxy's) REST API** connecting to the **Byzantine Fault-Tolerant Replicas** previously created:
+     ```batch
+     (...)
+     Connecting to replica 0 at /127.0.0.1:11000
+     Channel active
+     Connecting to replica 1 at /127.0.0.1:11010
+     Channel active
+     Connecting to replica 2 at /127.0.0.1:11020
+     Channel active
+     Connecting to replica 3 at /127.0.0.1:11030
+     Channel active
+     (...)
+     ```
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-bft-server-10.jpg?token=AIXAYR2QG72KVY6SDWQDALC6WGZNO" alt="Instructions - Starting the Server's (Proxy's) REST API #5" height="150" width="400">
   
 ***
 
