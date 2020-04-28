@@ -102,7 +102,7 @@
   
   * Repeat the process for the number of **Replicas** of the **System**, which you want to create, as long as they are defined in the **_Hosts' Configuration_** ([**_Hosts.config_**](https://github.com/fmpisantos/CSDG6/blob/master/CSDBftServer/config/hosts.config) file), always providing the **Replica's ID**, as a **Program Argument** to the **Main Configuration** of the **_BankService_** **_Java_** class;
   
-  * As you can see the _**Key Exchange/Agreement_** for the **Consensus Proofs Agreements** between the active **Replicas**, are made, using the **_Diffie-Hellman Key Exchange/Agreement_**:
+  * As you can see the **_Key Exchange/Agreement_** for the **Consensus Proofs Agreements** between the active **Replicas**, are made, using the **_Diffie-Hellman Key Exchange/Agreement_**:
      ```batch
      -- Using view stored on disk
      -- Using view stored on disk
