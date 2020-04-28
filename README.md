@@ -46,6 +46,11 @@
 ***
 
 ### Instructions
+* Clone the project, by doing the following command in a **_Terminal_**/**_Prompt_**:
+  ```
+  git clone https://github.com/fmpisantos/CSDG6.git
+  ```
+  
 * In order to build and run this application, you must initialize/start the main components of the system, doing the following steps:
   1. Start the **_Byzantine Fault-Tolerant Server (State Machine Replica)_**:
   2. Start the **_Server's (Proxy's) REST API_**:
