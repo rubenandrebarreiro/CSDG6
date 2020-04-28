@@ -21,6 +21,6 @@
   * **_Server's (Proxy's) REST API_**:
     * A [**_Spring_**](https://spring.io/) **aplication** using [**_RESTful/REST (Representational State Transfer)_**](https://restfulapi.net/) **API** for the interactions between the **_Client/User_** and the **_Server (Proxy)_**, responsible for the **mapping of the correct and valid states** of the **System**, derived from the operations of the **_Clients/Users_**;
     * Click [**_here_**]() to see its content!!!
-  * **_Byzantine Fault-Tolerant Server (State Machine Replica):
+  * **_Byzantine Fault-Tolerant Server (State Machine Replica)_**:
     * A **_Byzantine Fault-Tolerant Server_**, **replicated** and **distributed** for all the **heterogeneous nodes** of the **System**, in a **decentralized** fashion, **keeping the current valid state and data of the global system**, storing it at **Back-end Persistent Databases**, using [**_H2_**](https://www.h2database.com/);
     * Click [**_here_**]() to see its content!!!
