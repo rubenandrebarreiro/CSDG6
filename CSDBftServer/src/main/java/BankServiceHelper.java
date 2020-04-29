@@ -4,21 +4,21 @@ import java.util.Optional;
 
 public class BankServiceHelper {
 
-    protected static BankEntity registerUser(String username, String password, Long amount, BankRepositorie bankRepo) {
+    protected static BankEntity registerUser(String username, String password, Long amount, BankRepository bankRepo) {
 
         return bankRepo.save(new BankEntity(username, password, amount));
     }
 
-    protected static BankEntity findUser(String username, BankRepositorie bankRepo) {
+    protected static BankEntity findUser(String username, BankRepository bankRepo) {
             return bankRepo.findByUserName(username).get();
     }
 
-    protected static Iterable<BankEntity> getAllBankAcc(BankRepositorie bankRepo) {
+    protected static Iterable<BankEntity> getAllBankAcc(BankRepository bankRepo) {
         return bankRepo.findAll();
 
     }
 
-    protected static JSONObject transferMoney(String from, String to, long amount, BankRepositorie bankRepo) {
+    protected static JSONObject transferMoney(String from, String to, long amount, BankRepository bankRepo) {
         Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
 
         if (beFrom.isPresent()) {
@@ -68,7 +68,7 @@ public class BankServiceHelper {
 
     }
 
-    protected static JSONObject createMoney(String who, Long amount, BankRepositorie bankRepo) {
+    protected static JSONObject createMoney(String who, Long amount, BankRepository bankRepo) {
 
         Optional<BankEntity> be = bankRepo.findByUserName(who);
 
@@ -86,7 +86,7 @@ public class BankServiceHelper {
 
     }
 
-    protected static long currentAmount(String who, BankRepositorie bankRepo) {
+    protected static long currentAmount(String who, BankRepository bankRepo) {
         Optional<BankEntity> be = bankRepo.findByUserName(who);
         if (be.isPresent()) {
             BankEntity b = be.get();

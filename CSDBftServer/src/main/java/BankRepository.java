@@ -5,12 +5,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-public class BankRepositorie implements Serializable {
+public class BankRepository implements Serializable {
 
     private Map<String, BankEntity> users;
     public int version;
 
-    public BankRepositorie() {
+    public BankRepository() {
         this.users = new HashMap<String, BankEntity>();
         this.version=0;
     }

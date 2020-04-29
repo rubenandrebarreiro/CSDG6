@@ -13,14 +13,14 @@ import java.util.logging.Logger;
 
 public class BankService extends DefaultSingleRecoverable {
 
-    private BankRepositorie bankRepo;
+    private BankRepository bankRepo;
     private int id;
 
     private final Logger logger;
 
     public BankService(int replicaID) {
         this.id = replicaID;
-        this.bankRepo = new BankRepositorie();
+        this.bankRepo = new BankRepository();
         logger = Logger.getLogger(BankService.class.getName());
         ServiceReplica s = new ServiceReplica(replicaID, "config",this, this,(RequestVerifier)null, new DefaultReplier());
         this.bankRepo.load(id);
