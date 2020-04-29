@@ -168,7 +168,7 @@
      <br><br>
      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-4.jpg?token=AIXAYR2YS3NN72Y7PQQRS7S6WK3OC" alt="Instructions - Starting the Client/User Web App #4" height="360" width="600"> 
      
-   * Now, you can register yourself in the **_NOVA Crypto Banking Service_** system, interacting with the **_Web App_**, previously created, as shown next:
+   * Now, you can **register** yourself in the **_NOVA Crypto Banking Service_** system, interacting with the **_Web App_**, previously created, as shown next:
      <br><br>
      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-5.jpg?token=AIXAYR7Q52AVUCAABHGXK7C6WK3SE" alt="Instructions - Starting the Client/User Web App #5" height="360" width="600">
      <br><br>
@@ -178,13 +178,40 @@
      <br><br>
      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-8.jpg?token=AIXAYR47Q2QJ3E3JDZETIG26WK6VW" alt="Instructions - Starting the Client/User Web App #8" height="360" width="600">
      
-    * Then, you will be redirected to the **Login Page**, as demonstrated next:
-     <br><br>
-     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-9.jpg?token=AIXAYR6UNCIANJG2HAYZH6C6WK64K" alt="Instructions - Starting the Client/User Web App #10" height="360" width="600">
-   
-   
-   
-   
+    * Then, you will be redirected to the **Login Page**, where you can **login** to the system, as demonstrated next:
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-4.jpg?token=AIXAYR2YS3NN72Y7PQQRS7S6WK3OC" alt="Instructions - Starting the Client/User Web App #9" height="360" width="600"> 
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-9.jpg?token=AIXAYR6UNCIANJG2HAYZH6C6WK64K" alt="Instructions - Starting the Client/User Web App #10" height="360" width="600">
+    
+    * After that, you can **create/deposit** **_NOVA Coins_** on your personal account, as demonstrated next:
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-10.jpg?token=AIXAYR7VZDDJQXYAO567EY26WLBBU" alt="Instructions - Starting the Client/User Web App #11" height="360" width="600"> 
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-11.jpg?token=AIXAYR4VX3SC4LNNU57OQKK6WLBCW" alt="Instructions - Starting the Client/User Web App #12" height="360" width="600"> 
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-12.jpg?token=AIXAYRYKCU3C42S5YLCKF7S6WLBDY" alt="Instructions - Starting the Client/User Web App #13" height="360" width="600"> 
+      
+    * You can see **all the other users are registered** in the **_NOVA Banking Service_** system, doing the following operation:
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-13.jpg?token=AIXAYR6YKLOMKLUEQPIFUM26WLBYO" alt="Instructions - Starting the Client/User Web App #14" height="360" width="600"> 
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-14.jpg?token=AIXAYRZ7L6UGSMUYZTIGPCS6WLB5I" alt="Instructions - Starting the Client/User Web App #15" height="360" width="600"> 
+      
+    * You can also **transfer** **_NOVA Coins_** to the other **Clients/Users**, as illustrated next:
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-15.jpg?token=AIXAYR3TB2DD27CXLSXJ5HS6WLCHM" alt="Instructions - Starting the Client/User Web App #16" height="360" width="600"> 
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-16.jpg?token=AIXAYR2BHXNN74PVDJ7SGXS6WLCKW" alt="Instructions - Starting the Client/User Web App #17" height="360" width="600">  
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-17.jpg?token=AIXAYR5IOQXUETXKO7KGF326WLCME" alt="Instructions - Starting the Client/User Web App #18" height="360" width="600">  
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-18.jpg?token=AIXAYRY4OGZ75N53EVBRSYS6WLCM2" alt="Instructions - Starting the Client/User Web App #19" height="360" width="600">  
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-19.jpg?token=AIXAYR6RYMKXZADNGJD7UZ26WLCNS" alt="Instructions - Starting the Client/User Web App #20" height="360" width="600">  
+      <br><br>
+      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-20.jpg?token=AIXAYR7EUB37B2UI73LKSR26WLCOI" alt="Instructions - Starting the Client/User Web App #21" height="360" width="600">  
+      
 ***
 
 ### Our Currency - The NOVA Coin
