@@ -148,6 +148,7 @@
 
 4. **Starting the _Client/User Web App_**:
    * Open the **_clientw1_**, in the **Project's Structure**'s folder;
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-1.jpg?token=AIXAYR7QXKEIS3TPVXWC4FS6WKF7E" alt="Instructions - Starting the Client/User Web App #1" height="250" width="400">
    
    * Run the 2 (two) following commands in a **_Terminal_**/**_Prompt_** (e.g., [**_Git Bash_**](https://git-scm.com/)):
    
@@ -159,8 +160,8 @@
        ```
    
    * You should see an output similar to the following:
-   
-     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-1.jpg?token=AIXAYR7QXKEIS3TPVXWC4FS6WKF7E" alt="Instructions - Starting the Client/User Web App #1" height="250" width="400">
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-2.jpg?token=AIXAYR6C7MR4BBWKNO5WE2S6WKGC4" alt="Instructions - Starting the Client/User Web App #2" height="380" width="400"> &nbsp;&nbsp; <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-3.jpg?token=AIXAYR4VEKAYSI2HAU6IFWC6WKGDO" alt="Instructions - Starting the Client/User Web App #3" height="380" width="400">
+     
    
 ***
 
