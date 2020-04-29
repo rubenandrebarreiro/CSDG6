@@ -174,7 +174,16 @@
      <br><br>
      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-6.jpg?token=AIXAYRY7WLZBKSGJFCCT5626WK5XO" alt="Instructions - Starting the Client/User Web App #6" height="360" width="600">
      <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-7.jpg?token=AIXAYRZTJO6HNN6XUNWRO426WK6SK" alt="Instructions - Starting the Client/User Web App #7" height="360" width="600">
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-8.jpg?token=AIXAYR47Q2QJ3E3JDZETIG26WK6VW" alt="Instructions - Starting the Client/User Web App #8" height="360" width="600">
      
+    * Then, you will be redirected to the **Login Page**, as demonstrated next:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-9.jpg?token=AIXAYR6UNCIANJG2HAYZH6C6WK64K" alt="Instructions - Starting the Client/User Web App #10" height="360" width="600">
+   
+   
+   
    
 ***
 
