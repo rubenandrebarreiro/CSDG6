@@ -164,6 +164,17 @@
      <br><br>
      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-2.jpg?token=AIXAYR6C7MR4BBWKNO5WE2S6WKGC4" alt="Instructions - Starting the Client/User Web App #2" height="380" width="400"> &nbsp;&nbsp; <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-3.jpg?token=AIXAYR4VEKAYSI2HAU6IFWC6WKGDO" alt="Instructions - Starting the Client/User Web App #3" height="380" width="400">
      
+   * Then, you will probably be redirected to _Web Page_ similar to the presented following:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-4.jpg?token=AIXAYR2YS3NN72Y7PQQRS7S6WK3OC" alt="Instructions - Starting the Client/User Web App #4" height="480" width="600"> 
+     
+   * Now, you can register yourself in the **_NOVA Crypto Banking Service_** system, interacting with the **_Web App_**, previously created, as shown next:
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-5.jpg?token=AIXAYR7Q52AVUCAABHGXK7C6WK3SE" alt="Instructions - Starting the Client/User Web App #5" height="480" width="600">
+     <br><br>
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-6.jpg?token=AIXAYRY7WLZBKSGJFCCT5626WK5XO" alt="Instructions - Starting the Client/User Web App #6" height="480" width="600">
+     <br><br>
+     
    
 ***
 
