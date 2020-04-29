@@ -26,7 +26,7 @@
   * Our platform it's composed by **3 (three) main components (or modules)**:
   
   
-    * **_Client Web App_**:
+    * **_Client/User Web App_**:
       * A [**_React.js_**](https://reactjs.org/) **Web Application/Interface** for the **Clients/Users**, built in [**_Node.js_**](https://nodejs.org/), and [**_JavaScript_**](https://www.javascript.com/);
       * Click [**_here_**](https://github.com/fmpisantos/CSDG6/tree/master/clientw1) to see its content:
         * [**_https://github.com/fmpisantos/CSDG6/tree/master/clientw1_**](https://github.com/fmpisantos/CSDG6/tree/master/clientw1)
@@ -145,7 +145,23 @@
      (...)
      ```
      <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-rest-proxy-server-6.jpg?token=AIXAYR2FHAV4JEOLGVFRYO26WHHMO" alt="Instructions - Starting the Server's (Proxy's) REST API #6" height="150" width="400">
-  
+
+4. **Starting the _Client/User Web App_**:
+   * Open the **_clientw1_**, in the **Project's Structure**'s folder;
+   
+   * Run the 2 (two) following commands in a **_Terminal_**/**_Prompt_** (e.g., [**_Git Bash_**](https://git-scm.com/)):
+   
+     * ```
+       npm install
+       ```
+     * ```
+       npm start
+       ```
+   
+   * You should see an output similar to the following:
+   
+     <img src="https://raw.githubusercontent.com/fmpisantos/CSDG6/master/imgs/screenshots/instructions/JPGs/starting-reactjs-web-app-1.jpg?token=AIXAYR7QXKEIS3TPVXWC4FS6WKF7E" alt="Instructions - Starting the Client/User Web App #1" height="250" width="400">
+   
 ***
 
 ### Our Currency - The NOVA Coin
