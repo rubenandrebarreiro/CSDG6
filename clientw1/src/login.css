@@ -6,7 +6,7 @@
 
 .div2::after {
   content: "";
-  background: url(./assets/coins.jpg);
+  background: url(./assets/background.jpg);
   opacity: 0.5;
   top: 0;
   left: 0;

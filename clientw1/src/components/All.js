@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CostumNavBar from './CostumNavBar';
 import {ListGroup} from 'react-bootstrap';
+import '../login.css'
 import '../App.css';
 
 class All extends Component {
@@ -28,16 +29,27 @@ class All extends Component {
 
   render() {
     return (
-    	<div>
+    	<div className="div2">
     		<CostumNavBar/>
     		<div className="App horizontalOnlyMargin30">
-        <ListGroup>
-        {this.state.all.map((ell,key)=>{
-          return(
-            <ListGroup.Item key={key}>{ell.username +" has "+ell.amount+"€"}</ListGroup.Item>
-          )
-        })}
-        </ListGroup>
+                <img src="/nova-crypto-banking-service.png" width="380px" />
+                <br /><br />
+                <b>LIST OF ALL USERS REGISTERED IN THE SYSTEM</b>
+                <br/> <br/>
+                <ListGroup>
+                {this.state.all.map((ell,key)=>{
+                  return(
+                    <ListGroup.Item key={key}><b>{ell.username + " has " + ell.amount + " NOVA Coins"}</b></ListGroup.Item>
+                  )
+                })}
+                </ListGroup>
+                <br /><br />
+                <center>
+                    <b><strong>CONTRIBUTORS</ strong></ b>:<br />
+                    <b>Bruno Vicente dos Santos</ b><br />
+                    <b>Filipe Miguel Santos</ b><br />
+                <b>Rùben André Barreiro </ b>
+                </center>
 			</div>
 		</div>
     );

@@ -6,7 +6,7 @@ import './App.css';
 import CostumNavBar from './components/CostumNavBar';
 import Home from './components/Home';
 import CostumCreateMoney from './components/CostumCreateMoney';
-import CostumTransfereMoney from './components/CostumTransfereMoney';
+import CostumTransferMoney from './components/CostumTransferMoney';
 import CostumRegister from './components/CostumRegister';
 import CostumLogin from './components/CostumLogin';
 import All from './components/All';
@@ -22,13 +22,13 @@ class App extends Component {
               <Route path="/create">
                 <CostumCreateMoney />
               </Route>
-              <Route path="/transfere">
-                <CostumTransfereMoney />
+              <Route path="/transfer">
+                <CostumTransferMoney />
               </Route>
               <Route path="/register">
                 <CostumRegister />
               </Route>
-              <Route path="/signin">
+              <Route path="/login">
                 <CostumLogin />
               </Route>
             <Route path="/all">

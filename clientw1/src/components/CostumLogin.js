@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CostumNavBar from './CostumNavBar';
-import {Navbar, Nav, Form, Button,NavDropdown} from 'react-bootstrap';
+import {Navbar, Nav, Form, Button, NavDropdown} from 'react-bootstrap';
 import '../login.css'
 import '../App.css';
 
@@ -21,34 +21,44 @@ class CostumLogin extends Component {
 	}
 	
   render() {
+    const bgPurple = {backgroundColor: '#7f4764'}
     return (
     	<div className="div2">
-    		<Navbar bg="warning" expand="lg">
-			  <Navbar.Brand>Bank</Navbar.Brand>
+    		<Navbar expand="lg" style={bgPurple}>
+			  <Navbar.Brand><img src="/nova-coin.png" width="40px" />&nbsp;&nbsp;<font style={{ color: 'green' }}><strong><b>NOVA</b></strong></font><font style={{ color: 'DarkGoldenRod' }}> <b>Crypto Banking Service</b></font></Navbar.Brand>
 			  <Navbar.Toggle aria-controls="basic-navbar-nav" />
 			  <Navbar.Collapse id="basic-navbar-nav">
 			    <Nav className="mr-auto">
-			      <Nav.Link href="/login" >Sign-In</Nav.Link>
-			      <Nav.Link href="/register" >Register</Nav.Link>
+			      <Nav.Link href="/login" ><b>Login</b></Nav.Link>
+			      <Nav.Link href="/register" ><b>Register</b></Nav.Link>
 			    </Nav>
 			  </Navbar.Collapse>
 			</Navbar>
-    		<div className="horizontalMargin40">
-		        <Form onSubmit={(e)=>this.login(e)}>
+        	<div className="horizontalMargin40">
+		        <img src="/nova-crypto-banking-service.png" width="380px" />
+                <br /><br />
+                <Form onSubmit={(e)=>this.login(e)}>
 				  <Form.Group >
-				    <Form.Label>EMAIL</Form.Label>
-				    <Form.Control id="uName" type="email" placeholder="Enter Your Username" />
+				    <Form.Label><b>E-MAIL</b></Form.Label>
+				    <Form.Control id="uName" type="email" placeholder="Enter your username" />
 				  </Form.Group>
 				  <Form.Group >
-				    <Form.Label>PASSWORD</Form.Label>
-				    <Form.Control id="pw1" type="password" placeholder="Enter Your Password" />
+				    <Form.Label><b>PASSWORD</b></Form.Label>
+				    <Form.Control id="pw1" type="password" placeholder="Enter your password" />
 				  </Form.Group>
 				  <center>
 				  <Button variant="warning" type="submit" >
-				    Login
+				    <b>Login</b>
 				  </Button>
 				  </center>
 				</Form>
+                <br /><br />
+                <center>
+                    <b><strong>CONTRIBUTORS</ strong></ b>:<br />
+                    <b>Bruno Vicente dos Santos</ b><br />
+                    <b>Filipe Miguel Santos</ b><br />
+                <b>Rùben André Barreiro </ b>
+                </center>
 			</div>
 		</div>
     );

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CostumNavBar from './CostumNavBar';
 import {Form,Button} from 'react-bootstrap';
+import '../login.css'
 import '../App.css';
 
 class CostumCreateMoney extends Component {
@@ -28,23 +29,32 @@ class CostumCreateMoney extends Component {
 	}
   render() {
     return (
-    	<div>
-    		<CostumNavBar/>
-    		<div className="App horizontalMargin30">
-		        <Form onSubmit={(e)=>this.createMoney(e)}>
-				  <Form.Group>
-				    <Form.Label>Amount to generate:</Form.Label>
-				    <Form.Control id="money" type="number" placeholder="0" />
-				    <Form.Text className="text-muted">
-				      To test
-				    </Form.Text>
-				  </Form.Group>
-				  <Button variant="warning" type="submit">
-				    Generate
-				  </Button>
-				</Form>
-			</div>
-		</div>
+        <div className="div2">
+            <CostumNavBar/>
+            <div className="App horizontalOnlyMargin30">
+                <img src="/nova-crypto-banking-service.png" width="380px" />
+                <br /><br />
+                <Form onSubmit={(e)=>this.createMoney(e)}>
+                  <Form.Group>
+                    <Form.Label><b>AMOUNT TO GENERATE</b></Form.Label>
+                    <Form.Control id="money" type="number" placeholder="0" />
+                    <Form.Text className="text-muted">
+                      To test
+                    </Form.Text>
+                  </Form.Group>
+                  <Button variant="warning" type="submit">
+                    <b>Generate</b>
+                  </Button>
+                </Form>
+                <br /><br />
+                <center>
+                    <b><strong>CONTRIBUTORS</ strong></ b>:<br />
+                    <b>Bruno Vicente dos Santos</ b><br />
+                    <b>Filipe Miguel Santos</ b><br />
+                <b>Rùben André Barreiro </ b>
+                </center>
+            </div>
+        </div>
     );
   }
 }
