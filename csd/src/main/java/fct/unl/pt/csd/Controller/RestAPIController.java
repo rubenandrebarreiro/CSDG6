@@ -21,7 +21,7 @@ public class RestAPIController {
 
         //private final BankService bS;
         private final ClientRequestHandler cR;
-
+        
         @Autowired
         public RestAPIController(final ClientRequestHandler cR) {
                 this.cR = cR;
@@ -39,7 +39,7 @@ public class RestAPIController {
 
         @GetMapping(path="/test")
         public ResponseEntity<String> test() {
-                BankEntity e = this.cR.invokeFindUser("FilipeCOCO");
+                BankEntity e = this.cR.invokeFindUser("FilipeCOCÓ");
                 return new ResponseEntity<>(e.getOwnerName(), HttpStatus.OK);
         }
 
