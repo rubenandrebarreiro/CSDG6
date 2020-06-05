@@ -1,9 +1,7 @@
 package fct.unl.pt.csd.Entities;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +26,11 @@ public class BidEntity {
 	@JsonProperty("amount")
     private Long amount;
     
-    protected BidEntity(){};
+    protected BidEntity() {
+    
+    	// Empty Constructor
+    	
+    }
     
     protected BidEntity(String jsonObjectString)
   		  throws JsonMappingException, JsonProcessingException {
@@ -76,6 +78,16 @@ public class BidEntity {
 	public String toJSONString() throws JsonProcessingException {
 		
 		return new ObjectMapper().writeValueAsString(this);
+		
+	}
+	
+	public String toString() {
+		
+		return "bid#" + this.id + 
+			   "[" + 
+				  "username: " +  this.username +
+				  "amount: " + this.amount +
+			   "]";
 		
 	}
     
