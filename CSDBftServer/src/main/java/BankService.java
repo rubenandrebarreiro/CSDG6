@@ -22,7 +22,9 @@ public class BankService extends DefaultSingleRecoverable {
         this.id = replicaID;
         this.bankRepo = new BankRepository();
         logger = Logger.getLogger(BankService.class.getName());
-        ServiceReplica s = new ServiceReplica(replicaID, "config",this, this,(RequestVerifier)null, new DefaultReplier());
+        ServiceReplica s = new ServiceReplica(replicaID, "config", this, this,(RequestVerifier)null, new DefaultReplier());
+        
+        
         this.bankRepo.load(id);
     }
 
