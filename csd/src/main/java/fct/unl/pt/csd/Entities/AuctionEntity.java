@@ -9,7 +9,6 @@ import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.persistence.CollectionTable;
@@ -39,7 +38,7 @@ public class AuctionEntity {
     	
     }
     
-    @SuppressWarnings("unchecked")
+    /*@SuppressWarnings("unchecked")
 	protected AuctionEntity(String jsonObjectString)
     		  throws JsonMappingException, JsonProcessingException {
     	
@@ -55,6 +54,28 @@ public class AuctionEntity {
     	this.state = (String) auctionEntityMap.get("state");
     	
     	this.bids = (HashMap<Long, BidEntity>) objectMapper.readValue("bids", HashMap.class);
+    	
+    }*/
+    
+    protected AuctionEntity(String id, String ownerUsername, String state, String bidsString) {
+    	
+    	this.id = Long.parseLong(id);
+    	this.ownerUsername = ownerUsername;
+    	this.state = state;
+    	
+    	
+    	String[] bidsFromAuctionParts = bidsString.split(" \\| ");
+    	
+    	this.bids = new HashMap<>();
+    	
+    	
+    	for ( String bidFromAuction : bidsFromAuctionParts ) {
+    		
+    		BidEntity bidEntity = new BidEntity(bidFromAuction);
+    		
+    		this.bids.put(bidEntity.getID(), bidEntity);
+    		
+    	}
     	
     }
 

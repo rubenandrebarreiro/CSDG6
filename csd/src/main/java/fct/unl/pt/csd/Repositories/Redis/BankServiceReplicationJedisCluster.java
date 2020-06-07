@@ -228,8 +228,6 @@ public class BankServiceReplicationJedisCluster {
 				
 				this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "state", "opened" );
 				
-				this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "numBids", String.valueOf(new Integer(0)) );
-				
 
 				this.jedis.sadd( "auctions", String.valueOf(auctionEntityID) );
 				
@@ -391,7 +389,7 @@ public class BankServiceReplicationJedisCluster {
 									this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "bids", updatedBidsFromAuction );
 									
 								}
-								
+																
 								
 								if ( this.jedis.hget( "users#" + username, "bids" ) == null ) {
 									
