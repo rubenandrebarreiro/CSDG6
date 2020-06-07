@@ -27,6 +27,9 @@ public class BankServiceReplicationJedisCluster {
 		
 		this.jedisCluster = new JedisCluster(jedisClusterNodes);
 		
+		// add New Cluster Node Replicas TODO
+		this.addNewClusterNodeReplica(null);
+		
 	}
 	
 	public boolean addNewClusterNodeReplica(HostAndPort hostAndPort) {
@@ -39,6 +42,8 @@ public class BankServiceReplicationJedisCluster {
 			this.jedis.sadd( "replicas", hostAndPortString );
 		
 			this.jedisClusterNodes.add(hostAndPort);
+			
+			this.jedisCluster = new JedisCluster(this.jedisClusterNodes);
 			
 			this.jedis.save();
 			
