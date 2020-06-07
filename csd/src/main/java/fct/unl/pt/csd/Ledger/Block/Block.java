@@ -28,6 +28,22 @@ public class Block {
 		
 	}
 	
+	public BlockHeader getBlockHeader() {
+		
+		return this.blockHeader;
+		
+	}
 	
+	public byte[] getHashOfPreviousBlocks() {
+		
+		return this.hashOfPreviousBlock;
+		
+	}
+	
+	public List<Operation> getOperationsList() {
+		
+		return this.operationsList;
+		
+	}
 	
 }
