@@ -106,7 +106,7 @@ public class BankServiceReplicationJedisCluster {
 			this.jedis.save();
 			
 			
-			System.out.println("REDIS Storage: New User was registered!!!");
+			System.out.println("REDIS Storage: Money created for the User!!!");
 			
 			
 			return true;
@@ -114,7 +114,7 @@ public class BankServiceReplicationJedisCluster {
 		}
 		else {
 			
-			System.err.println("REDIS Storage: New User wasn't registered!!! An User with this Username already exist!!!");
+			System.err.println("REDIS Storage: Money not created for the User!!! Don't exist any User with this Username!!!");
 			
 		}
 		
@@ -332,7 +332,6 @@ public class BankServiceReplicationJedisCluster {
 		
 		Map<String, String> userEntry = this.jedis.hgetAll("users#" + username);
 		
-		
 		if ( ( !userEntry.isEmpty() ) && ( this.jedis.sismember( "users-registered", username ) ) ) {
 			
 			Long auctionEntityID = auctionEntity.getID();
@@ -342,49 +341,87 @@ public class BankServiceReplicationJedisCluster {
 			
 			if ( ( !auction.isEmpty() ) && ( this.jedis.sismember( "auctions", String.valueOf(auctionEntityID) ) ) ) {
 				
+				
 				if ( ( this.jedis.sismember( "opened-auctions", String.valueOf(auctionEntityID) ) ) && ( !this.jedis.sismember( "closed-auctions", String.valueOf(auctionEntityID) ) ) ) {
 					
-					String ownerUsername = this.jedis.hget("auction#" + String.valueOf(auctionEntityID), "ownerUsername");
+					String ownerUsername = this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "ownerUsername" );
 					
-					if (!ownerUsername.equalsIgnoreCase(username)) {
+					
+					if ( !ownerUsername.equalsIgnoreCase(username) ) {
 						
 						Long bidAmount = bidEntity.getAmount();
 						
 						
-						if (auctionEntity.validBidAmount(bidAmount)) {
-							
-							Long bidID = bidEntity.getID();
-							
-							
-							this.jedis.sadd( "bids" , String.valueOf(bidID) );
-							
-							
-							if ( this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "bids" ) == null ) {
-								
-								this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "bids", bidEntity.toString());
-								
-							}
-							else {
-								
-								String oldBids = this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "bids");
-								
-								String updatedBids = oldBids + " | " + bidEntity.toString();
-								
-								
-								this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "bids", updatedBids);
-								
-							}
-							
-							
-							this.jedis.save();
-							
-							
-							System.out.println("REDIS Storage: Bid was added to the Auction!!! "
-									         + "Bid #" + bidEntity.getID() + " added to the Auction #" + auctionEntityID + "!!!");
-							
-							
-							return true;
+						String oldBidsFromAuction = this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "bids" );
 						
+						
+						String[] bidsFromAuctionParts = oldBidsFromAuction.split(" \\| ");
+						
+				        String lastBidString = bidsFromAuctionParts[ ( bidsFromAuctionParts.length - 1 ) ];
+						
+				        
+				        BidEntity lastBidEntity = new BidEntity(lastBidString);
+						
+				        
+				        if( lastBidEntity.getAmount() < bidEntity.getAmount() ) {
+				        	
+				        	if (auctionEntity.validBidAmount(bidAmount)) {
+								
+								Long bidID = bidEntity.getID();
+								
+								
+								this.jedis.sadd( "bids" , String.valueOf(bidID) );
+								
+								
+								if ( this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "bids" ) == null ) {
+									
+									this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "bids", bidEntity.toString() );
+									
+								}
+								else {
+									
+									String updatedBidsFromAuction = oldBidsFromAuction + " | " + bidEntity.toString();
+									
+									
+									this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "bids", updatedBidsFromAuction );
+									
+								}
+								
+								
+								if ( this.jedis.hget( "users#" + username, "bids" ) == null ) {
+									
+									this.jedis.hset( "users#" + username, "bids", bidEntity.toString() );
+									
+								}
+								else {
+									
+									String oldBidsFromUser = this.jedis.hget( "users#" + username, "bids" );
+									
+									String updatedBidsFromUser = oldBidsFromUser + " | " + bidEntity.toString();
+									
+									
+									this.jedis.hset( "users#" + username, "bids", updatedBidsFromUser );
+									
+								}
+								
+								
+								this.jedis.save();
+								
+								
+								System.out.println("REDIS Storage: Bid was added to the Auction!!! "
+										         + "Bid #" + bidEntity.getID() + " added to the Auction #" + auctionEntityID + "!!!");
+								
+								
+								return true;
+							
+				        	}
+				        	else {
+								
+								System.err.println("REDIS Storage: Bid wasn't added to the Auction!!! "
+									   	         + "The Bid's Amount for this Auction needs to be higher than the current highest one!!!");
+								
+							}
+				        	
 						}
 						else {
 							
@@ -425,29 +462,38 @@ public class BankServiceReplicationJedisCluster {
 		
 	}
 	
-	public void getCurrentOpenAuctions() {
+	public void getCurrentOpenedAuctions() {
 		
 		Set<String> openedAuctions = this.jedis.smembers( "opened-auctions" );
 		
 		
-		for ( String openedAuctionID : openedAuctions ) {
+		if ( openedAuctions.isEmpty() ) {
 			
-			System.out.println("INFO for Auction #" + openedAuctionID);
+			System.out.println("There's no Opened Auctions yet!!!");
 			
+		}
+		else {
 			
-			Map<String, String> openedAuctionFields = this.jedis.hgetAll( "auction#" + openedAuctionID );
-			
-			
-			for ( Entry<String, String> openedAuctionFieldsEntry : openedAuctionFields.entrySet() ) {
+			for ( String openedAuctionID : openedAuctions ) {
 				
-				System.out.println();
+				System.out.println("INFO for Auction #" + openedAuctionID);
 				
-				System.out.println(" - " + openedAuctionFieldsEntry.getKey() + ":");
 				
-				System.out.println("    -> " + openedAuctionFieldsEntry.getValue() + ";");
+				Map<String, String> openedAuctionFields = this.jedis.hgetAll( "auction#" + openedAuctionID );
+				
+				
+				for ( Entry<String, String> openedAuctionFieldsEntry : openedAuctionFields.entrySet() ) {
+					
+					System.out.println();
+					
+					System.out.println(" - " + openedAuctionFieldsEntry.getKey() + ":");
+					
+					System.out.println("    -> " + openedAuctionFieldsEntry.getValue() + ";");
+					
+				}
 				
 			}
-			
+		
 		}
 		
 	}
@@ -457,22 +503,64 @@ public class BankServiceReplicationJedisCluster {
 		Set<String> closedAuctions = this.jedis.smembers( "closed-auctions" );
 		
 		
-		for ( String closedAuctionID : closedAuctions ) {
+		if ( closedAuctions.isEmpty() ) {
 			
-			System.out.println("INFO for Auction #" + closedAuctionID);
+			System.out.println("REDIS STORAGE: There's no Closed Auctions yet!!!");
 			
+		}
+		else {
 			
-			Map<String, String> closedAuctionFields = this.jedis.hgetAll( "auction#" + closedAuctionID );
-			
-			
-			for ( Entry<String, String> closedAuctionFieldsEntry : closedAuctionFields.entrySet() ) {
+			for ( String closedAuctionID : closedAuctions ) {
 				
-				System.out.println();
+				System.out.println("INFO for Auction #" + closedAuctionID);
 				
-				System.out.println(" - " + closedAuctionFieldsEntry.getKey() + ":");
 				
-				System.out.println("    -> " + closedAuctionFieldsEntry.getValue() + ";");
+				Map<String, String> closedAuctionFields = this.jedis.hgetAll( "auction#" + closedAuctionID );
 				
+				
+				for ( Entry<String, String> closedAuctionFieldsEntry : closedAuctionFields.entrySet() ) {
+					
+					System.out.println();
+					
+					System.out.println(" - " + closedAuctionFieldsEntry.getKey() + ":");
+					
+					System.out.println("    -> " + closedAuctionFieldsEntry.getValue() + ";");
+					
+				}
+				
+			}
+		
+		}
+		
+	}
+	
+	public void getCurrentBidsFromAuction(Long auctionID) {
+		
+		Set<String> auctions = this.jedis.smembers( "auctions" );
+		
+		
+		if ( auctions.isEmpty() ) {
+			
+			System.out.println("REDIS STORAGE: There's no Auctions yet!!!");
+			
+		}
+		else {
+			
+			if ( this.jedis.sismember( "auction", String.valueOf(auctionID) ) ) {
+				
+				System.out.println("INFO for Auction #" + auctionID);
+				
+				
+				String auctionBids = this.jedis.hget( "auction#" + auctionID , "bids" );
+				
+				
+				System.out.println(auctionBids);
+			
+			}
+			else {
+	
+				System.err.println("REDIS Storage: There's no Auction with th given ID!!!");
+									
 			}
 			
 		}
@@ -480,12 +568,90 @@ public class BankServiceReplicationJedisCluster {
 	}
 	
 	
-	/**
-	 * TODO - Remaining functions to implement:
-	 * 1) AuctionBids(Auction): bids
-	 * 2) ClientBids(who): bids
-	 * 3) CheckWinnerBidFromClosedAuction(Auction): bid
-	 * 
-	 */
+	public void getBidsFroUser(String username) {
+		
+		Map<String, String> userEntry = this.jedis.hgetAll("users#" + username);
+		
+		
+		if ( ( !userEntry.isEmpty() ) && ( this.jedis.sismember( "users-registered", username ) ) ) {
+		
+			if ( this.jedis.hget( "users#" + username, "bids" ) != null ) {
+				
+				System.out.println("Bids made by the User: " + username);
+				
+				System.out.println( this.jedis.hget( "users#" + username, "bids" ) );
+				
+			}
+			else {
+				
+				System.err.println("REDIS Storage: There's no Bids made by this User!!!");
+				
+			}
+			
+		}
+		else {
+		
+			System.err.println("REDIS Storage: Don't exist any User with this Username!!!");	
+			
+		}
+		
+	}
+	
+	
+	public BidEntity checkWinnerBidFromClosedAuction(AuctionEntity auctionEntity) {
+		
+		Set<String> closedAuctions = this.jedis.smembers( "closed-auctions" );
+		
+		Long auctionID = auctionEntity.getID();
+		
+		
+		if ( this.jedis.sismember( "auctions", String.valueOf( String.valueOf(auctionID) ) ) ) {
+			
+			if ( ( closedAuctions.contains( String.valueOf(auctionID) ) ) 
+				       && ( auctionEntity.getState().equalsIgnoreCase("closed") ) 
+				       && ( this.jedis.hget( "auctions#" + String.valueOf(auctionID), "state" ).equalsIgnoreCase("closed") ) ) {
+					
+				
+				if ( this.jedis.hget( "auctions#" + String.valueOf(auctionID), "bids" ) != null ) {
+				
+					String bidsFromAuction = this.jedis.hget( "auctions#" + String.valueOf(auctionID), "bids" );
+					
+					String[] bidsFromAuctionParts = bidsFromAuction.split(" \\| ");
+					
+			        String lastBidString = bidsFromAuctionParts[ ( bidsFromAuctionParts.length - 1 ) ];
+					
+			        
+			        BidEntity bidEntity = new BidEntity(lastBidString);
+			        
+			        
+			        System.out.println("The Winner Bid for this Closed Auction is: " + bidEntity.toString());
+			        
+			        
+			        return bidEntity;
+			        
+				}
+				else {
+					
+					System.err.println("REDIS STORAGE: It wasn't possible to check the Winner Bid from the Closed Auction!!! The Closed Auction with the given ID doesn't have any Bid made!!!");
+					
+				}
+				
+			}
+			else {
+				
+				System.err.println("REDIS STORAGE: It wasn't possible to check the Winner Bid from the Closed Auction!!! The Auction with the given ID isn't closed yet!!!");
+			
+			}
+			
+		}
+		else {
+			
+			System.err.println("REDIS STORAGE: It wasn't possible to check the Winner Bid from the Closed Auction!!! The Auction with the given ID don't exist!!!");			
+			
+		}
+				
+		return null;
+		
+	}
 	
 }

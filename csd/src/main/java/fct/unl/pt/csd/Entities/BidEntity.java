@@ -1,7 +1,5 @@
 package fct.unl.pt.csd.Entities;
 
-import java.util.Map;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +7,6 @@ import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Entity
@@ -32,23 +29,6 @@ public class BidEntity {
     	
     }
     
-    protected BidEntity(String jsonObjectString)
-  		  throws JsonMappingException, JsonProcessingException {
-  	
-	  	ObjectMapper objectMapper = new ObjectMapper();
-	  	
-	  	@SuppressWarnings("unchecked")
-			Map<String, Object> auctionEntityMap = 
-	  			objectMapper.readValue(jsonObjectString, Map.class);
-	  	
-	  	this.id = (Long) auctionEntityMap.get("id");
-	  	
-	  	this.username = (String) auctionEntityMap.get("username");
-	  	
-	  	this.amount = (Long) auctionEntityMap.get("amount");
-  	
-    }
-
     public BidEntity(Long id, String username, Long amount) {
     	
         this.id = id;
@@ -56,6 +36,22 @@ public class BidEntity {
         this.amount = amount;
     
     }
+    
+    public BidEntity(String bidString) {
+    	
+    	this.id = Long.parseLong(bidString.split("\\[")[0].split("#")[1]);
+    	
+    	this.username = bidString.split("\\[")[1].split(" , ")[0].split("username: ")[1];
+    	
+    	this.amount = 
+    			Long.parseLong
+    					(
+    			
+    							bidString.split("\\[")[1].split(" , ")[1]
+    									 .split("\\]")[0].split("amount: ")[1]
+				
+    					);
+	}
 
     public Long getID() {
 
