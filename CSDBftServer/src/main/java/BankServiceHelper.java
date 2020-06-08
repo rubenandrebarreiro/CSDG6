@@ -6,7 +6,7 @@ public class BankServiceHelper {
 
     protected static BankEntity registerUser(String username, String password, Long amount, BankRepository bankRepo) {
 
-        return bankRepo.save(new BankEntity(username, password, amount));
+        return bankRepo.newUserBankEntity(new BankEntity(username, password, amount));
     }
 
     protected static BankEntity findUser(String username, BankRepository bankRepo) {
@@ -35,11 +35,11 @@ public class BankServiceHelper {
 
                         b.updateAmount(-amount);
 
-                        bankRepo.save(b);
+                        bankRepo.newUserBankEntity(b);
                         b = beTo.get();
 
                         b.updateAmount(amount);
-                        bankRepo.save(b);
+                        bankRepo.newUserBankEntity(b);
 
                         return new JSONObject().put("Success", "True");
 
@@ -68,6 +68,18 @@ public class BankServiceHelper {
 
     }
 
+    protected static JSONObject createAuction(String who, BankRepository bankRepo) {
+    	
+    	Optional<BankEntity> be = bankRepo.findByUserName(who);
+
+        if (be.isPresent()) {
+        
+        	BankEntity b = be.get();
+        	
+        }
+    	
+    }
+    
     protected static JSONObject createMoney(String who, Long amount, BankRepository bankRepo) {
 
         Optional<BankEntity> be = bankRepo.findByUserName(who);
