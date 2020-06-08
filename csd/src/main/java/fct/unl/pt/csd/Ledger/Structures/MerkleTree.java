@@ -424,7 +424,7 @@ public class MerkleTree {
 	 * Internal Nodes will have at least one child (always on the left).
 	 * Leaf Nodes will have no children (left = right = null).
 	 */
-	private static class Node {
+	public static class Node {
 		  
 		public byte type;  // INTERNAL_SIG_TYPE or LEAF_SIG_TYPE
 		public byte[] signatureHash; // Signature Hash of the Node

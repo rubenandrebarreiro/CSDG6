@@ -5,12 +5,14 @@ import java.util.List;
 import fct.unl.pt.csd.Ledger.Block.Utils.BlockHeader;
 import fct.unl.pt.csd.Ledger.Block.Utils.BlockVersion;
 import fct.unl.pt.csd.Ledger.Operations.Operation;
+import fct.unl.pt.csd.Ledger.Structures.MerkleTree.Node;
 
 public class Block {
 
 	private BlockHeader blockHeader;
 	
 	// Merkle Root
+	private Node merkleTreeRoot;
 	
 	private byte[] hashOfPreviousBlock;
 	
