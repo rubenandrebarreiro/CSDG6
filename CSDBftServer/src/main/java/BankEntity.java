@@ -41,12 +41,9 @@ public class BankEntity implements Serializable {
     	this.auctions.put(auction.getID(), auction);
     }
     
-    public void addBid(BidEntity bid) {
+    public void addBidToAuction(AuctionEntity auction, BidEntity bid) {
+    	auction.addBid(this.userName, bid);
     	this.bids.put(bid.getID(), bid);
-    }
-    
-    public void addBidToAuction(BidEntity bid, AuctionEntity auction) {
-    	auction.addBid(bid);
     }
     
     public JSONObject getJSON(){

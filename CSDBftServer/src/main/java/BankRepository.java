@@ -28,7 +28,27 @@ public class BankRepository implements Serializable {
         BankEntity b = users.get(userName);
         return b == null? Optional.empty() : Optional.of(users.get(userName));
     }
+    
+    public Optional<AuctionEntity> findByAuctionID(Long id) {
+    	AuctionEntity a = auctions.get(id);
+        return a == null? Optional.empty() : Optional.of(auctions.get(id));
+    }
+    
+    public Optional<AuctionEntity> findByOpenedAuctionID(Long id) {
+    	AuctionEntity a = openedAuctions.get(id);
+        return a == null? Optional.empty() : Optional.of(openedAuctions.get(id));
+    }
+    
+    public Optional<AuctionEntity> findByClosedAuctionID(Long id) {
+    	AuctionEntity a = closedAuctions.get(id);
+        return a == null? Optional.empty() : Optional.of(closedAuctions.get(id));
+    }
 
+    public Optional<BidEntity> findByBidID(Long id) {
+    	BidEntity b = bids.get(id);
+        return b == null? Optional.empty() : Optional.of(bids.get(id));
+    }
+    
     public BankEntity newUserBankEntity(BankEntity b) {
         users.put(b.getOwnerName(),b);
         return users.get(b.getOwnerName());
@@ -63,6 +83,26 @@ public class BankRepository implements Serializable {
         return iteratorToIterable(this.users.values().iterator());
     }
 
+    public Iterable<AuctionEntity> findAllOpenedAuctions(){
+        return iteratorToIterable(this.openedAuctions.values().iterator());
+    }
+
+    public Iterable<AuctionEntity> findAllClosedAuctions(){
+        return iteratorToIterable(this.closedAuctions.values().iterator());
+    }
+
+    public Iterable<BidEntity> findAllBidsFromAuction(Long id){
+        return iteratorToIterable(this.auctions.get(id).getBids().values().iterator());
+    }
+
+    public Iterable<BidEntity> findAllBidsFromUser(String who){
+        return iteratorToIterable(this.users.get(who).getBids().values().iterator());
+    }
+    
+    public BidEntity checkWinnerBidFromAuction(Long id){
+        return this.auctions.get(id).getLastBid();
+    }
+    
     public Iterator<BankEntity> iterator(){
         return this.users.values().iterator();
     }

@@ -17,7 +17,37 @@ public class BankServiceHelper {
         return bankRepo.findAll();
 
     }
+    
+    protected static Iterable<AuctionEntity> getAllOpenedAuctions(BankRepository bankRepo){
 
+        return bankRepo.findAllOpenedAuctions();
+
+    }
+    
+    protected static Iterable<AuctionEntity> getAllClosedAuctions(BankRepository bankRepo){
+
+        return bankRepo.findAllClosedAuctions();
+
+    }
+    
+    protected static Iterable<BidEntity> getBidsFromAuction(Long id, BankRepository bankRepo){
+
+        return bankRepo.findAllBidsFromAuction(id);
+
+    }
+    
+    protected static Iterable<BidEntity> getBidsFromUser(String who, BankRepository bankRepo){
+
+        return bankRepo.findAllBidsFromUser(who);
+        
+    }
+    
+    protected static BidEntity getBidsFromUser(Long id, BankRepository bankRepo){
+
+        return bankRepo.checkWinnerBidFromAuction(id);
+        
+    }
+    
     protected static JSONObject transferMoney(String from, String to, long amount, BankRepository bankRepo) {
         Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
 
@@ -68,17 +98,76 @@ public class BankServiceHelper {
 
     }
 
-    protected static JSONObject createAuction(String who, BankRepository bankRepo) {
+    protected static JSONObject createAuction(Long id, String who, BankRepository bankRepo) {
     	
     	Optional<BankEntity> be = bankRepo.findByUserName(who);
 
         if (be.isPresent()) {
-        
-        	BankEntity b = be.get();
+
+        	Optional<AuctionEntity> ae = bankRepo.findByAuctionID(id);
         	
-        }
+           if (!ae.isPresent()) {
+        	   
+               bankRepo.createAuction(new AuctionEntity(id, who));
+
+               return new JSONObject().put("Success", "True").put("id", id);
+
+           }
+           else {
+        	   return new JSONObject().put("error", "Auction already exist " + id);
+           }
+        	
+        } else
+
+            return new JSONObject().put("error", "User not found " + who);
     	
     }
+    
+    protected static JSONObject closeAution(Long id, String who, BankRepository bankRepo) {
+		
+    	Optional<BankEntity> be = bankRepo.findByUserName(who);
+    	
+        if (be.isPresent()) {
+
+        	Optional<AuctionEntity> ae = bankRepo.findByAuctionID(id);
+        	
+        	if (ae.isPresent()) {
+        	   
+        	   AuctionEntity auction = ae.get();
+        		
+
+    		   if(auction.getOwnerUsername().equalsIgnoreCase(who)) {
+    			  
+    			   if(!auction.isClosed()) {
+            		   
+            		   auction.close();
+            		   
+            		   bankRepo.closeAuction(auction);
+            		
+            		   return new JSONObject().put("Success", "True").put("id", id);
+         			  
+            	   }
+            	   else {
+            		   return new JSONObject().put("error", "Auction it's already closed " + id);
+            	   }
+      
+    		   }
+    		   else
+    			   return new JSONObject().put("error", "User " + who + " doesn't own this auction " + id); 
+
+        	}
+        	else {
+        		return new JSONObject().put("error", "Auction don't exist " + id);
+        	}
+        	
+        } 
+        else
+
+            return new JSONObject().put("error", "User not found " + who);
+    	
+	}
+    
+    
     
     protected static JSONObject createMoney(String who, Long amount, BankRepository bankRepo) {
 

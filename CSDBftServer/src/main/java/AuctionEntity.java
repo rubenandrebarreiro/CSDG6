@@ -8,7 +8,7 @@ public class AuctionEntity implements Serializable {
 	
 	private String ownerUsername;
 	
-	private String state;
+	private boolean isClosed;
 	
     private Map<Long, BidEntity> bids;
 
@@ -41,7 +41,7 @@ public class AuctionEntity implements Serializable {
     	
     	this.id = Long.parseLong(id);
     	this.ownerUsername = ownerUsername;
-    	this.state = state;
+    	this.isClosed = false;
     	
     	
     	String[] bidsFromAuctionParts = bidsString.split(" \\| ");
@@ -62,7 +62,7 @@ public class AuctionEntity implements Serializable {
     public AuctionEntity(Long id, String ownerUsername) {
         this.id = id;
         this.ownerUsername = ownerUsername;
-        this.state = "opened";
+        this.isClosed = false;
         this.bids = new HashMap<>();
     }
 
@@ -78,15 +78,15 @@ public class AuctionEntity implements Serializable {
     
     }
     
-    public String getState() {
+    public boolean isClosed() {
     	
-    	return this.state;
+    	return this.isClosed;
     	
     }
     
     public void close() {
     	
-    	this.state = "closed";
+    	this.isClosed = true;
     	
     }
 
@@ -96,10 +96,7 @@ public class AuctionEntity implements Serializable {
     
     }
     
-    public void addBid(String username, Long amount) {
-    	
-    	BidEntity bid = new BidEntity( new Long( this.bids.size() ),
-    								   username, amount);
+    public void addBid(String username, BidEntity bid) {
     	
     	this.bids.put(bid.getID(), bid);
     	
@@ -112,6 +109,12 @@ public class AuctionEntity implements Serializable {
 		
 	}
     
+	public BidEntity getLastBid() {
+		
+		return this.getBids().get(new Long( ( this.bids.size() - 1 ) ) );
+		
+	}
+	
 	public boolean validBidAmount(Long amount) {
 		
 		return amount > this.getLastBidAmount();
