@@ -212,20 +212,35 @@ public class BankService extends DefaultSingleRecoverable {
 	        
 	        auctionEnt = bankRepo.findByAuctionID(auctionID);
 	        
+	        bidID = (Long) receivedRequestObjectInput.readObject();
+	        
+	        bidEnt = bankRepo.findByBidID(bidID);
+	        
+	        amount = (Long) receivedRequestObjectInput.readObject();
+	        
+	        
 	        openedAuctionEnt = bankRepo.findByOpenedAuctionID(auctionID);
 	        
 	        closedAuctionEnt = bankRepo.findByClosedAuctionID(auctionID);
 	        
-	        if ( bankEnt.isPresent() )  {
+	        if ( bankEnt.isPresent() ) {
 	        	
 	        	if ( ( auctionEnt.isPresent() ) && ( openedAuctionEnt.isPresent() ) && ( !closedAuctionEnt.isPresent() ) ) {
 	        		
-	        		JSONObject jsonObject = BankServiceHelper.closeAution(auctionID, who, bankRepo);
-	        		
-	                requestReplyObjectOutput.writeObject(jsonObject.toString());
-	
-	                hasRequestReply = true;
-	                
+	        		if (!bidEnt.isPresent()) {
+	        			
+	        			if (!auctionEnt.get().getBids().containsKey(bidID) ) {
+	        			
+		        			JSONObject jsonObject = BankServiceHelper.createBid(bidID, auctionID, amount, who, bankRepo);
+			        		
+			                requestReplyObjectOutput.writeObject(jsonObject.toString());
+			
+			                hasRequestReply = true;
+		    
+	        			}
+	        			
+	        		}
+	        	                
 	            }
 	
 	        }
@@ -404,10 +419,17 @@ public class BankService extends DefaultSingleRecoverable {
 
                     if ( this.bankRepo.findByAuctionID(auctionID).isPresent() ) {
 
-                        Iterator<BidEntity> bidsFromAuction = BankServiceHelper.getBidsFromAuction(auctionID, bankRepo).iterator();
+                        Iterator<BidEntity> bidsFromAuctionIt = BankServiceHelper.getBidsFromAuction(auctionID, bankRepo).iterator();
 
-                        requestReplyObjectOutput.writeObject(bidsFromAuction);
+                        int numTotalBidsFromAuctionBankEntities = bankRepo.findByAuctionID(auctionID).get().getBids().size();
 
+                        requestReplyObjectOutput.writeObject(numTotalBidsFromAuctionBankEntities);
+
+                        while(bidsFromAuctionIt.hasNext()) {
+                            BidEntity i = bidsFromAuctionIt.next();
+                            requestReplyObjectOutput.writeObject(i.getJSON().toString());
+                        }
+                        
                         hasRequestReply = true;
 
                     }
@@ -420,10 +442,17 @@ public class BankService extends DefaultSingleRecoverable {
 
                     if ( this.bankRepo.findByUserName(who).isPresent() ) {
 
-                        Iterator<BidEntity> bidsFromUser = BankServiceHelper.getBidsFromUser(who, bankRepo).iterator();
+                        Iterator<BidEntity> bidsFromUserIt = BankServiceHelper.getBidsFromUser(who, bankRepo).iterator();
 
-                        requestReplyObjectOutput.writeObject(bidsFromUser);
+                        int numTotalBidsFromUserBankEntities = bankRepo.findByUserName(who).get().getBids().size();
 
+                        requestReplyObjectOutput.writeObject(numTotalBidsFromUserBankEntities);
+
+                        while(bidsFromUserIt.hasNext()) {
+                            BidEntity i = bidsFromUserIt.next();
+                            requestReplyObjectOutput.writeObject(i.getJSON().toString());
+                        }
+                        
                         hasRequestReply = true;
 
                     }

@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +24,10 @@ public class BidEntity {
 	
 	@JsonProperty("amount")
     private Long amount;
-    
+	
+	@JsonProperty("timestamp")
+    private Long timestamp;
+	
     protected BidEntity() {
     
     	// Empty Constructor
@@ -34,6 +39,15 @@ public class BidEntity {
         this.id = id;
         this.username = username;
         this.amount = amount;
+        this.timestamp = System.currentTimeMillis();
+    }
+    
+    public BidEntity(Long id, String username, Long amount, Long timestamp) {
+    	
+        this.id = id;
+        this.username = username;
+        this.amount = amount;
+        this.timestamp = timestamp;
     
     }
     
@@ -64,10 +78,16 @@ public class BidEntity {
     	return this.username;
     
     }
-    
+
     public Long getAmount() {
     
     	return this.amount;
+    
+    }
+    
+    public Long getTimestamp() {
+    
+    	return this.timestamp;
     
     }
     
@@ -87,4 +107,8 @@ public class BidEntity {
 		
 	}
     
+	public JSONObject getJSON(){
+        return new JSONObject().put("id",getID()).put("username",this.username).put("amount",getAmount()).put("timestamp",getTimestamp());
+    }
+   
 }
