@@ -2,6 +2,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 public class AuctionEntity implements Serializable {
 
 	private Long id;
@@ -120,5 +122,9 @@ public class AuctionEntity implements Serializable {
 		return amount > this.getLastBidAmount();
 		
 	}
+	
+	public JSONObject getJSON(){
+        return new JSONObject().put("id",getID()).put("ownerUsername",this.ownerUsername).put("isClosed",isClosed()).put("bids", getBids());
+    }
 	
 }

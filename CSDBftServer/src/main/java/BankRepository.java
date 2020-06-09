@@ -103,12 +103,36 @@ public class BankRepository implements Serializable {
         return this.auctions.get(id).getLastBid();
     }
     
-    public Iterator<BankEntity> iterator(){
+    public Iterator<BankEntity> usersIterator(){
         return this.users.values().iterator();
     }
+    
+    public Iterator<AuctionEntity> auctionsIterator(){
+        return this.auctions.values().iterator();
+    }
+    
+    public Iterator<AuctionEntity> openedAuctionsIterator(){
+        return this.openedAuctions.values().iterator();
+    }
+    
+    public Iterator<AuctionEntity> closedAuctionsIterator(){
+        return this.closedAuctions.values().iterator();
+    }
 
-    public int getSize(){
+    public int getNumUsers(){
         return this.users.size();
+    }
+
+    public int getNumAuctions(){
+        return this.auctions.size();
+    }
+
+    public int getNumOpenedAuctions(){
+        return this.openedAuctions.size();
+    }
+
+    public int getNumClosedAuctions(){
+        return this.closedAuctions.size();
     }
 
     protected void save(int id){

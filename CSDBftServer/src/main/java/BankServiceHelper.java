@@ -42,7 +42,7 @@ public class BankServiceHelper {
         
     }
     
-    protected static BidEntity getBidsFromUser(Long id, BankRepository bankRepo){
+    protected static BidEntity getWinnerBidFromAuction(Long id, BankRepository bankRepo){
 
         return bankRepo.checkWinnerBidFromAuction(id);
         
@@ -130,15 +130,17 @@ public class BankServiceHelper {
         if (be.isPresent()) {
 
         	Optional<AuctionEntity> ae = bankRepo.findByAuctionID(id);
+        	Optional<AuctionEntity> oae = bankRepo.findByOpenedAuctionID(id);
+        	Optional<AuctionEntity> cae = bankRepo.findByClosedAuctionID(id);
         	
-        	if (ae.isPresent()) {
+        	if ( ( ae.isPresent() ) && ( oae.isPresent() ) && ( !cae.isPresent() ) ) {
         	   
-        	   AuctionEntity auction = ae.get();
-        		
+        		AuctionEntity auction = ae.get();
+        		AuctionEntity openedAuction = oae.get();
 
-    		   if(auction.getOwnerUsername().equalsIgnoreCase(who)) {
+    		   if ( ( auction.getOwnerUsername().equalsIgnoreCase(who) ) && ( openedAuction.getOwnerUsername().equalsIgnoreCase(who) ) ) {
     			  
-    			   if(!auction.isClosed()) {
+    			   if ( ( !auction.isClosed() ) && ( !openedAuction.isClosed() ) ) {
             		   
             		   auction.close();
             		   
@@ -166,6 +168,71 @@ public class BankServiceHelper {
             return new JSONObject().put("error", "User not found " + who);
     	
 	}
+    
+    protected static JSONObject createBid(Long bidId, Long auctionId, Long amount, String who, BankRepository bankRepo) {
+		
+    	Optional<BankEntity> be = bankRepo.findByUserName(who);
+    	
+        if (be.isPresent()) {
+
+        	Optional<AuctionEntity> ae = bankRepo.findByAuctionID(bidId);
+        	Optional<AuctionEntity> oae = bankRepo.findByOpenedAuctionID(bidId);
+        	Optional<AuctionEntity> cae = bankRepo.findByClosedAuctionID(bidId);
+        	
+        	if ( ( ae.isPresent() ) ) {
+        	   
+        		if ( ( oae.isPresent() ) && ( !cae.isPresent() ) ) {
+        			
+        		   AuctionEntity auction = ae.get();
+             	   AuctionEntity openedAuction = oae.get();
+             	   
+         		   if ( ( !auction.getOwnerUsername().equalsIgnoreCase(who) ) && ( !openedAuction.getOwnerUsername().equalsIgnoreCase(who) ) ) {
+         			  
+         			   if( ( !auction.isClosed() ) && ( !openedAuction.isClosed() ) ) {
+                 		   	
+         				   if (!auction.getBids().containsKey(bidId)) {
+         					  
+         					   BankEntity bankEntity = be.get();
+         					   
+         					   if(bankEntity.getAmount() >= amount) {
+         						  
+         						   BidEntity bid = new BidEntity(bidId, who, amount);
+             					   bankEntity.makeBidForAuction(auction, bid);
+
+             					   return new JSONObject().put("Success", "True").put("id", bidId);
+         					   
+         					   }
+         					   else
+              					  return new JSONObject().put("error", "User " + who + " don't have the necessary amount of money to make this bid");
+         						
+         				   }
+         				   else
+         					  return new JSONObject().put("error", "Auction " + auctionId + " already contains a Bid with thhe id " + bidId);
+                 	   }
+                 	   else {
+                 		   return new JSONObject().put("error", "Auction it's already closed " + auctionId);
+                 	   }
+           
+         		   }
+         		   else
+         			   return new JSONObject().put("error", "User " + who + " can't make bids for its own auction " + auctionId); 
+        			
+        		}
+        		else
+        			return new JSONObject().put("error", "Auction it's already closed " + auctionId);
+        	}
+        	else {
+        		return new JSONObject().put("error", "Auction don't exist " + auctionId);
+        	}
+        	
+        } 
+        else
+
+            return new JSONObject().put("error", "User not found " + who);
+    	
+	}
+    
+    
     
     
     
