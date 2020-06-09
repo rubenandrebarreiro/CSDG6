@@ -100,37 +100,43 @@ public class BankService extends DefaultSingleRecoverable {
                         logger.info(String.valueOf(amount));
                         JSONObject jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
 
-            requestReplyObjectOutput.writeObject(jsonObject.toString());
+                        requestReplyObjectOutput.writeObject(jsonObject.toString());
 
-            hasRequestReply = true;
+                        hasRequestReply = true;
 
-        }
+                    }
 
-        break;
+                break;
 
         case "TRANSFER_MONEY":
 
         from = (String) receivedRequestObjectInput.readObject();
+        long fromSaldo = receivedRequestObjectInput.readLong();
 
         Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
 
         to = (String) receivedRequestObjectInput.readObject();
+        long  toSaldo = receivedRequestObjectInput.readLong();
+
+        long fromAmount = receivedRequestObjectInput.readLong();
+        long toAmount = receivedRequestObjectInput.readLong();
 
         Optional<BankEntity> beTo = bankRepo.findByUserName(to);
+        JSONObject jsonObject = new JSONObject();
 
         if ( ( beFrom.isPresent() ) && ( beTo.isPresent() ) ) {
+            Long sFrom = beFrom.get().getAmount();
+            Long sTo = beTo.get().getAmount();
 
-            amount = (Long) receivedRequestObjectInput.readObject();
+                if(beFrom.get().getAmount() == fromSaldo && beTo.get().getAmount() == toSaldo) {
 
-            if ( ( amount > 0 ) && ( ( beFrom.get().getAmount() - amount ) >= 0 ) ) {
-
-                JSONObject jsonObject = BankServiceHelper.transferMoney(from, to, amount, bankRepo);
-
+                    jsonObject = BankServiceHelper.transferMoney(from, fromAmount, to, toAmount, bankRepo);
+                }else{
+                    jsonObject.put("error",true).put("fromSaldo",sFrom).put("toSaldo",sTo);
+                }
                 requestReplyObjectOutput.writeObject(jsonObject.toString());
 
                 hasRequestReply = true;
-
-            }
 
         }
 
@@ -203,7 +209,7 @@ public class BankService extends DefaultSingleRecoverable {
 
             switch (bankServiceRequestType) {
 
-                case "FIND_USER":
+                case "FIND_USER": 
                     username = (String) receivedRequestObjectInput.readObject();
 
                     if ( this.bankRepo.findByUserName(username).isPresent() ) {

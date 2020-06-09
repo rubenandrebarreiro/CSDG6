@@ -18,54 +18,21 @@ public class BankServiceHelper {
 
     }
 
-    protected static JSONObject transferMoney(String from, String to, long amount, BankRepository bankRepo) {
+    protected static JSONObject transferMoney(String from, long fromAmount, String to, long toAmount, BankRepository bankRepo) {
         Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
+        Optional<BankEntity> beTo = bankRepo.findByUserName(to);
 
-        if (beFrom.isPresent()) {
+        BankEntity b = beFrom.get();
 
-            Optional<BankEntity> beTo = bankRepo.findByUserName(to);
+        b.updateAmount(fromAmount);
 
-            if (beTo.isPresent()) {
+        bankRepo.save(b);
+        b = beTo.get();
 
-                if (amount > 0) {
+        b.updateAmount(toAmount);
+        bankRepo.save(b);
 
-                    BankEntity b = beFrom.get();
-
-                    if ((b.getAmount() - amount) >= 0) {
-
-                        b.updateAmount(-amount);
-
-                        bankRepo.save(b);
-                        b = beTo.get();
-
-                        b.updateAmount(amount);
-                        bankRepo.save(b);
-
-                        return new JSONObject().put("Success", "True");
-
-                    } else {
-
-                        return new JSONObject().put("error", "From account doesn't have enough money").put("errorID", 3);
-
-                    }
-                } else {
-
-                    return new JSONObject().put("error", "Amount<0").put("errorID", 2);
-
-                }
-
-            } else {
-
-                return new JSONObject().put("error", "To account doesn't exist").put("errorID", 1);
-
-            }
-
-        } else {
-
-            return new JSONObject().put("error", "From account doesn't exist").put("errorID", 0);
-
-        }
-
+        return new JSONObject().put("Success", "True");
     }
 
     protected static JSONObject createMoney(String who, Long amount, BankRepository bankRepo) {
