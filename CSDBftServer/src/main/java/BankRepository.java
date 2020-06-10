@@ -28,9 +28,9 @@ public class BankRepository implements Serializable {
     public Long compareAmount(String user, Long amnt){
         Long orig = this.users.get(user).getAmount();
         if(orig != amnt)
-            return orig;
+            return -orig;
         else
-            return (long) -1;
+            return orig;
     }
 
     // Function to get the Spliterator
@@ -70,12 +70,14 @@ public class BankRepository implements Serializable {
 
     protected void load(int id){
         try {
-            FileInputStream fileIn = new FileInputStream("/users"+id+".ser");
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            this.version = in.readInt();
-            this.users = (HashMap<String,BankEntity>) in.readObject();
-            in.close();
-            fileIn.close();
+            if(new File("/users"+id+".ser").isFile()) {
+                FileInputStream fileIn = new FileInputStream("/users" + id + ".ser");
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                this.version = in.readInt();
+                this.users = (HashMap<String, BankEntity>) in.readObject();
+                in.close();
+                fileIn.close();
+            }
         } catch (IOException i) {
             i.printStackTrace();
             return;

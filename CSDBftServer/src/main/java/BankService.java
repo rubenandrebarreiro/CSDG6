@@ -104,7 +104,7 @@ public class BankService extends DefaultSingleRecoverable {
                         if(orig >= 0)
                             jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
                         else
-                            jsonObject = new JSONObject().put("error","Original amount did not pass verifications").put("amount",orig);
+                            jsonObject = new JSONObject().put("error","Original amount did not pass verifications").put("amount",-orig);
                         requestReplyObjectOutput.writeObject(jsonObject.toString());
 
                         hasRequestReply = true;
