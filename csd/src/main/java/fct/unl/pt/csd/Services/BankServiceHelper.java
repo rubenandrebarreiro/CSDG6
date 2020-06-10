@@ -89,6 +89,8 @@ public class BankServiceHelper {
         if ( ( beFrom.isPresent() ) && ( beTo.isPresent() ) ) {
             beFrom.get().updateAmount(fromAmount);
             beTo.get().updateAmount(toAmount);
+            bankRepo.save(beFrom.get());
+            bankRepo.save(beTo.get());
         }
     }
 
@@ -182,6 +184,7 @@ public class BankServiceHelper {
         if (be.isPresent()) {
             BankEntity b = be.get();
             b.updateAmount(amount);
+            bankRepo.save(be.get());
         }
     }
 
