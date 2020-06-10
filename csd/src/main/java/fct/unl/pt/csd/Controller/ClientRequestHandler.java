@@ -145,7 +145,7 @@ public class ClientRequestHandler implements UserDetailsService {
             requestToSendObjectOutput.writeObject(to);
             requestToSendObjectOutput.writeLong(toSaldo);
             requestToSendObjectOutput.writeLong(fromAmount);
-            requestToSendObjectOutput.writeLong(toSaldo);
+            requestToSendObjectOutput.writeLong(toAmount);
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 
@@ -266,9 +266,7 @@ public class ClientRequestHandler implements UserDetailsService {
 
                 int hash = (int) receivedRequestReplyObjectInput.readObject();
                 if(hash != myHash) {
-                    int numTotalUserBankEntities = (int) receivedRequestReplyObjectInput.readObject();
-
-                    JSONArray arr = new JSONArray(receivedRequestReplyObjectInput.readObject());
+                    JSONArray arr = new JSONArray((String) receivedRequestReplyObjectInput.readObject());
 
                 /*List<JSONObject> usersBankEntities = new ArrayList<>();
                 System.out.println(numTotalUserBankEntities);

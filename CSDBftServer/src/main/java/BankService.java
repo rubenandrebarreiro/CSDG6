@@ -125,6 +125,8 @@ public class BankService extends DefaultSingleRecoverable {
 
         long fromAmount = receivedRequestObjectInput.readLong();
         long toAmount = receivedRequestObjectInput.readLong();
+            System.out.println("From amount final" + fromAmount);
+            System.out.println("To amount final" + toAmount);
 
         Optional<BankEntity> beTo = bankRepo.findByUserName(to);
         JSONObject jsonObject = new JSONObject();
@@ -139,6 +141,7 @@ public class BankService extends DefaultSingleRecoverable {
                 }else{
                     jsonObject.put("error",true).put("fromSaldo",sFrom).put("toSaldo",sTo);
                 }
+            System.out.println(jsonObject.toString());
                 requestReplyObjectOutput.writeObject(jsonObject.toString());
 
                 hasRequestReply = true;
@@ -241,10 +244,10 @@ public class BankService extends DefaultSingleRecoverable {
                     while(it.hasNext()) {
                         BankEntity i = it.next();
                         hash = hash^i.getJSONSecure().toString().hashCode();
-                        arr.put(i.getJSONSecure().toString());
+                        arr.put(i.getJSONSecure());
                     }
                     requestReplyObjectOutput.writeObject(hash);
-                    requestReplyObjectOutput.writeObject(numTotalUserBankEntities);
+//                    requestReplyObjectOutput.writeObject(numTotalUserBankEntities);
                     requestReplyObjectOutput.writeObject(arr.toString());
                     /*for ( BankEntity userBankEntity: usersBankEntities ) {
 

@@ -78,7 +78,7 @@ public class BankServiceHelper {
             results[0] = beFrom.get().getAmount();
             results[1] = beTo.get().getAmount();
             results[2] =( beFrom.get().getAmount())-amount;
-            results[3] = beFrom.get().getAmount()+amount;
+            results[3] = beTo.get().getAmount()+amount;
             this.transferMoney(from, to, amount);
             return results;
         }
@@ -215,8 +215,7 @@ public class BankServiceHelper {
         Iterator<BankEntity> it = getAllBankAcc().iterator();
         int index = 0;
         JSONObject j;
-        while(it.hasNext()){
-            index++;
+        while(index<arr.length()){
             j = arr.getJSONObject(index);
             if(it.next().getAmount() != j.getInt("amount")){
                 Optional<BankEntity> o = bankRepo.findByUserName(j.getString("username"));
@@ -226,8 +225,10 @@ public class BankServiceHelper {
                     bankRepo.save(b);
                 }else{
                     // Como nao temos delete nao existe esta possibilidade
+
                 }
             }
+            index++;
         }
     }
 

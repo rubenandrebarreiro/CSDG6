@@ -64,25 +64,25 @@ public class BankRepository implements Serializable {
             fileOut.close();
             System.out.printf("Serialized data is saved in /users"+id+".ser");
         } catch (IOException i) {
-            i.printStackTrace();
+//            i.printStackTrace();
         }
     }
 
     protected void load(int id){
         try {
-            if(new File("/users"+id+".ser").isFile()) {
+//            if(new File("/users"+id+".ser").isFile()) {
                 FileInputStream fileIn = new FileInputStream("/users" + id + ".ser");
                 ObjectInputStream in = new ObjectInputStream(fileIn);
                 this.version = in.readInt();
                 this.users = (HashMap<String, BankEntity>) in.readObject();
                 in.close();
                 fileIn.close();
-            }
+//            }
         } catch (IOException i) {
-            i.printStackTrace();
+//            i.printStackTrace();
             return;
         } catch (ClassNotFoundException c) {
-            c.printStackTrace();
+//            c.printStackTrace();
             return;
         }
     }
