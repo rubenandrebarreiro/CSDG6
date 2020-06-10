@@ -28,13 +28,10 @@ public class ClientRequestHandler implements UserDetailsService {
 
         //this.username = username;
         // TODO ID Client??
-
-    }
-
-    protected void setUsername(String username) {
-        this.username = username;
         this.serviceProxy = new ServiceProxy(1014, "config");
+
     }
+
 
     protected String invokeCreateNew(String username, String password, Long amount) {
 
@@ -135,7 +132,7 @@ public class ClientRequestHandler implements UserDetailsService {
 
     }
 
-    protected JSONObject invokeTransferMoney(String from, String to, Long amount) {
+    protected JSONObject invokeTransferMoney(String from, long fromSaldo, String to, long toSaldo, long fromAmount, long toAmount ) {
 
         try
                 (
@@ -147,9 +144,11 @@ public class ClientRequestHandler implements UserDetailsService {
 
             requestToSendObjectOutput.writeObject("TRANSFER_MONEY");
             requestToSendObjectOutput.writeObject(from);
+            requestToSendObjectOutput.writeObject(fromSaldo);
             requestToSendObjectOutput.writeObject(to);
-            requestToSendObjectOutput.writeObject(amount);
-
+            requestToSendObjectOutput.writeObject(toSaldo);
+            requestToSendObjectOutput.writeObject(fromAmount);
+            requestToSendObjectOutput.writeObject(toSaldo);
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 
