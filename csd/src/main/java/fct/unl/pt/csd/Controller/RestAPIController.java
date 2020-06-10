@@ -82,6 +82,8 @@ public class RestAPIController {
         public ResponseEntity<String> createMoney(@RequestParam("who") String who,@RequestBody CreateMoneyDao amount){
                 BankEntity b = bH.findUser(who);
                 JSONObject js = cR.invokeCreateMoney(who, b.getAmount(),b.getAmount()+amount.amount);
+                System.out.println(b.getAmount());
+                System.out.println(b.getAmount()+amount.amount);
                 if(js.has("error")){
                         bH.setAmount(who, js.getLong("amount"));
                         return this.createMoney(who, new CreateMoneyDao(String.valueOf(amount.amount)));

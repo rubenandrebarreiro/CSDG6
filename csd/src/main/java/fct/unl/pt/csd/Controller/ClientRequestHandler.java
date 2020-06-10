@@ -92,8 +92,8 @@ public class ClientRequestHandler implements UserDetailsService {
 
             requestToSendObjectOutput.writeObject("CREATE_MONEY");
             requestToSendObjectOutput.writeObject(who);
-            requestToSendObjectOutput.writeObject(intitialAmount);
-            requestToSendObjectOutput.writeObject(finalAmount);
+            requestToSendObjectOutput.writeLong(intitialAmount);
+            requestToSendObjectOutput.writeLong(finalAmount);
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 
@@ -141,11 +141,11 @@ public class ClientRequestHandler implements UserDetailsService {
 
             requestToSendObjectOutput.writeObject("TRANSFER_MONEY");
             requestToSendObjectOutput.writeObject(from);
-            requestToSendObjectOutput.writeObject(fromSaldo);
+            requestToSendObjectOutput.writeLong(fromSaldo);
             requestToSendObjectOutput.writeObject(to);
-            requestToSendObjectOutput.writeObject(toSaldo);
-            requestToSendObjectOutput.writeObject(fromAmount);
-            requestToSendObjectOutput.writeObject(toSaldo);
+            requestToSendObjectOutput.writeLong(toSaldo);
+            requestToSendObjectOutput.writeLong(fromAmount);
+            requestToSendObjectOutput.writeLong(toSaldo);
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 

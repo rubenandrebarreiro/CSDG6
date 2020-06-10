@@ -95,8 +95,8 @@ public class BankService extends DefaultSingleRecoverable {
                     who = (String) receivedRequestObjectInput.readObject();
                     logger.info(who);
                     if ( this.bankRepo.findByUserName(who).isPresent() ) {
-                        Long original = (Long) receivedRequestObjectInput.readObject();
-                        amount = (Long) receivedRequestObjectInput.readObject();
+                        Long original =  receivedRequestObjectInput.readLong();
+                        amount =  receivedRequestObjectInput.readLong();
                         logger.info(who);
                         logger.info(String.valueOf(amount));
                         JSONObject jsonObject;

@@ -28,7 +28,7 @@ public class BankEntity implements Serializable {
     }
 
     public void updateAmount(long amount){
-        this.amount += amount;
+        this.amount = amount;
     }
 
     public JSONObject getJSON(){
