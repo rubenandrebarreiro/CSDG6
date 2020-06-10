@@ -25,11 +25,7 @@ public class ClientRequestHandler implements UserDetailsService {
 
     @Autowired
     public ClientRequestHandler() {
-
-        //this.username = username;
-        // TODO ID Client??
         this.serviceProxy = new ServiceProxy(1014, "config");
-
     }
 
 
