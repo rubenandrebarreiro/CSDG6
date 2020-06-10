@@ -230,7 +230,6 @@ public class ClientRequestHandler implements UserDetailsService {
     }
 
     protected Iterable<JSONObject> invokeListAllBankAccounts() {
-
         try
                 (
 
@@ -335,9 +334,7 @@ public class ClientRequestHandler implements UserDetailsService {
     }
 
     protected void terminateClientRequestHandlerSession() {
-
         this.serviceProxy.close();
-
     }
 
     @Override

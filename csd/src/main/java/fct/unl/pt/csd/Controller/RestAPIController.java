@@ -62,6 +62,8 @@ public class RestAPIController {
                 long b = cR.invokeCheckCurrentAmount(who);
                 if(b == -1)
                         return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+                if(!(b == this.bH.currentAmount(who)))
+                        this.bH.setAmount(who, b);
                 return new ResponseEntity<>(b+"", HttpStatus.OK);
         }
 
@@ -79,11 +81,11 @@ public class RestAPIController {
 
         @RequestMapping(method = PUT, value = "/money",params ={"who"},consumes = "application/json")
         public ResponseEntity<String> createMoney(@RequestParam("who") String who,@RequestBody CreateMoneyDao amount){
-                System.out.println(amount.amount);
                 JSONObject js = cR.invokeCreateMoney(who,amount.amount);
+                bH.setAmount(who, js.getLong("amount"));
                 if(js.has("error"))
                         return new ResponseEntity<>(js.getString("error"), HttpStatus.NOT_FOUND);
-                return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
+                return new ResponseEntity<>(js.getLong("amount"), HttpStatus.OK);
         }
 
 }
