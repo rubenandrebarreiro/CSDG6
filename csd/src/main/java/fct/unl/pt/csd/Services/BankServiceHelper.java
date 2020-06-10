@@ -91,6 +91,8 @@ public class BankServiceHelper {
         if ( ( beFrom.isPresent() ) && ( beTo.isPresent() ) ) {
             beFrom.get().updateAmount(fromAmount);
             beTo.get().updateAmount(toAmount);
+            bankRepo.save(beFrom.get());
+            bankRepo.save(beTo.get());
         }
     }
 
@@ -175,11 +177,17 @@ public class BankServiceHelper {
             return b.getAmount();
         }
         else {
-
             return -1;
-
         }
+    }
 
+    public void setAmount(String who, long amount){
+        Optional<BankEntity> be = bankRepo.findByUserName(who);
+        if (be.isPresent()) {
+            BankEntity b = be.get();
+            b.updateAmount(amount);
+            bankRepo.save(be.get());
+        }
     }
 
     public int getHash(){

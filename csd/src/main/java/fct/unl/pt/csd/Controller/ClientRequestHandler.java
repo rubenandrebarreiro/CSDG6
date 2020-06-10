@@ -81,7 +81,7 @@ public class ClientRequestHandler implements UserDetailsService {
 
     }
 
-    protected JSONObject invokeCreateMoney(String who, Long amount) {
+    protected JSONObject invokeCreateMoney(String who, Long intitialAmount, Long finalAmount) {
         try
                 (
 
@@ -92,8 +92,8 @@ public class ClientRequestHandler implements UserDetailsService {
 
             requestToSendObjectOutput.writeObject("CREATE_MONEY");
             requestToSendObjectOutput.writeObject(who);
-            requestToSendObjectOutput.writeObject(amount);
-
+            requestToSendObjectOutput.writeObject(intitialAmount);
+            requestToSendObjectOutput.writeObject(finalAmount);
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 
@@ -344,9 +344,7 @@ public class ClientRequestHandler implements UserDetailsService {
     }
 
     protected void terminateClientRequestHandlerSession() {
-
         this.serviceProxy.close();
-
     }
 
     @Override
