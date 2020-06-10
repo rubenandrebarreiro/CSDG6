@@ -81,10 +81,13 @@ public class RestAPIController {
 
         @RequestMapping(method = PUT, value = "/money",params ={"who"},consumes = "application/json")
         public ResponseEntity<String> createMoney(@RequestParam("who") String who,@RequestBody CreateMoneyDao amount){
-                JSONObject js = cR.invokeCreateMoney(who,amount.amount);
+                BankEntity b = bH.findUser(who);
+                JSONObject js = cR.invokeCreateMoney(who, b.getAmount(),b.getAmount()+amount.amount);
+                if(js.has("error")){
+                        bH.setAmount(who, js.getLong("amount"));
+                        return this.createMoney(who, new CreateMoneyDao(String.valueOf(amount.amount)));
+                }
                 bH.setAmount(who, js.getLong("amount"));
-                if(js.has("error"))
-                        return new ResponseEntity<>(js.getString("error"), HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
 }
