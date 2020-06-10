@@ -73,7 +73,8 @@ public class RestAPIController {
                         return new ResponseEntity<>("Transfer successful", HttpStatus.OK);
                 }
                 bH.cancelTransfer(from, to, js.getLong("fromSaldo"), js.getLong("toSaldo"));
-                return new ResponseEntity<>(bH.transferMoney(from, to, dao.amount).toString(), HttpStatus.OK);
+                //return new ResponseEntity<>(bH.transferMoney(from, to, dao.amount).toString(), HttpStatus.OK);
+                return this.transferMoney(from, to, new BankAccountDao(null, dao.amount));
         }
 
         @RequestMapping(method = PUT, value = "/money",params ={"who"},consumes = "application/json")
