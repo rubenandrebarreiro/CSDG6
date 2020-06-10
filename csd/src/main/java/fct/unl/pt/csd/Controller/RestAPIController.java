@@ -85,7 +85,7 @@ public class RestAPIController {
                 bH.setAmount(who, js.getLong("amount"));
                 if(js.has("error"))
                         return new ResponseEntity<>(js.getString("error"), HttpStatus.NOT_FOUND);
-                return new ResponseEntity<>(js.getLong("amount"), HttpStatus.OK);
+                return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
 
 }
