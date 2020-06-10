@@ -3,6 +3,7 @@ package fct.unl.pt.csd.Controller;
 import bftsmart.tom.ServiceProxy;
 import fct.unl.pt.csd.Entities.BankEntity;
 import fct.unl.pt.csd.Security.MyUserDetails;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -229,7 +230,7 @@ public class ClientRequestHandler implements UserDetailsService {
 
     }
 
-    protected Iterable<JSONObject> invokeListAllBankAccounts() {
+    protected JSONObject invokeListAllBankAccounts(int myHash) {
 
         try
                 (
@@ -261,17 +262,25 @@ public class ClientRequestHandler implements UserDetailsService {
                                     new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
                     ) {
 
-                int numTotalUserBankEntities = (int) receivedRequestReplyObjectInput.readObject();
 
-                List<JSONObject> usersBankEntities = new ArrayList<>();
+
+                int hash = (int) receivedRequestReplyObjectInput.readObject();
+                if(hash != myHash) {
+                    int numTotalUserBankEntities = (int) receivedRequestReplyObjectInput.readObject();
+
+                    JSONArray arr = new JSONArray(receivedRequestReplyObjectInput.readObject());
+
+                /*List<JSONObject> usersBankEntities = new ArrayList<>();
                 System.out.println(numTotalUserBankEntities);
                 for (int currentUserBankEntity = 0; currentUserBankEntity < numTotalUserBankEntities; currentUserBankEntity++) {
                     JSONObject j = new JSONObject(receivedRequestReplyObjectInput.readObject().toString());
                     System.out.println(j.toString());
                     usersBankEntities.add(j);
-                }
+                }*/
 
-                return usersBankEntities;
+                    return new JSONObject().put("arr",arr);
+                }else
+                    return new JSONObject();
 
             }
 

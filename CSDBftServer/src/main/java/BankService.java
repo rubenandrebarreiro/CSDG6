@@ -3,6 +3,7 @@ import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.RequestVerifier;
 import bftsmart.tom.server.defaultservices.DefaultReplier;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -94,12 +95,16 @@ public class BankService extends DefaultSingleRecoverable {
                     who = (String) receivedRequestObjectInput.readObject();
                     logger.info(who);
                     if ( this.bankRepo.findByUserName(who).isPresent() ) {
-
+                        Long original = (Long) receivedRequestObjectInput.readObject();
                         amount = (Long) receivedRequestObjectInput.readObject();
                         logger.info(who);
                         logger.info(String.valueOf(amount));
-                        JSONObject jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
-
+                        JSONObject jsonObject;
+                        Long orig = bankRepo.compareAmount(who,original);
+                        if(orig >= 0)
+                            jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
+                        else
+                            jsonObject = new JSONObject().put("error","Original amount did not pass verifications").put("amount",orig);
                         requestReplyObjectOutput.writeObject(jsonObject.toString());
 
                         hasRequestReply = true;
@@ -229,14 +234,18 @@ public class BankService extends DefaultSingleRecoverable {
                     Iterator<BankEntity> it = bankRepo.iterator();
                     //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
 
+                    int hash = 0;
                     int numTotalUserBankEntities = bankRepo.getSize();
-
-                    requestReplyObjectOutput.writeObject(numTotalUserBankEntities);
+                    JSONArray arr = new JSONArray();
 
                     while(it.hasNext()) {
                         BankEntity i = it.next();
-                        requestReplyObjectOutput.writeObject(i.getJSONSecure().toString());
+                        hash = hash^i.getJSONSecure().toString().hashCode();
+                        arr.put(i.getJSONSecure().toString());
                     }
+                    requestReplyObjectOutput.writeObject(hash);
+                    requestReplyObjectOutput.writeObject(numTotalUserBankEntities);
+                    requestReplyObjectOutput.writeObject(arr.toString());
                     /*for ( BankEntity userBankEntity: usersBankEntities ) {
 
                         requestReplyObjectOutput.writeObject(userBankEntity.getJSONSecure().toString());

@@ -46,15 +46,14 @@ public class RestAPIController {
         }
 
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
-        public ResponseEntity<String> getAll(){
-                JSONArray response = new JSONArray();
-                Iterator<JSONObject> it = this.cR.invokeListAllBankAccounts().iterator();
-                JSONObject bankEntity = null;
-                while(it.hasNext()) {
-                        bankEntity = it.next();
-                        response.put(bankEntity);
-                }
-                return new ResponseEntity<>(response.toString(), HttpStatus.OK);
+        public ResponseEntity<String> getAll() {
+                JSONObject arrAndHash = bH.getJSONArrayAndHash();
+                JSONObject it = this.cR.invokeListAllBankAccounts(arrAndHash.getInt("hash"));
+                if (it.has("arr")) {
+                        bH.replaceUsers(it.getJSONArray("arr"));
+                        return new ResponseEntity<>(it.get("arr").toString(), HttpStatus.OK);
+                } else
+                        return new ResponseEntity<>(arrAndHash.getJSONArray("arr").toString(), HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/amount",params ={"who"})

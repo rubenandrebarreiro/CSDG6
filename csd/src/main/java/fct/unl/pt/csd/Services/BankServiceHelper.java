@@ -2,11 +2,13 @@ package fct.unl.pt.csd.Services;
 
 import fct.unl.pt.csd.Entities.BankEntity;
 import fct.unl.pt.csd.Repositories.BankRepo;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 @Service
@@ -178,6 +180,47 @@ public class BankServiceHelper {
 
         }
 
+    }
+
+    public int getHash(){
+        Iterator<BankEntity> it = getAllBankAcc().iterator();
+        int hash = 0;
+        while(it.hasNext()){
+            hash = hash^it.next().getJSONSecure().toString().hashCode();
+        }
+        return hash;
+    }
+
+    public JSONObject getJSONArrayAndHash(){
+        Iterator<BankEntity> it = getAllBankAcc().iterator();
+        JSONArray arr = new JSONArray();
+        int hash = 0;
+        while(it.hasNext()){
+            BankEntity e = it.next();
+            hash = hash^e.getJSONSecure().toString().hashCode();
+            arr.put(e.getJSONSecure());
+        }
+        return new JSONObject().put("arr",arr).put("hash",hash);
+    }
+
+    public void replaceUsers(JSONArray arr){
+        Iterator<BankEntity> it = getAllBankAcc().iterator();
+        int index = 0;
+        JSONObject j;
+        while(it.hasNext()){
+            index++;
+            j = arr.getJSONObject(index);
+            if(it.next().getAmount() != j.getInt("amount")){
+                Optional<BankEntity> o = bankRepo.findByUserName(j.getString("username"));
+                if(o.isPresent()){
+                    BankEntity b = o.get();
+                    b.changeAmount(j.getInt("amount"));
+                    bankRepo.save(b);
+                }else{
+                    // Como nao temos delete nao existe esta possibilidade
+                }
+            }
+        }
     }
 
 }
