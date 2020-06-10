@@ -28,9 +28,9 @@ public class BankRepository implements Serializable {
     public Long compareAmount(String user, Long amnt){
         Long orig = this.users.get(user).getAmount();
         if(orig != amnt)
-            return (long) -1;
-        else
             return orig;
+        else
+            return (long) -1;
     }
 
     // Function to get the Spliterator
