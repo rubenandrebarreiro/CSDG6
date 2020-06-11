@@ -56,11 +56,11 @@ public class BankServiceHelper {
 
         b.updateAmount(fromAmount);
 
-        bankRepo.save(b);
+        bankRepo.newUserBankEntity(b);
         b = beTo.get();
 
         b.updateAmount(toAmount);
-        bankRepo.save(b);
+        bankRepo.newUserBankEntity(b);
 
         return new JSONObject().put("Success", "True");
     }

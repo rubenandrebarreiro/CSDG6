@@ -127,33 +127,6 @@ public class BankService extends DefaultSingleRecoverable {
 
         from = (String) receivedRequestObjectInput.readObject();
         long fromSaldo = receivedRequestObjectInput.readLong();
-
-        case "CREATE_AUCTION":
-        	
-        	who = (String) receivedRequestObjectInput.readObject();
-        	
-	        bankEnt = bankRepo.findByUserName(who);
-	        
-	        auctionID = (Long) receivedRequestObjectInput.readObject();
-	        
-	        auctionEnt = bankRepo.findByAuctionID(auctionID);
-	        
-	        if ( bankEnt.isPresent() )  {
-	        	
-	        	if (!auctionEnt.isPresent()) {
-	        		
-	        		JSONObject jsonObject = BankServiceHelper.createAuction(auctionID, who, bankRepo);
-	        		
-	                requestReplyObjectOutput.writeObject(jsonObject.toString());
-	
-	                hasRequestReply = true;
-	                
-	            }
-	
-	        }
-	
-	        break;
-
         to = (String) receivedRequestObjectInput.readObject();
         long  toSaldo = receivedRequestObjectInput.readLong();
 
@@ -162,6 +135,7 @@ public class BankService extends DefaultSingleRecoverable {
             System.out.println("From amount final" + fromAmount);
             System.out.println("To amount final" + toAmount);
 
+            Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
         Optional<BankEntity> beTo = bankRepo.findByUserName(to);
         JSONObject jsonObject = new JSONObject();
 
@@ -183,6 +157,32 @@ public class BankService extends DefaultSingleRecoverable {
         }
 
         break;
+
+        case "CREATE_AUCTION":
+
+            who = (String) receivedRequestObjectInput.readObject();
+
+            bankEnt = bankRepo.findByUserName(who);
+
+            auctionID = (Long) receivedRequestObjectInput.readObject();
+
+            auctionEnt = bankRepo.findByAuctionID(auctionID);
+
+            if ( bankEnt.isPresent() )  {
+
+                if (!auctionEnt.isPresent()) {
+
+                    jsonObject = BankServiceHelper.createAuction(auctionID, who, bankRepo);
+
+                    requestReplyObjectOutput.writeObject(jsonObject.toString());
+
+                    hasRequestReply = true;
+
+                }
+
+            }
+
+            break;
 
         default:
 
@@ -270,11 +270,10 @@ public class BankService extends DefaultSingleRecoverable {
 
                 case "LIST_ALL_BANK_ACCOUNTS":
 
-                    Iterator<BankEntity> usersIt = bankRepo.usersIterator();
+                    Iterator<BankEntity> it = bankRepo.usersIterator();
                     //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
 
                     int hash = 0;
-                    int numTotalUserBankEntities = bankRepo.getSize();
                     JSONArray arr = new JSONArray();
 
                     while(it.hasNext()) {
