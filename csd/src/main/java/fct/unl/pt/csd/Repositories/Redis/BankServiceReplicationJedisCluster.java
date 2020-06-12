@@ -1,11 +1,12 @@
 package fct.unl.pt.csd.Repositories.Redis;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import fct.unl.pt.csd.Entities.AuctionEntity;
+import fct.unl.pt.csd.Entities.BankEntity;
 import fct.unl.pt.csd.Entities.BidEntity;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
@@ -212,6 +213,27 @@ public class BankServiceReplicationJedisCluster {
 		
 		return null;
 		
+	}
+
+	public void test(){
+		System.out.println(this.jedis.scan("").getResult());
+	}
+
+	public JSONObject getJSONArrayAndHash(){
+		List<String> result = this.jedis.scan("").getResult();
+		int hash = 0;
+		JSONObject jsonSecure;
+		Map<String, String> userEntry;
+		JSONArray arr = new JSONArray();
+		for(String s : result){
+			if(s.startsWith("users#")){
+				userEntry = this.jedis.hgetAll(s);
+				jsonSecure = new JSONObject().put("username",userEntry.get("username")).put("amount",Long.parseLong(userEntry.get("amount")));
+				hash = hash^jsonSecure.toString().hashCode();
+				arr.put(jsonSecure);
+			}
+		}
+		return new JSONObject().put("arr",arr).put("hash",hash);
 	}
 	
 	

@@ -45,13 +45,14 @@ public class RestAPIController {
 
         @GetMapping(path="/test")
         public ResponseEntity<String> test() {
-                BankEntity e = this.cR.invokeFindUser("FilipeLindo");
-                return new ResponseEntity<>(e.getOwnerName(), HttpStatus.OK);
+                jD.test();
+                return new ResponseEntity<>("Simple test", HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
         public ResponseEntity<String> getAll() {
-                JSONObject arrAndHash = bH.getJSONArrayAndHash();
+                //JSONObject arrAndHash = bH.getJSONArrayAndHash();
+                JSONObject arrAndHash = jD.getJSONArrayAndHash();
                 JSONObject it = this.cR.invokeListAllBankAccounts(arrAndHash.getInt("hash"));
                 if (it.has("arr")) {
                         bH.replaceUsers(it.getJSONArray("arr"));
