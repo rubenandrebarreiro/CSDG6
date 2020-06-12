@@ -99,4 +99,24 @@ public class RestAPIController {
 //                bH.setAmount(who, js.getLong("amount"));
                 return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
+
+        @RequestMapping(method = POST, value = "/createAuction",params ={"username"},consumes = "application/json")
+        public ResponseEntity<String> createAuction(@RequestParam("username") String username){
+                Long id = this.jD.createAuction(username);
+                if(id != Long.valueOf("-1"))
+                        return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
+                this.cR.invokeCreateAuction(username, id);
+                return new ResponseEntity<>("Auction was created by user "+username+" with id: "+id, HttpStatus.OK);
+        }
+
+        @RequestMapping(method = POST, value = "/closeAuction",params ={"username", "id"},consumes = "application/json")
+        public ResponseEntity<String> createMoney(@RequestParam("username") String username, @RequestParam("id") Long id){
+                if(this.jD.closeAuction(username,id)){
+                        this.cR.invokeCloseAuction(username, id);
+                        return new ResponseEntity<>("Auction with id "+id+" was closed", HttpStatus.OK);
+                }
+                return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
+        }
+
+
 }
