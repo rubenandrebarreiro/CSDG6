@@ -34,7 +34,6 @@ public class BankServiceReplicationJedisCluster {
 		
 		// add New Cluster Node Replicas TODO
 		this.addNewClusterNodeReplica(new HostAndPort("localhost", 6378));
-		
 	}
 	
 	public boolean addNewClusterNodeReplica(HostAndPort hostAndPort) {
@@ -98,6 +97,17 @@ public class BankServiceReplicationJedisCluster {
 		
 	}
 
+	public void setAmount(String username, Long amount){
+		Map<String, String> userEntry = this.jedis.hgetAll("users#" + username);
+
+
+		if ( ( !userEntry.isEmpty() ) && ( this.jedis.sismember( "users-registered", username ) ) ) {
+			this.jedis.hset("users#" + username, "amount", String.valueOf(amount));
+			this.jedis.save();
+			System.out.println("REDIS Storage: Money updated for the User!!!");
+		}else
+			System.err.println("REDIS Storage: Money not updated for the User!!! Don't exist any User with this Username!!!");
+	}
 	
 	public boolean createMoney(String username, Long amount) {
 		
@@ -130,6 +140,22 @@ public class BankServiceReplicationJedisCluster {
 		
 		return false;
 		
+	}
+
+	public long[] getTransferInfo(String from, String to, long amount){
+		long[] results = new long[4];
+		Map<String, String> fromEntry = this.jedis.hgetAll("users#" + from);
+		Map<String, String> toEntry = this.jedis.hgetAll("users#" + to);
+
+		if ( (( !fromEntry.isEmpty() ) && ( this.jedis.sismember( "users-registered", from ) )) && (( !toEntry.isEmpty() ) && ( this.jedis.sismember( "users-registered", to ) )) ) {
+			results[0] = Long.parseLong(fromEntry.get("amount"));
+			results[1] = Long.parseLong(toEntry.get("amount"));
+			results[2] =(Long.parseLong(fromEntry.get("amount")))-amount;
+			results[3] =Long.parseLong(toEntry.get("amount"))+amount;
+			this.transferMoney(from, to, amount);
+			return results;
+		}
+		return null;
 	}
 	
 	
