@@ -6,10 +6,15 @@ import java.util.Set;
 
 import fct.unl.pt.csd.Entities.AuctionEntity;
 import fct.unl.pt.csd.Entities.BidEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 
+import javax.persistence.Entity;
+
+@Service
 public class BankServiceReplicationJedisCluster {
 	
 	private Jedis jedis;
@@ -18,17 +23,16 @@ public class BankServiceReplicationJedisCluster {
 	
 	private Set<HostAndPort> jedisClusterNodes;
 	
-	
+	@Autowired
 	public BankServiceReplicationJedisCluster() {
 		
-		this.jedis = new Jedis();
-		
+		this.jedis = new Jedis("localhost",6378);
 		this.jedisClusterNodes = new HashSet<HostAndPort>();
 		
 		this.jedisCluster = new JedisCluster(jedisClusterNodes);
 		
 		// add New Cluster Node Replicas TODO
-		this.addNewClusterNodeReplica(null);
+		this.addNewClusterNodeReplica(new HostAndPort("localhost", 6378));
 		
 	}
 	

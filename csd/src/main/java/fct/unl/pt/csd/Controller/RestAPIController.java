@@ -4,6 +4,7 @@ import fct.unl.pt.csd.Daos.BankAccountDao;
 import fct.unl.pt.csd.Daos.CreateMoneyDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
 import fct.unl.pt.csd.Entities.BankEntity;
+import fct.unl.pt.csd.Repositories.Redis.BankServiceReplicationJedisCluster;
 import fct.unl.pt.csd.Services.BankServiceHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,11 +24,13 @@ public class RestAPIController {
         //private final BankService bS;
         private final ClientRequestHandler cR;
         private final BankServiceHelper bH;
+        private final BankServiceReplicationJedisCluster jD;
 
         @Autowired
-        public RestAPIController(final ClientRequestHandler cR, final BankServiceHelper bH) {
+        public RestAPIController(final ClientRequestHandler cR, final BankServiceHelper bH, final BankServiceReplicationJedisCluster jD) {
                 this.cR = cR;
                 this.bH = bH;
+                this.jD = jD;
         }
 
         @RequestMapping(method=POST,value="/register",consumes = "application/json")
@@ -36,6 +39,7 @@ public class RestAPIController {
                 if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount).equals(""))
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
                 bH.registerUser(dao.userName, dao.password, dao.amount);
+                jD.addNewUser(dao.userName,dao.password,dao.amount);
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
         }
 

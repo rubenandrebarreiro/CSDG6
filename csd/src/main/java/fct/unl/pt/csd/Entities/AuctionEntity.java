@@ -3,16 +3,11 @@ package fct.unl.pt.csd.Entities;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.Entity;
 
 @Entity
 public class AuctionEntity {
@@ -27,9 +22,10 @@ public class AuctionEntity {
 	
 	@JsonProperty("state")
     private String state;
-	
-	@CollectionTable
-	@JsonProperty("bids")
+
+	//@CollectionTable
+	@OneToMany(cascade=CascadeType.ALL)
+	@MapKeyColumn(name="bids")
     private Map<Long, BidEntity> bids;
 
     protected AuctionEntity() {
