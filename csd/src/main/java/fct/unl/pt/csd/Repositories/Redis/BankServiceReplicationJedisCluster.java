@@ -261,6 +261,30 @@ public class BankServiceReplicationJedisCluster {
 		}
 		return new JSONObject().put("arr",arr).put("hash",hash);
 	}
+
+	public void replaceUsers(JSONArray arr){
+		List<String> result = this.jedis.scan("").getResult();
+		int hash = 0;
+		JSONObject jsonSecure;
+		Map<String, String> userEntry;
+		int index = 0;
+		JSONObject j;
+		long val;
+		for(String s : result) {
+			if (s.startsWith("users#") && arr.length()>index) {
+				userEntry = this.jedis.hgetAll(s);
+				j = arr.getJSONObject(index);
+				val = j.getLong("amount");
+				if(Long.parseLong(userEntry.get("amount")) != val){
+					this.jedis.hset( "users#" + userEntry.get("username"), "amount", String.valueOf(val));
+				}else{
+					// Como nao temos delete nao existe esta possibilidade
+				}
+			}
+			index++;
+		}
+		this.jedis.save();
+	}
 	
 	
 	public boolean createAuction(String username, AuctionEntity auctionEntity) {
