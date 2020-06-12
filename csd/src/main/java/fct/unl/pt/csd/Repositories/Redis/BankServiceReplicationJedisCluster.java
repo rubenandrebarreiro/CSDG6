@@ -7,6 +7,7 @@ import java.util.Set;
 import fct.unl.pt.csd.Entities.AuctionEntity;
 import fct.unl.pt.csd.Entities.BidEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
@@ -22,11 +23,11 @@ public class BankServiceReplicationJedisCluster {
 	private JedisCluster jedisCluster;
 	
 	private Set<HostAndPort> jedisClusterNodes;
-	
+
 	@Autowired
 	public BankServiceReplicationJedisCluster() {
 		
-		this.jedis = new Jedis("localhost",6378);
+		this.jedis = new Jedis();
 		this.jedisClusterNodes = new HashSet<HostAndPort>();
 		
 		this.jedisCluster = new JedisCluster(jedisClusterNodes);
@@ -336,137 +337,61 @@ public class BankServiceReplicationJedisCluster {
 	}
 	
 	public boolean addBidToAuction(String username, AuctionEntity auctionEntity, BidEntity bidEntity) {
-		
 		Map<String, String> userEntry = this.jedis.hgetAll("users#" + username);
-		
 		if ( ( !userEntry.isEmpty() ) && ( this.jedis.sismember( "users-registered", username ) ) ) {
-			
 			Long auctionEntityID = auctionEntity.getID();
-			
 			Map<String, String> auction = this.jedis.hgetAll("auctions#" + auctionEntityID);
-			
-			
 			if ( ( !auction.isEmpty() ) && ( this.jedis.sismember( "auctions", String.valueOf(auctionEntityID) ) ) ) {
-				
-				
 				if ( ( this.jedis.sismember( "opened-auctions", String.valueOf(auctionEntityID) ) ) && ( !this.jedis.sismember( "closed-auctions", String.valueOf(auctionEntityID) ) ) ) {
-					
 					String ownerUsername = this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "ownerUsername" );
-					
-					
 					if ( !ownerUsername.equalsIgnoreCase(username) ) {
-						
 						Long bidAmount = bidEntity.getAmount();
-						
-						
 						String oldBidsFromAuction = this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "bids" );
-						
-						
 						String[] bidsFromAuctionParts = oldBidsFromAuction.split(" \\| ");
-						
-				        String lastBidString = bidsFromAuctionParts[ ( bidsFromAuctionParts.length - 1 ) ];
-						
-				        
-				        BidEntity lastBidEntity = new BidEntity(lastBidString);
-						
-				        
-				        if( lastBidEntity.getAmount() < bidEntity.getAmount() ) {
-				        	
-				        	if (auctionEntity.validBidAmount(bidAmount)) {
-								
+						String lastBidString = bidsFromAuctionParts[ ( bidsFromAuctionParts.length - 1 ) ];
+						BidEntity lastBidEntity = new BidEntity(lastBidString);
+						if( lastBidEntity.getAmount() < bidEntity.getAmount() ) {
+							if (auctionEntity.validBidAmount(bidAmount)) {
 								Long bidID = bidEntity.getID();
-								
-								
 								this.jedis.sadd( "bids" , String.valueOf(bidID) );
-								
-								
-								if ( this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "bids" ) == null ) {
-									
+								if ( this.jedis.hget( "auction#" + String.valueOf(auctionEntityID), "bids" ) == null )
 									this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "bids", bidEntity.toString() );
-									
-								}
 								else {
-									
 									String updatedBidsFromAuction = oldBidsFromAuction + " | " + bidEntity.toString();
-									
-									
 									this.jedis.hset( "auction#" + String.valueOf(auctionEntityID), "bids", updatedBidsFromAuction );
-									
 								}
-																
-								
-								if ( this.jedis.hget( "users#" + username, "bids" ) == null ) {
-									
+								if ( this.jedis.hget( "users#" + username, "bids" ) == null )
 									this.jedis.hset( "users#" + username, "bids", bidEntity.toString() );
-									
-								}
 								else {
-									
 									String oldBidsFromUser = this.jedis.hget( "users#" + username, "bids" );
-									
 									String updatedBidsFromUser = oldBidsFromUser + " | " + bidEntity.toString();
-									
-									
 									this.jedis.hset( "users#" + username, "bids", updatedBidsFromUser );
-									
 								}
-								
-								
 								this.jedis.save();
-								
-								
 								System.out.println("REDIS Storage: Bid was added to the Auction!!! "
 										         + "Bid #" + bidEntity.getID() + " added to the Auction #" + auctionEntityID + "!!!");
-								
-								
 								return true;
-							
-				        	}
-				        	else {
-								
-								System.err.println("REDIS Storage: Bid wasn't added to the Auction!!! "
-									   	         + "The Bid's Amount for this Auction needs to be higher than the current highest one!!!");
-								
 							}
-				        	
+				        	else
+				        		System.err.println("REDIS Storage: Bid wasn't added to the Auction!!! "
+									   	         + "The Bid's Amount for this Auction needs to be higher than the current highest one!!!");
 						}
-						else {
-							
+						else
 							System.err.println("REDIS Storage: Bid wasn't added to the Auction!!! "
 								   	         + "The Bid's Amount for this Auction needs to be higher than the current highest one!!!");
-							
-						}
-						
 					}
-					else {
-					
+					else
 						System.err.println("REDIS Storage: Bid wasn't added to the Auction!!! The User with the given Username doesn't own this Auction!!!");
-						
-					}
-					
 				}
-				else {
-					
+				else
 					System.err.println("REDIS Storage: Bid wasn't added to the Auction!!! It's only possible to add Bids to Opened Auctions!!!");
-					
-				}
-				
 			}
-			else {
-				
+			else
 				System.err.println("REDIS Storage: Bid wasn't added to the Auction!!! Don't exist an Auction with the given ID!!!");
-				
-			}
-			
 		}
-		else {
-
+		else
 			System.err.println("REDIS Storage: Bid wasn't added to the Auction!!! Username doesn't exist!!!");
-			
-		}
-		
 		return false;
-		
 	}
 	
 	public void getCurrentOpenedAuctions() {
