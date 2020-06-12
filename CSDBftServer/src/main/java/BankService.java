@@ -3,6 +3,7 @@ import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.RequestVerifier;
 import bftsmart.tom.server.defaultservices.DefaultReplier;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -22,7 +23,9 @@ public class BankService extends DefaultSingleRecoverable {
         this.id = replicaID;
         this.bankRepo = new BankRepository();
         logger = Logger.getLogger(BankService.class.getName());
-        ServiceReplica s = new ServiceReplica(replicaID, "config",this, this,(RequestVerifier)null, new DefaultReplier());
+        ServiceReplica s = new ServiceReplica(replicaID, "config", this, this,(RequestVerifier)null, new DefaultReplier());
+        
+        
         this.bankRepo.load(id);
     }
 
@@ -67,6 +70,14 @@ public class BankService extends DefaultSingleRecoverable {
             String to;
 
             Long amount;
+            
+            Long auctionID, bidID;
+            
+            Optional<BankEntity> bankEnt;
+            Optional<AuctionEntity> auctionEnt;
+            Optional<AuctionEntity> openedAuctionEnt;
+            Optional<AuctionEntity> closedAuctionEnt;
+            Optional<BidEntity> bidEnt;
 
             switch (bankServiceRequestType) {
 
@@ -94,51 +105,88 @@ public class BankService extends DefaultSingleRecoverable {
                     who = (String) receivedRequestObjectInput.readObject();
                     logger.info(who);
                     if ( this.bankRepo.findByUserName(who).isPresent() ) {
-
-                        amount = (Long) receivedRequestObjectInput.readObject();
+                        Long original =  receivedRequestObjectInput.readLong();
+                        amount =  receivedRequestObjectInput.readLong();
                         logger.info(who);
                         logger.info(String.valueOf(amount));
-                        JSONObject jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
+                        JSONObject jsonObject;
+                        Long orig = bankRepo.compareAmount(who,original);
+                        if(orig >= 0)
+                            jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
+                        else
+                            jsonObject = new JSONObject().put("error","Original amount did not pass verifications").put("amount",-orig);
+                        requestReplyObjectOutput.writeObject(jsonObject.toString());
 
-            requestReplyObjectOutput.writeObject(jsonObject.toString());
+                        hasRequestReply = true;
 
-            hasRequestReply = true;
+                    }
 
-        }
-
-        break;
+                break;
 
         case "TRANSFER_MONEY":
 
         from = (String) receivedRequestObjectInput.readObject();
-
-        Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
-
+        long fromSaldo = receivedRequestObjectInput.readLong();
         to = (String) receivedRequestObjectInput.readObject();
+        long  toSaldo = receivedRequestObjectInput.readLong();
 
+        long fromAmount = receivedRequestObjectInput.readLong();
+        long toAmount = receivedRequestObjectInput.readLong();
+            System.out.println("From amount final" + fromAmount);
+            System.out.println("To amount final" + toAmount);
+
+            Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
         Optional<BankEntity> beTo = bankRepo.findByUserName(to);
+        JSONObject jsonObject = new JSONObject();
 
         if ( ( beFrom.isPresent() ) && ( beTo.isPresent() ) ) {
+            Long sFrom = beFrom.get().getAmount();
+            Long sTo = beTo.get().getAmount();
 
-            amount = (Long) receivedRequestObjectInput.readObject();
+                if(beFrom.get().getAmount() == fromSaldo && beTo.get().getAmount() == toSaldo) {
 
-            if ( ( amount > 0 ) && ( ( beFrom.get().getAmount() - amount ) >= 0 ) ) {
-
-                JSONObject jsonObject = BankServiceHelper.transferMoney(from, to, amount, bankRepo);
-
+                    jsonObject = BankServiceHelper.transferMoney(from, fromAmount, to, toAmount, bankRepo);
+                }else{
+                    jsonObject.put("error",true).put("fromSaldo",sFrom).put("toSaldo",sTo);
+                }
+            System.out.println(jsonObject.toString());
                 requestReplyObjectOutput.writeObject(jsonObject.toString());
 
                 hasRequestReply = true;
-
-            }
 
         }
 
         break;
 
+        case "CREATE_AUCTION":
+
+            who = (String) receivedRequestObjectInput.readObject();
+
+            bankEnt = bankRepo.findByUserName(who);
+
+            auctionID = (Long) receivedRequestObjectInput.readObject();
+
+            auctionEnt = bankRepo.findByAuctionID(auctionID);
+
+            if ( bankEnt.isPresent() )  {
+
+                if (!auctionEnt.isPresent()) {
+
+                    jsonObject = BankServiceHelper.createAuction(auctionID, who, bankRepo);
+
+                    requestReplyObjectOutput.writeObject(jsonObject.toString());
+
+                    hasRequestReply = true;
+
+                }
+
+            }
+
+            break;
+
         default:
 
-        logger.log(Level.WARNING, "Unsupported Ordered Operation!!!");
+        	logger.log(Level.WARNING, "Unsupported Ordered Operation!!!");
 
     }
 
@@ -200,10 +248,12 @@ public class BankService extends DefaultSingleRecoverable {
 
             String who;
             Long amount;
+            
+            Long auctionID;
 
             switch (bankServiceRequestType) {
 
-                case "FIND_USER":
+                case "FIND_USER": 
                     username = (String) receivedRequestObjectInput.readObject();
 
                     if ( this.bankRepo.findByUserName(username).isPresent() ) {
@@ -220,17 +270,20 @@ public class BankService extends DefaultSingleRecoverable {
 
                 case "LIST_ALL_BANK_ACCOUNTS":
 
-                    Iterator<BankEntity> it = bankRepo.iterator();
+                    Iterator<BankEntity> it = bankRepo.usersIterator();
                     //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
 
-                    int numTotalUserBankEntities = bankRepo.getSize();
-
-                    requestReplyObjectOutput.writeObject(numTotalUserBankEntities);
+                    int hash = 0;
+                    JSONArray arr = new JSONArray();
 
                     while(it.hasNext()) {
                         BankEntity i = it.next();
-                        requestReplyObjectOutput.writeObject(i.getJSONSecure().toString());
+                        hash = hash^i.getJSONSecure().toString().hashCode();
+                        arr.put(i.getJSONSecure());
                     }
+                    requestReplyObjectOutput.writeObject(hash);
+//                    requestReplyObjectOutput.writeObject(numTotalUserBankEntities);
+                    requestReplyObjectOutput.writeObject(arr.toString());
                     /*for ( BankEntity userBankEntity: usersBankEntities ) {
 
                         requestReplyObjectOutput.writeObject(userBankEntity.getJSONSecure().toString());
@@ -256,6 +309,112 @@ public class BankService extends DefaultSingleRecoverable {
 
                     break;
 
+                case "LIST_ALL_CURRENT_OPENED_AUCTIONS":
+                	
+                	Iterator<AuctionEntity> openedAuctionsIt = bankRepo.openedAuctionsIterator();
+                    //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
+
+                    int numTotalOpenedAuctionsBankEntities = bankRepo.getNumOpenedAuctions();
+
+                    requestReplyObjectOutput.writeObject(numTotalOpenedAuctionsBankEntities);
+
+                    while(openedAuctionsIt.hasNext()) {
+                        AuctionEntity i = openedAuctionsIt.next();
+                        requestReplyObjectOutput.writeObject(i.getJSON().toString());
+                    }
+                    /*for ( BankEntity userBankEntity: usersBankEntities ) {
+
+                        requestReplyObjectOutput.writeObject(userBankEntity.getJSONSecure().toString());
+                    }*/
+
+                    hasRequestReply = true;
+                	
+                	break;
+
+                case "LIST_ALL_CURRENT_CLOSED_AUCTIONS":
+                	
+                	Iterator<AuctionEntity> closedAuctionsIt = bankRepo.closedAuctionsIterator();
+                    //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
+
+                    int numTotalClosedAuctionsBankEntities = bankRepo.getNumOpenedAuctions();
+
+                    requestReplyObjectOutput.writeObject(numTotalClosedAuctionsBankEntities);
+
+                    while(closedAuctionsIt.hasNext()) {
+                        AuctionEntity i = closedAuctionsIt.next();
+                        requestReplyObjectOutput.writeObject(i.getJSON().toString());
+                    }
+                    /*for ( BankEntity userBankEntity: usersBankEntities ) {
+
+                        requestReplyObjectOutput.writeObject(userBankEntity.getJSONSecure().toString());
+                    }*/
+
+                    hasRequestReply = true;
+                	
+                	break;
+
+                case "LIST_ALL_BIDS_FROM_AUCTION":
+
+                    auctionID = (Long) receivedRequestObjectInput.readObject();
+
+                    if ( this.bankRepo.findByAuctionID(auctionID).isPresent() ) {
+
+                        Iterator<BidEntity> bidsFromAuctionIt = BankServiceHelper.getBidsFromAuction(auctionID, bankRepo).iterator();
+
+                        int numTotalBidsFromAuctionBankEntities = bankRepo.findByAuctionID(auctionID).get().getBids().size();
+
+                        requestReplyObjectOutput.writeObject(numTotalBidsFromAuctionBankEntities);
+
+                        while(bidsFromAuctionIt.hasNext()) {
+                            BidEntity i = bidsFromAuctionIt.next();
+                            requestReplyObjectOutput.writeObject(i.getJSON().toString());
+                        }
+                        
+                        hasRequestReply = true;
+
+                    }
+
+                    break;
+
+                case "LIST_ALL_BIDS_FROM_USER":
+
+                    who = (String) receivedRequestObjectInput.readObject();
+
+                    if ( this.bankRepo.findByUserName(who).isPresent() ) {
+
+                        Iterator<BidEntity> bidsFromUserIt = BankServiceHelper.getBidsFromUser(who, bankRepo).iterator();
+
+                        int numTotalBidsFromUserBankEntities = bankRepo.findByUserName(who).get().getBids().size();
+
+                        requestReplyObjectOutput.writeObject(numTotalBidsFromUserBankEntities);
+
+                        while(bidsFromUserIt.hasNext()) {
+                            BidEntity i = bidsFromUserIt.next();
+                            requestReplyObjectOutput.writeObject(i.getJSON().toString());
+                        }
+                        
+                        hasRequestReply = true;
+
+                    }
+
+                    break;
+
+                case "CHECK_WINNER_BID_CLOSED_AUCTION":
+
+                    auctionID = (Long) receivedRequestObjectInput.readObject();
+
+                    if ( ( this.bankRepo.findByAuctionID(auctionID).isPresent() ) && ( this.bankRepo.findByClosedAuctionID(auctionID).isPresent() ) ) {
+
+                        BidEntity winnerBidFromAuction = BankServiceHelper.getWinnerBidFromAuction(auctionID, bankRepo);
+                        
+                        requestReplyObjectOutput.writeObject(winnerBidFromAuction);
+
+                        hasRequestReply = true;
+
+                    }
+
+                    break;
+                	                    
                 default:
 
                     logger.log(Level.WARNING, "Unsupported Unordered Operation!!!");

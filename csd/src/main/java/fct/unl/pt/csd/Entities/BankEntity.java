@@ -1,5 +1,7 @@
 package fct.unl.pt.csd.Entities;
 
+import org.json.JSONObject;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,5 +39,13 @@ public class BankEntity {
 
     public void updateAmount(long amount){
         this.amount += amount;
+    }
+
+    public void changeAmount(long amount){
+        this.amount = amount;
+    }
+
+    public JSONObject getJSONSecure(){
+        return new JSONObject().put("username",getOwnerName()).put("amount",getAmount());
     }
 }

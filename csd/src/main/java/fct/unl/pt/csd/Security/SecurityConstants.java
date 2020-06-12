@@ -5,7 +5,6 @@ public final class SecurityConstants {
     public static final String AUTH_LOGIN_URL = "/login";
 
     // Signing key for HS512 algorithm
-    // You can use the page http://www.allkeysgenerator.com/ to generate all kinds of keys
     public static final String JWT_SECRET = "+KbPeShVkYp3s6v9y$B&E)H@McQfTjWnZq4t7w!z%C*F-JaNdRgUkXp2s5u8x/A?";
 
     // JWT token defaults

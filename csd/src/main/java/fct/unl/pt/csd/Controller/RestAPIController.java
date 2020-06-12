@@ -4,6 +4,8 @@ import fct.unl.pt.csd.Daos.BankAccountDao;
 import fct.unl.pt.csd.Daos.CreateMoneyDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
 import fct.unl.pt.csd.Entities.BankEntity;
+import fct.unl.pt.csd.Repositories.Redis.BankServiceReplicationJedisCluster;
+import fct.unl.pt.csd.Services.BankServiceHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +23,14 @@ public class RestAPIController {
 
         //private final BankService bS;
         private final ClientRequestHandler cR;
+//        private final BankServiceHelper bH;
+        private final BankServiceReplicationJedisCluster jD;
 
         @Autowired
-        public RestAPIController(final ClientRequestHandler cR) {
+        public RestAPIController(final ClientRequestHandler cR, final BankServiceHelper bH, final BankServiceReplicationJedisCluster jD) {
                 this.cR = cR;
-                cR.setUsername("FilipeCOCÓ");
+//                this.bH = bH;
+                this.jD = jD;
         }
 
         @RequestMapping(method=POST,value="/register",consumes = "application/json")
@@ -33,26 +38,28 @@ public class RestAPIController {
 
                 if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount).equals(""))
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
-
+                //bH.registerUser(dao.userName, dao.password, dao.amount);
+                jD.addNewUser(dao.userName,dao.password,dao.amount);
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
         }
 
         @GetMapping(path="/test")
         public ResponseEntity<String> test() {
-                BankEntity e = this.cR.invokeFindUser("FilipeCOCO");
-                return new ResponseEntity<>(e.getOwnerName(), HttpStatus.OK);
+                jD.test();
+                return new ResponseEntity<>("Simple test", HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
-        public ResponseEntity<String> getAll(){
-                JSONArray response = new JSONArray();
-                Iterator<JSONObject> it = this.cR.invokeListAllBankAccounts().iterator();
-                JSONObject bankEntity = null;
-                while(it.hasNext()) {
-                        bankEntity = it.next();
-                        response.put(bankEntity);
-                }
-                return new ResponseEntity<>(response.toString(), HttpStatus.OK);
+        public ResponseEntity<String> getAll() {
+//                JSONObject arrAndHash = bH.getJSONArrayAndHash();
+                JSONObject arrAndHash = jD.getJSONArrayAndHash();
+                JSONObject it = this.cR.invokeListAllBankAccounts(arrAndHash.getInt("hash"));
+                if (it.has("arr")) {
+                        jD.replaceUsers(it.getJSONArray("arr"));
+//                        bH.replaceUsers(it.getJSONArray("arr"));
+                        return new ResponseEntity<>(it.get("arr").toString(), HttpStatus.OK);
+                } else
+                        return new ResponseEntity<>(arrAndHash.getJSONArray("arr").toString(), HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/amount",params ={"who"})
@@ -60,32 +67,36 @@ public class RestAPIController {
                 long b = cR.invokeCheckCurrentAmount(who);
                 if(b == -1)
                         return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+                if(!(b == this.jD.getMoney(who)))
+                        this.jD.setAmount(who, b);
                 return new ResponseEntity<>(b+"", HttpStatus.OK);
         }
 
         @RequestMapping(method = PUT, value = "/amount",params ={"from","to"},consumes = "application/json")
         public ResponseEntity<String> transferMoney(@RequestParam("from") String from,@RequestParam("to") String to,@RequestBody BankAccountDao dao){
-                JSONObject js = cR.invokeTransferMoney(from,to,dao.amount);
-                if(!js.has("error"))
+                long[] transferInfo = this.jD.getTransferInfo(from, to, dao.amount);
+                if(transferInfo == null)
+                        return new ResponseEntity<>("One of the users wasnt found", HttpStatus.NOT_FOUND);
+                JSONObject js = cR.invokeTransferMoney(from,transferInfo[0],to, transferInfo[1], transferInfo[2], transferInfo[3]);
+                if(!js.has("error")){
                         return new ResponseEntity<>("Transfer successful", HttpStatus.OK);
-                int err = js.getInt("errorID");
-                switch(err){
-                        case 0:
-                                return new ResponseEntity<>("Client not found "+from, HttpStatus.NOT_FOUND);
-                        case 1:
-                                return new ResponseEntity<>("Client not found "+to, HttpStatus.NOT_FOUND);
-                        default:
-                                return new ResponseEntity<>(js.getString("error"), HttpStatus.CONFLICT);
                 }
+                this.jD.setAmount("from", js.getLong("fromSaldo"));
+                this.jD.setAmount("to", js.getLong("toSaldo"));
+                return this.transferMoney(from, to, new BankAccountDao(null, dao.amount));
         }
 
         @RequestMapping(method = PUT, value = "/money",params ={"who"},consumes = "application/json")
         public ResponseEntity<String> createMoney(@RequestParam("who") String who,@RequestBody CreateMoneyDao amount){
-                System.out.println(amount.amount);
-                JSONObject js = cR.invokeCreateMoney(who,amount.amount);
-                if(js.has("error"))
-                        return new ResponseEntity<>(js.getString("error"), HttpStatus.NOT_FOUND);
+                Long money = this.jD.getMoney(who);
+                JSONObject js = cR.invokeCreateMoney(who, money,money+amount.amount);
+                if(js.has("error")){
+                        jD.setAmount(who, js.getLong("amount"));
+//                        bH.setAmount(who, js.getLong("amount"));
+                        return this.createMoney(who, new CreateMoneyDao(String.valueOf(amount.amount)));
+                }
+                jD.setAmount(who, js.getLong("amount"));
+//                bH.setAmount(who, js.getLong("amount"));
                 return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
-
 }
