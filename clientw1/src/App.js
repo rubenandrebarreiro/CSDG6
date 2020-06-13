@@ -10,6 +10,7 @@ import CostumTransferMoney from './components/CostumTransferMoney';
 import CostumRegister from './components/CostumRegister';
 import CostumLogin from './components/CostumLogin';
 import All from './components/All';
+import CostumSmartContract from "./components/CostumSmartContract";
 
 class App extends Component {
   render() {
@@ -30,6 +31,9 @@ class App extends Component {
               </Route>
               <Route path="/login">
                 <CostumLogin />
+              </Route>
+              <Route path="/smartcontract">
+                <CostumSmartContract/>
               </Route>
             <Route path="/all">
               <All />

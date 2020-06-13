@@ -111,6 +111,7 @@ public class BankService extends DefaultSingleRecoverable {
                         logger.info(String.valueOf(amount));
                         JSONObject jsonObject;
                         Long orig = bankRepo.compareAmount(who,original);
+                        System.out.println(who + " " + original);
                         if(orig >= 0)
                             jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
                         else
