@@ -24,7 +24,7 @@ public class BankEntity {
         this.userName = userName;
         this.password = password;
         this.amount = amount;
-        this.roles = "";
+        this.roles = "ROLE_USER";
     }
 
     public void setNewRole(String newRole){

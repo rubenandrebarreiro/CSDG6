@@ -49,7 +49,6 @@ public class ClientRequestHandler implements UserDetailsService {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             requestToSendObjectOutput.writeObject(passwordEncoder.encode(password));
             requestToSendObjectOutput.writeObject(amount);
-
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 
