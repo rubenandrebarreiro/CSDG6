@@ -56,7 +56,8 @@ public class BankRepository implements Serializable {
 
     public Long compareAmount(String user, Long amnt){
         Long orig = this.users.get(user).getAmount();
-        if(orig != amnt)
+        System.out.println(orig.toString() + " " +amnt.toString());
+        if(!orig.toString().equals(amnt.toString()))
             return -orig;
         else
             return orig;

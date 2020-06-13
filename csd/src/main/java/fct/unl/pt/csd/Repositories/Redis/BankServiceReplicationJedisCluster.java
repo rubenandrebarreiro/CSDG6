@@ -242,7 +242,11 @@ public class BankServiceReplicationJedisCluster {
 	}
 
 	public void test(){
-		System.out.println(this.jedis.scan("").getResult());
+		//System.out.println(this.jedis.scan("").getResult());
+		String[] arr = jedis.keys("users#*").toArray(new String[0]);
+		for(String s : arr){
+			System.out.println(s);
+		}
 	}
 
 	public JSONObject getJSONArrayAndHash(){
@@ -251,13 +255,11 @@ public class BankServiceReplicationJedisCluster {
 		JSONObject jsonSecure;
 		Map<String, String> userEntry;
 		JSONArray arr = new JSONArray();
-		for(String s : result){
-			if(s.startsWith("users#")){
+		for(String s : jedis.keys("users#*").toArray(new String[0])){
 				userEntry = this.jedis.hgetAll(s);
 				jsonSecure = new JSONObject().put("username",userEntry.get("username")).put("amount",Long.parseLong(userEntry.get("amount")));
 				hash = hash^jsonSecure.toString().hashCode();
 				arr.put(jsonSecure);
-			}
 		}
 		return new JSONObject().put("arr",arr).put("hash",hash);
 	}
