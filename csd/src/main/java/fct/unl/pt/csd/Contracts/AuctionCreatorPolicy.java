@@ -1,4 +1,4 @@
-package smartContracts;
+package fct.unl.pt.csd.Contracts;
 
 import java.io.File;
 import java.io.IOException;

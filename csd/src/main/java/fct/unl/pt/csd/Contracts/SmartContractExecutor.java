@@ -1,4 +1,4 @@
-package smartContracts;
+package fct.unl.pt.csd.Contracts;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
