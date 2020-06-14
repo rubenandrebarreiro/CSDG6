@@ -94,11 +94,12 @@ public class RestAPIController {
         }
 
         @RequestMapping(method = POST, value = "/createAuction",params ={"username"},consumes = "MediaType.APPLICATION_OCTET_STREAM_VALUE")
-        public ResponseEntity<String> createAuction(@RequestHeader("Authorization") String bearer, @RequestBody byte[] file) throws IllegalAccessException, IOException, InstantiationException {
-                String username = jD.getSubject(bearer);
-                ClassLoader loader = new ClassLoader();
-                CreateAuctionSmartContract c = (CreateAuctionSmartContract) loader.createObjectFromFile("id", file);
-                return null;
+        public ResponseEntity<String> createAuction(@RequestParam("username") String username){
+                Long id = this.jD.createAuction(username);
+                if(!id.equals(Long.valueOf("-1")))
+                        return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
+                this.cR.invokeCreateAuction(username, id);
+                return new ResponseEntity<>("Auction was created by user "+username+" with id: "+id, HttpStatus.OK);
         }
 
         @RequestMapping(method = POST, value = "/closeAuction",params ={"username", "id"},consumes = "application/json")
