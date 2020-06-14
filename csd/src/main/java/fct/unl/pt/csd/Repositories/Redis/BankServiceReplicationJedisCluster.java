@@ -339,6 +339,10 @@ public class BankServiceReplicationJedisCluster {
 		return Long.valueOf("-1");
 		
 	}
+
+	public boolean validateByteCode(byte[] b){
+		return true;
+	}
 	
 	public boolean closeAuction(String username, Long id) {
 		
