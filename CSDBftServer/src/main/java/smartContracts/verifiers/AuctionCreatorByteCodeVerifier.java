@@ -110,5 +110,4 @@ public class AuctionCreatorByteCodeVerifier implements ByteCodeVerifier {
 		
 	}
 	
-	
 }

@@ -89,21 +89,4 @@ public class AuctionCreatorPolicy {
 		
 	}
 	
-	public boolean verifySignatures(Object ... params) {
-		
-		if( ( params[0] instanceof String ) && ( params[1] instanceof Long) ) {
-			
-			ClassLoader classLoader = new Cl
-			
-		}
-		else {
-			
-			System.err.println("Invalid parameters!!!");
-			
-			return false;
-			
-		}
-		
-	}
-	
 }
