@@ -1,4 +1,4 @@
-package smartContracts.verifiers;
+package smartContracts.verifiers.bytecode;
 
 public interface ByteCodeVerifier {
 	

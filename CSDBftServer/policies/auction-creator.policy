@@ -1,4 +1,4 @@
-keystore "users.keystore";
+keystore "auction-contracts.keystore";
 
 grant codeBase "file:/C:/Users/rubenandrebarreiro/git/CSDG6/CSDBftServer/bin/src/main/java/" {
   permission java.io.FilePermission "C:/Users/rubenandrebarreiro/git/CSDG6/CSDBftServer/bin/src/main/java/", "read,write";

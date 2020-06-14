@@ -1,4 +1,4 @@
-package smartContracts.verifiers;
+package smartContracts.verifiers.bytecode;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -7,11 +7,11 @@ import java.lang.reflect.Parameter;
 
 import smartContracts.SmartContract;
 
-public class AuctionCreatorByteCodeVerifier implements ByteCodeVerifier {
+public class AuctionCreatorSmartContractByteCodeVerifier implements ByteCodeVerifier {
 
 	private Class<?> auctionCreatorSmartContractClass;
 	
-	public AuctionCreatorByteCodeVerifier(Class<?> auctionCreatorSmartContractClass) {
+	public AuctionCreatorSmartContractByteCodeVerifier(Class<?> auctionCreatorSmartContractClass) {
 		
 		this.auctionCreatorSmartContractClass = auctionCreatorSmartContractClass;
 		
@@ -50,9 +50,11 @@ public class AuctionCreatorByteCodeVerifier implements ByteCodeVerifier {
 
 		Constructor<?>[] constructorsFromClassLoaded = this.auctionCreatorSmartContractClass.getConstructors();
 		
-		for (Constructor<?> constructor: constructorsFromClassLoaded) {
+		if(constructorsFromClassLoaded.length == 1) {
 			
-			Parameter[] parametersFromConstructor = constructor.getParameters();
+			Constructor<?> uniqueConstructorFromClassLoaded = constructorsFromClassLoaded[0];
+			
+			Parameter[] parametersFromConstructor = uniqueConstructorFromClassLoaded.getParameters();
 			
 			if (parametersFromConstructor.length == 2) {
 			
@@ -62,9 +64,14 @@ public class AuctionCreatorByteCodeVerifier implements ByteCodeVerifier {
 			}
 			else {
 				
-				throw new Exception("Number Invalid of Parameters in the Constructor from this Smart Contract's Class file!!!!");
+				throw new Exception("Invalid Number of Parameters in the Constructor from this Smart Contract's Class file!!!!");
 				
 			}
+			
+		}
+		else {
+			
+			throw new Exception("Invalid Number of Constructors from this Smart Contract's Class file!!!!");
 			
 		}
 		
@@ -73,6 +80,24 @@ public class AuctionCreatorByteCodeVerifier implements ByteCodeVerifier {
 	@Override
 	public void verifyFields() throws Exception {
 
+		Field durabilityField = this.auctionCreatorSmartContractClass.getField("DURABILITY");
+		
+		if ( durabilityField != null ) {
+			
+			if ( !durabilityField.getClass().getName().equalsIgnoreCase(Long.class.getName())) {
+				
+				throw new Exception("Invalid of Structure of Fields in the Constructor from this Smart Contract's Class file!!!!");
+				
+			}
+			
+		}
+		else {
+			
+			throw new Exception("Invalid of Structure of Fields in the Constructor from this Smart Contract's Class file!!!!");
+			
+		}
+		
+		
 		Field auctionIdField = this.auctionCreatorSmartContractClass.getField("auctionId");
 		
 		if ( auctionIdField != null ) {

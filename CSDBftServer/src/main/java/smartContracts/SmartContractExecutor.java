@@ -9,7 +9,11 @@ import java.util.concurrent.TimeoutException;
 
 public class SmartContractExecutor {
 
+
+	private static final long MAX_EXECUTION_TIME = 600_000L;
+	
 	private SmartContract smartContract;
+
 	
 	public SmartContractExecutor(SmartContract smartContract) {
 		
@@ -24,7 +28,7 @@ public class SmartContractExecutor {
 
 		try {
 		
-			future.get(SmartContract.MAX_EXECUTION_TIME, TimeUnit.MILLISECONDS);
+			future.get(MAX_EXECUTION_TIME, TimeUnit.MILLISECONDS);
 		    System.out.println("Smart Contract's Execution completed successfully!!!");
 		
 		}
