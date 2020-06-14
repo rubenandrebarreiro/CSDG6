@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Qualifier("clientRequestHandler")
     @Autowired
     UserDetailsService userDetailsService;
@@ -33,6 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/register", "/test","/all").permitAll()
+                .antMatchers("/createAuction").hasRole("ROLE_AUCTION_MAKER")
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
@@ -42,10 +42,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        /*auth.inMemoryAuthentication()
-                .withUser("user")
-                .password(passwordEncoder().encode("password"))
-                .authorities("ROLE_USER");*/
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 

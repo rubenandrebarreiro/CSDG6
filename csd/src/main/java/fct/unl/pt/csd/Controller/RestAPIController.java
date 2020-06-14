@@ -13,25 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import fct.unl.pt.csd.Contracts.ClassLoader;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @RestController
 @RequestMapping(value = "/")
 public class RestAPIController {
 
-        //private final BankService bS;
         private final ClientRequestHandler cR;
-//        private final BankServiceHelper bH;
         private final BankServiceReplicationJedisCluster jD;
 
         @Autowired
-        public RestAPIController(final ClientRequestHandler cR, final BankServiceHelper bH, final BankServiceReplicationJedisCluster jD) {
+        public RestAPIController(final ClientRequestHandler cR,  final BankServiceReplicationJedisCluster jD) {
                 this.cR = cR;
-//                this.bH = bH;
                 this.jD = jD;
         }
 
@@ -40,7 +33,6 @@ public class RestAPIController {
 
                 if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount).equals(""))
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
-                //bH.registerUser(dao.userName, dao.password, dao.amount);
                 jD.addNewUser(dao.userName,dao.password,dao.amount);
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
         }
@@ -53,12 +45,10 @@ public class RestAPIController {
 
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
         public ResponseEntity<String> getAll() {
-//                JSONObject arrAndHash = bH.getJSONArrayAndHash();
                 JSONObject arrAndHash = jD.getJSONArrayAndHash();
                 JSONObject it = this.cR.invokeListAllBankAccounts(arrAndHash.getInt("hash"));
                 if (it.has("arr")) {
                         jD.replaceUsers(it.getJSONArray("arr"));
-//                        bH.replaceUsers(it.getJSONArray("arr"));
                         return new ResponseEntity<>(it.get("arr").toString(), HttpStatus.OK);
                 } else
                         return new ResponseEntity<>(arrAndHash.getJSONArray("arr").toString(), HttpStatus.OK);
@@ -96,43 +86,29 @@ public class RestAPIController {
                 System.out.println(js.toString());
                 if(js.has("error")){
                         jD.setAmount(who, js.getLong("amount"));
-//                        bH.setAmount(who, js.getLong("amount"));
                         return this.createMoney(who, new CreateMoneyDao(String.valueOf(amount.amount)));
                 }
-//                bH.setAmount(who, js.getLong("amount"));
+                jD.setAmount(who, js.getLong("amount"));
                 return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
 
-        @RequestMapping(method = POST, value= "/smartcontract", params={"who","id"},consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-        public ResponseEntity<String> runSmartContract(@RequestParam("who") String who,@RequestParam("id") String id, @RequestBody byte[] data) throws Exception {
-                ClassLoader loader = new ClassLoader();
-                src.ContractMethods  cliente = (src.ContractMethods) loader.createObjectFromFile(id,data);
-                System.out.println(cliente.toString());
-                return new ResponseEntity<>(cliente.toString(),HttpStatus.OK);
+        @RequestMapping(method = POST, value = "/createAuction",params ={"username"},consumes = "application/json")
+        public ResponseEntity<String> createAuction(@RequestParam("username") String username){
+                Long id = this.jD.createAuction(username);
+                if(id != Long.valueOf("-1"))
+                        return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
+                this.cR.invokeCreateAuction(username, id);
+                return new ResponseEntity<>("Auction was created by user "+username+" with id: "+id, HttpStatus.OK);
         }
 
-        public static boolean saveToFile(byte[] data,String filename){
-                try {
-                        File myObj = new File(filename);
-                        if (myObj.createNewFile()) {
-//                                System.out.println("File created: " + myObj.getName());
-                        } else {
-//                                System.out.println("File already exists.");
-                        }
-                        try {
-                                FileOutputStream fos = new FileOutputStream(filename);
-                                fos.write(data);
-                                fos.close();
-                        }catch(IOException e1) {
-                                System.out.println("An error occurred.");
-                                e1.printStackTrace();
-                        }
-
-                        return true;
-                } catch (IOException e) {
-                        System.out.println("An error occurred.");
-                        e.printStackTrace();
-                        return false;
+        @RequestMapping(method = POST, value = "/closeAuction",params ={"username", "id"},consumes = "application/json")
+        public ResponseEntity<String> createMoney(@RequestParam("username") String username, @RequestParam("id") Long id){
+                if(this.jD.closeAuction(username,id)){
+                        this.cR.invokeCloseAuction(username, id);
+                        return new ResponseEntity<>("Auction with id "+id+" was closed", HttpStatus.OK);
                 }
+                return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
         }
+
+
 }

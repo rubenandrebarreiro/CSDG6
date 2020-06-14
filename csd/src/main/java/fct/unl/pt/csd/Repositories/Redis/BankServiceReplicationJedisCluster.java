@@ -10,9 +10,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.*;
 
 import javax.persistence.Entity;
 
@@ -287,12 +285,15 @@ public class BankServiceReplicationJedisCluster {
 		}
 		this.jedis.save();
 	}
+
+	public int getnextID(){
+		return jedis.keys("auction#*").toArray(new String[0]).length;
+	}
 	
-	
-	public boolean createAuction(String username, AuctionEntity auctionEntity) {
+	public Long createAuction(String username) {
 		
 		Map<String, String> userEntry = this.jedis.hgetAll("users#" + username);
-		
+		AuctionEntity auctionEntity = new AuctionEntity(Long.valueOf(this.getnextID()), username);
 		
 		if ( ( !userEntry.isEmpty() ) && ( this.jedis.sismember( "users-registered", username ) ) ) {
 			
@@ -319,7 +320,7 @@ public class BankServiceReplicationJedisCluster {
 				System.out.println("REDIS Storage: Auction created!!! Auction #" + auctionEntityID + " created by: " + username + "!!!");
 				
 				
-				return true;
+				return auctionEntityID;
 				
 			}
 			else {
@@ -335,18 +336,18 @@ public class BankServiceReplicationJedisCluster {
 			
 		}
 		
-		return false;
+		return Long.valueOf("-1");
 		
 	}
 	
-	public boolean closeAuction(String username, AuctionEntity auctionEntity) {
+	public boolean closeAuction(String username, Long id) {
 		
 		Map<String, String> userEntry = this.jedis.hgetAll("users#" + username);
 		
 		
 		if ( ( !userEntry.isEmpty() ) && ( this.jedis.sismember( "users-registered", username ) ) ) {
 			
-			Long auctionEntityID = auctionEntity.getID();
+			Long auctionEntityID = id;
 			
 			Map<String, String> auction = this.jedis.hgetAll("auctions#" + auctionEntityID);
 			

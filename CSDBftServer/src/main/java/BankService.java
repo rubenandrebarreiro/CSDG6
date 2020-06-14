@@ -70,7 +70,6 @@ public class BankService extends DefaultSingleRecoverable {
             String to;
 
             Long amount;
-            
             Long auctionID, bidID;
             
             Optional<BankEntity> bankEnt;
