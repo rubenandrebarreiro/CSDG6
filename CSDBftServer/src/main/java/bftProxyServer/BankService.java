@@ -1,12 +1,16 @@
 package bftProxyServer;
+import bftsmart.reconfiguration.util.RSAKeyUtils;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.RequestVerifier;
 import bftsmart.tom.server.defaultservices.DefaultReplier;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
+import bftsmart.tom.util.TOMUtil;
+
 import org.json.JSONObject;
 
 import java.io.*;
+import java.security.PrivateKey;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -24,6 +28,7 @@ public class BankService extends DefaultSingleRecoverable {
         this.bankRepo = new BankRepository();
         logger = Logger.getLogger(BankService.class.getName());
         ServiceReplica s = new ServiceReplica(replicaID, "config",this, this,(RequestVerifier)null, new DefaultReplier());
+        
         this.bankRepo.load(id);
     }
 
@@ -42,6 +47,7 @@ public class BankService extends DefaultSingleRecoverable {
         logger.info("Ordered");
 
         byte[] requestReply = null;
+        byte[] finalReply = null;
 
         boolean hasRequestReply = false;
 
@@ -81,8 +87,18 @@ public class BankService extends DefaultSingleRecoverable {
                         BankEntity bankEntity = BankServiceHelper.registerUser(username, password, amount, bankRepo);
                         if ( bankEntity != null ) {
                             logger.info("Created new user (on replica "+this.id+"): "+bankEntity.getOwnerName());
-                            requestReplyObjectOutput.writeObject( bankEntity.getOwnerName() );
-                            hasRequestReply = true;
+                            
+                            try {
+							
+                                requestReplyObjectOutput.writeObject( bankEntity.getOwnerName() );
+                                hasRequestReply = true;
+                            	
+                            }
+                            catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+                            
 
                         }
 
@@ -143,17 +159,42 @@ public class BankService extends DefaultSingleRecoverable {
 
     }
 
+            
             if (hasRequestReply) {
 
+            	
+            	
         requestReplyObjectOutput.flush();
         requestReplyByteArrayOutputStream.flush();
 
         requestReply = requestReplyByteArrayOutputStream.toByteArray();
 
+        
+		try {
+		
+			PrivateKey privateKey = RSAKeyUtils.getPrivateKeyFromString("config/keys/privatekey" + this.id);
+		
+			byte[] signature = TOMUtil.signMessage(privateKey, requestReply);
+		
+			finalReply = new byte[requestReply.length + 20];
+
+			System.arraycopy(requestReply, 0, finalReply, 0, requestReply.length);
+			System.arraycopy(signature, 0, finalReply, requestReply.length, 20);
+			
+		}
+		catch (Exception exception) {
+		
+			exception.printStackTrace();
+		
+		}
+    	
+    	
+        
     }
             else {
 
-        requestReply = new byte[0];
+            	//requestReply = new byte[0];
+            	finalReply = new byte[0];
 
     }
 
@@ -168,7 +209,7 @@ public class BankService extends DefaultSingleRecoverable {
 
         }
         bankRepo.save(this.id);
-        return requestReply;
+        return finalReply;
 
     }
 
@@ -177,6 +218,7 @@ public class BankService extends DefaultSingleRecoverable {
 
         logger.info("UnOrdered");
         byte[] requestReply = null;
+        byte[] finalReply = null;
 
         boolean hasRequestReply = false;
 
@@ -269,6 +311,24 @@ public class BankService extends DefaultSingleRecoverable {
                 requestReplyByteArrayOutputStream.flush();
 
                 requestReply = requestReplyByteArrayOutputStream.toByteArray();
+                
+                try {
+            		
+        			PrivateKey privateKey = RSAKeyUtils.getPrivateKeyFromString("config/keys/privatekey" + this.id);
+        		
+        			byte[] signature = TOMUtil.signMessage(privateKey, requestReply);
+        		
+        			finalReply = new byte[requestReply.length + 20];
+
+        			System.arraycopy(requestReply, 0, finalReply, 0, requestReply.length);
+        			System.arraycopy(signature, 0, finalReply, requestReply.length, 20);
+        			
+        		}
+        		catch (Exception exception) {
+        		
+        			exception.printStackTrace();
+        		
+        		}
 
             }
             else {
@@ -288,7 +348,7 @@ public class BankService extends DefaultSingleRecoverable {
 
         }
         bankRepo.save(this.id);
-        return requestReply;
+        return finalReply;
 
     }
 

@@ -1,6 +1,10 @@
 package fct.unl.pt.csd.Controller;
 
+import bftsmart.reconfiguration.util.RSAKeyUtils;
 import bftsmart.tom.ServiceProxy;
+import bftsmart.tom.core.messages.TOMMessage;
+import bftsmart.tom.util.Extractor;
+import bftsmart.tom.util.TOMUtil;
 import fct.unl.pt.csd.Entities.BankEntity;
 import fct.unl.pt.csd.Security.MyUserDetails;
 import org.json.JSONObject;
@@ -12,7 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.security.PublicKey;
+import java.security.Signature;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,8 +40,102 @@ public class ClientRequestHandler implements UserDetailsService {
     }
 
     protected void setUsername(String username) {
+    	
         this.username = username;
-        this.serviceProxy = new ServiceProxy(1014, "config");
+        
+        Comparator<byte[]> replyComparator = new Comparator<byte[]>() {
+
+			@Override
+			public int compare(byte[] o1, byte[] o2) {
+
+				byte[] o1Content = new byte[o1.length - 20];
+				byte[] o2Content = new byte[o2.length - 20];
+				
+				System.arraycopy(o1, 0, o1Content, 0, (o1.length - 20) );
+				System.arraycopy(o2, 0, o2Content, 0, (o2.length - 20) );
+				
+				return (Arrays.equals(o1Content, o2Content) == true) ? 1 : 0;
+				
+			}
+			
+		};
+		
+        Extractor replyExtractor = new Extractor() {
+			
+			@Override
+			public TOMMessage extractResponse(TOMMessage[] replies, int sameContent, int lastReceived) {
+				
+				int numValidReplies = 0;
+				
+				for(TOMMessage reply : replies) {
+				
+					byte[] replyBytes = reply.getContent();
+					
+					//byte[] replyBytes = TOMMessage.messageToBytes(reply);
+					
+					try {
+						
+						PublicKey publicKey = RSAKeyUtils.getPublicKeyFromString("config/keys/publickey" + serviceProxy.getProcessId());
+						
+						byte[] replyContentBytes = new byte[(replyBytes.length - 20)];
+						byte[] replySignatureBytes = new byte[20];
+
+						System.arraycopy(replyBytes, 0, replyContentBytes, 0, replyContentBytes.length);
+						System.arraycopy(replyBytes, (replyBytes.length - 20), replySignatureBytes, 0, 20);
+						
+						//Signature signature = Signature.getInstance("SHA256withRSA");
+						
+						//signature.initVerify(publicKey);
+						
+						boolean isReplyValid = TOMUtil.verifySignature(publicKey, replyContentBytes, replySignatureBytes);
+						
+						if(isReplyValid) {
+							
+							numValidReplies++;
+							
+						}
+						
+					}
+					catch (Exception exception) {
+						
+						exception.printStackTrace();
+					
+					}
+					
+				}
+				
+				int fPlus1Consensus = ( serviceProxy.getViewManager().getCurrentView().getF() + 1 );
+				
+				if(numValidReplies >= fPlus1Consensus) {
+				
+					TOMMessage lastReply = replies[lastReceived];
+	
+					byte[] lastReplyBytes = lastReply.getContent();
+					
+					byte[] lastReplyContent = new byte[lastReplyBytes.length - 32];
+					
+					System.arraycopy(lastReplyBytes, 0, lastReplyContent, 0, (lastReplyBytes.length - 32) );
+					
+					return new TOMMessage(lastReply.getSender(), lastReply.getSession(), replies[lastReceived].getSequence(), replies[lastReceived].getOperationId(),
+										  lastReplyContent, replies[lastReceived].getViewID(), replies[lastReceived].getReqType());
+				
+				}
+				else {
+					
+					System.err.println("Invalid Consensus Reply: The Consensus wasn't obtained by at least f+1 Replicas : " +  fPlus1Consensus);
+					
+					return null;
+					
+				}
+				
+			}
+			
+        };
+		
+        
+        this.serviceProxy = new ServiceProxy(1014, "config/system.config", "config/hosts.config", "config/keys/", replyComparator, replyExtractor);
+        
+        
     }
 
     protected String invokeCreateNew(String username, String password, Long amount) {
@@ -54,9 +156,17 @@ public class ClientRequestHandler implements UserDetailsService {
 
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
-
+            
             byte[] requestReply = this.serviceProxy.invokeOrdered(requestToSendByteArrayOutputStream.toByteArray());
+            
+            if (requestReply == null) {
 
+                System.err.println("It wasn't obtained the Consensus by, at least, f+1 Replicas!!!");
+
+                return "";
+                
+            }
+            
             if (requestReply.length == 0) {
 
                 return "";
@@ -105,6 +215,15 @@ public class ClientRequestHandler implements UserDetailsService {
 
             byte[] requestReply = this.serviceProxy.invokeOrdered(requestToSendByteArrayOutputStream.toByteArray());
 
+            
+            if (requestReply == null) {
+
+                System.err.println("It wasn't obtained the Consensus by, at least, f+1 Replicas!!!");
+
+                return null;
+                
+            }
+            
             if (requestReply.length == 0) {
 
                 return null;
@@ -203,6 +322,15 @@ public class ClientRequestHandler implements UserDetailsService {
 
             byte[] requestReply = this.serviceProxy.invokeUnordered(requestToSendByteArrayOutputStream.toByteArray());
 
+            
+            if (requestReply == null) {
+
+                System.err.println("It wasn't obtained the Consensus by, at least, f+1 Replicas!!!");
+
+                return null;
+                
+            }
+            
             if (requestReply.length == 0) {
 
                 return null;
@@ -251,6 +379,15 @@ public class ClientRequestHandler implements UserDetailsService {
 
             byte[] requestReply = this.serviceProxy.invokeUnordered(requestToSendByteArrayOutputStream.toByteArray());
 
+                        
+            if (requestReply == null) {
+
+                System.err.println("It wasn't obtained the Consensus by, at least, f+1 Replicas!!!");
+
+                return null;
+                
+            }
+            
             if (requestReply.length == 0) {
 
                 return null;
@@ -309,6 +446,15 @@ public class ClientRequestHandler implements UserDetailsService {
 
             byte[] requestReply = this.serviceProxy.invokeUnordered(requestToSendByteArrayOutputStream.toByteArray());
 
+                        
+            if (requestReply == null) {
+
+                System.err.println("It wasn't obtained the Consensus by, at least, f+1 Replicas!!!");
+
+                return null;
+                
+            }
+            
             if (requestReply.length == 0) {
 
                 return null;

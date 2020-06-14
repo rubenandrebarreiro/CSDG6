@@ -1,5 +1,4 @@
 package bftProxyServer;
-import javax.swing.text.html.Option;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
