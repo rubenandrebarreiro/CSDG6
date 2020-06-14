@@ -5,6 +5,10 @@ import java.util.Map.Entry;
 import fct.unl.pt.csd.Entities.AuctionEntity;
 import fct.unl.pt.csd.Entities.BankEntity;
 import fct.unl.pt.csd.Entities.BidEntity;
+import fct.unl.pt.csd.Security.SecurityConstants;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -339,6 +343,10 @@ public class BankServiceReplicationJedisCluster {
 		return Long.valueOf("-1");
 		
 	}
+
+	public boolean validateByteCode(byte[] b){
+		return true;
+	}
 	
 	public boolean closeAuction(String username, Long id) {
 		
@@ -660,5 +668,15 @@ public class BankServiceReplicationJedisCluster {
 		return null;
 		
 	}
-	
+
+	public String getSubject(String token) {
+		byte[] signingKey = SecurityConstants.JWT_SECRET.getBytes();
+		Jws parsedToken = Jwts.parser()
+				.setSigningKey(signingKey)
+				.parseClaimsJws(token.replace("Bearer ", ""));
+		Claims claims = (Claims) parsedToken.getBody();
+		System.out.println(claims.getSubject());
+		return claims
+				.getSubject();
+	}
 }

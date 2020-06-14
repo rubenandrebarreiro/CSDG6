@@ -1,17 +1,18 @@
 package fct.unl.pt.csd.Controller;
 
+import fct.unl.pt.csd.Contracts.CreateAuctionSmartContract;
 import fct.unl.pt.csd.Daos.BankAccountDao;
 import fct.unl.pt.csd.Daos.CreateMoneyDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
+import fct.unl.pt.csd.Contracts.ClassLoader;
 import fct.unl.pt.csd.Repositories.Redis.BankServiceReplicationJedisCluster;
-import fct.unl.pt.csd.Services.BankServiceHelper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import fct.unl.pt.csd.Contracts.ClassLoader;
+
+import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -92,10 +93,10 @@ public class RestAPIController {
                 return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
 
-        @RequestMapping(method = POST, value = "/createAuction",params ={"username"},consumes = "application/json")
+        @RequestMapping(method = POST, value = "/createAuction",params ={"username"},consumes = "MediaType.APPLICATION_OCTET_STREAM_VALUE")
         public ResponseEntity<String> createAuction(@RequestParam("username") String username){
                 Long id = this.jD.createAuction(username);
-                if(id != Long.valueOf("-1"))
+                if(!id.equals(Long.valueOf("-1")))
                         return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
                 this.cR.invokeCreateAuction(username, id);
                 return new ResponseEntity<>("Auction was created by user "+username+" with id: "+id, HttpStatus.OK);
