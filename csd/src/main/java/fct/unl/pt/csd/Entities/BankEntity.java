@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Entity
 public class BankEntity {
@@ -14,6 +16,7 @@ public class BankEntity {
     private Long id;
     private String userName, password;
     private Long amount;
+    private String roles;
 
     protected BankEntity(){};
 
@@ -21,6 +24,18 @@ public class BankEntity {
         this.userName = userName;
         this.password = password;
         this.amount = amount;
+        this.roles = "ROLE_USER";
+    }
+
+    public void setNewRole(String newRole){
+        roles+="@/&@"+newRole;
+    }
+
+    public ArrayList<String> getRoles(){
+        String[] splitter = roles.split("@/&@");
+        if(splitter.length <= 0)
+            return null;
+        return (ArrayList<String>) Arrays.asList(splitter);
     }
 
     public Long getID(){

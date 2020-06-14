@@ -4,8 +4,8 @@ import java.util.Optional;
 
 public class BankServiceHelper {
 
-    protected static BankEntity registerUser(String username, String password, Long amount, BankRepository bankRepo) {
 
+    protected static BankEntity registerUser(String username, String password, Long amount, BankRepository bankRepo) {
         return bankRepo.newUserBankEntity(new BankEntity(username, password, amount));
     }
 
