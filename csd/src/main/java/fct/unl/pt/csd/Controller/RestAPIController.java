@@ -1,6 +1,5 @@
 package fct.unl.pt.csd.Controller;
 
-import fct.unl.pt.csd.Contracts.ContractMethods;
 import fct.unl.pt.csd.Daos.BankAccountDao;
 import fct.unl.pt.csd.Daos.CreateMoneyDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
@@ -12,11 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import fct.unl.pt.csd.Contracts.ClassLoader;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -24,15 +18,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @RequestMapping(value = "/")
 public class RestAPIController {
 
-        //private final BankService bS;
         private final ClientRequestHandler cR;
-//        private final BankServiceHelper bH;
         private final BankServiceReplicationJedisCluster jD;
 
         @Autowired
         public RestAPIController(final ClientRequestHandler cR, final BankServiceHelper bH, final BankServiceReplicationJedisCluster jD) {
                 this.cR = cR;
-//                this.bH = bH;
                 this.jD = jD;
         }
 
@@ -41,7 +32,6 @@ public class RestAPIController {
 
                 if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount).equals(""))
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
-                //bH.registerUser(dao.userName, dao.password, dao.amount);
                 jD.addNewUser(dao.userName,dao.password,dao.amount);
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
         }
@@ -54,12 +44,10 @@ public class RestAPIController {
 
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
         public ResponseEntity<String> getAll() {
-//                JSONObject arrAndHash = bH.getJSONArrayAndHash();
                 JSONObject arrAndHash = jD.getJSONArrayAndHash();
                 JSONObject it = this.cR.invokeListAllBankAccounts(arrAndHash.getInt("hash"));
                 if (it.has("arr")) {
                         jD.replaceUsers(it.getJSONArray("arr"));
-//                        bH.replaceUsers(it.getJSONArray("arr"));
                         return new ResponseEntity<>(it.get("arr").toString(), HttpStatus.OK);
                 } else
                         return new ResponseEntity<>(arrAndHash.getJSONArray("arr").toString(), HttpStatus.OK);
@@ -104,39 +92,13 @@ public class RestAPIController {
                 return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
 
-        @RequestMapping(method = POST, value= "/smartcontract", params={"who","id"},consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+
+
+        /*@RequestMapping(method = POST, value= "/smartcontract", params={"who","id"},consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
         public ResponseEntity<String> runSmartContract(@RequestParam("who") String who,@RequestParam("id") String id, @RequestBody byte[] data) throws Exception {
-//                byte[] data = entity.getBody().readAllBytes();
-                saveToFile(data,id);
                 ClassLoader loader = new ClassLoader();
                 ContractMethods c = (ContractMethods) loader.createObjectFromFile(id);
-//                LoadClass l = new LoadClass();
-//                ContractMethods c = (ContractMethods) l.findClass("Contract", data).newInstance();
                 return new ResponseEntity<>(c.toString(),HttpStatus.OK);
-        }
+        }*/
 
-        public static boolean saveToFile(byte[] data,String filename){
-                try {
-                        File myObj = new File(filename);
-                        if (myObj.createNewFile()) {
-//                                System.out.println("File created: " + myObj.getName());
-                        } else {
-//                                System.out.println("File already exists.");
-                        }
-                        try {
-                                FileOutputStream fos = new FileOutputStream(filename);
-                                fos.write(data);
-                                fos.close();
-                        }catch(IOException e1) {
-                                System.out.println("An error occurred.");
-                                e1.printStackTrace();
-                        }
-
-                        return true;
-                } catch (IOException e) {
-                        System.out.println("An error occurred.");
-                        e.printStackTrace();
-                        return false;
-                }
-        }
 }
