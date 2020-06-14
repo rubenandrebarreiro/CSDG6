@@ -8,6 +8,10 @@ import java.security.SecureClassLoader;
 
 public class ClassLoader extends SecureClassLoader {
 
+    public ClassLoader(){
+
+    }
+
     public Object createObjectFromFile(String fileName,byte[] classBytes) throws
             InstantiationException, IOException, IllegalAccessException {
 
