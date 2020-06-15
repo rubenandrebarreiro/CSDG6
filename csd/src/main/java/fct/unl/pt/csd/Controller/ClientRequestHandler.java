@@ -30,7 +30,8 @@ public class ClientRequestHandler implements UserDetailsService {
 
     @Autowired
     public ClientRequestHandler() {
-        this.serviceProxy = new ServiceProxy(1014, "config/system.config", "config/hosts.config", "config/keys", replyComparator, replyExtractor);
+//        this.serviceProxy = new ServiceProxy(1014, "config/system.config", "config/hosts.config", "config/keys", replyComparator, replyExtractor);
+        this.serviceProxy = new ServiceProxy(1014, "config");
     }
 
 
@@ -769,6 +770,53 @@ public class ClientRequestHandler implements UserDetailsService {
 
         return null;
         
+    }
+
+    protected JSONObject invokeCreateSmartContract(String who,byte[] code){
+        try
+                (
+
+                        ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
+                        ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
+
+                ) {
+
+            requestToSendObjectOutput.writeObject("CREATE_SMART_CONTRACT");
+            requestToSendObjectOutput.writeObject(who);
+            requestToSendObjectOutput.writeInt(code.length);
+            requestToSendObjectOutput.write(code);
+            requestToSendObjectOutput.flush();
+            requestToSendByteArrayOutputStream.flush();
+
+            byte[] requestReply = this.serviceProxy.invokeOrdered(requestToSendByteArrayOutputStream.toByteArray());
+
+            if (requestReply.length == 0) {
+
+                return null;
+
+            }
+
+            try
+                    (
+                            ByteArrayInputStream receivedRequestReplyByteArrayInputStream =
+                                    new ByteArrayInputStream(requestReply);
+
+                            ObjectInput receivedRequestReplyObjectInput =
+                                    new ObjectInputStream(receivedRequestReplyByteArrayInputStream)
+                    ) {
+
+                return new JSONObject(receivedRequestReplyObjectInput.readObject().toString());
+
+            }
+
+        } catch (IOException | ClassNotFoundException createMoneyException) {
+
+            System.out.println("Exception in creation of Money by User/Client: " +
+                    createMoneyException.getMessage());
+
+        }
+
+        return null;
     }
     
     protected void terminateClientRequestHandlerSession() {

@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/register", "/test","/all").permitAll()
-                .antMatchers("/createAuction").hasRole("ROLE_AUCTION_MAKER")
+//                .antMatchers("/createAuction").hasRole("AUCTION_MAKER")
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))

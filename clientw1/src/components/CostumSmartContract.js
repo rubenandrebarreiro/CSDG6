@@ -20,7 +20,7 @@ class CostumSmartContract extends Component {
                 array = new Uint8Array(arrayBuffer),
                 binaryString = String.fromCharCode.apply(null, array);
 
-            fetch("smartcontract?who="+localStorage.getItem("username")+"&id="+"ServerContract.class",
+            fetch("createauction",
                 {
                     headers: {
                         "authorization":localStorage.getItem("auth")

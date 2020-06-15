@@ -1,10 +1,8 @@
 package fct.unl.pt.csd.Controller;
 
-import fct.unl.pt.csd.Contracts.CreateAuctionSmartContract;
 import fct.unl.pt.csd.Daos.BankAccountDao;
 import fct.unl.pt.csd.Daos.CreateMoneyDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
-import fct.unl.pt.csd.Contracts.ClassLoader;
 import fct.unl.pt.csd.Repositories.Redis.BankServiceReplicationJedisCluster;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -94,19 +90,30 @@ public class RestAPIController {
                 return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
 
-        @RequestMapping(method = POST, value = "/createAuction",params ={"username"},consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+        @RequestMapping(method = POST, value = "/createauction",consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
         public ResponseEntity<String> createAuction(@RequestHeader("Authorization") String bearer, @RequestBody byte[] data){
                 String username = this.jD.getSubject(bearer);
-                ClassLoader c = new ClassLoader();
-                try {
-                        CreateAuctionSmartContract auc = (CreateAuctionSmartContract) c.createObjectFromFile(username,data);
-                } catch (InstantiationException e) {
-                        e.printStackTrace();
-                } catch (IOException e) {
-                        e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                }
+                //TODO: send code to bft to run
+                JSONObject js = cR.invokeCreateSmartContract(username,data);
+                HttpStatus t = HttpStatus.OK;
+                if(js.has("error")){
+                        t = HttpStatus.LOOP_DETECTED;
+                }else
+                        return new ResponseEntity<>(js.toString(),t);
+
+
+//                ClassLoader c = new ClassLoader();
+//                try {
+//                        AuctionSmartContract auc = (AuctionSmartContract) c.createObjectFromFile(username,data);
+//                        SmartContractExecutor ex = new SmartContractExecutor(auc);
+//                        ex.start();
+//                } catch (InstantiationException e) {
+//                        e.printStackTrace();
+//                } catch (IOException e) {
+//                        e.printStackTrace();
+//                } catch (IllegalAccessException e) {
+//                        e.printStackTrace();
+//                }
                 /*Long id = this.jD.createAuction(username);
                 if(!id.equals(Long.valueOf("-1")))
                         return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);

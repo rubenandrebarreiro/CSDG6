@@ -1,9 +1,10 @@
-public class ClientContract extends src.ContractMethods {
-    public ClientContract() {
-        super();
-    }
+package src;
 
-    public String toString() {
-        return "This was made now";
+public class ClientContract extends AuctionSmartContract {
+
+    public void run() {
+        createAuction();
+        while(t)
+        System.out.println("This was runned by the client");
     }
 }

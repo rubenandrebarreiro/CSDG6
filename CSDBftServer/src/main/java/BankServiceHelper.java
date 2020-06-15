@@ -234,4 +234,10 @@ public class BankServiceHelper {
 
     }
 
+    public static JSONObject validateCode(byte[] code){
+
+        //TODO:Implement
+        return new JSONObject().put("SUCCESS",true);
+    }
+
 }

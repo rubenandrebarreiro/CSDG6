@@ -15,20 +15,20 @@ public class MyUserDetails implements UserDetails {
 
     private String userName;
     private String passWord;
-    private List<SimpleGrantedAuthority> roles;
+//    private List<SimpleGrantedAuthority> roles;
 
     public MyUserDetails(String userName,Optional<BankEntity> e1){
         this.userName = userName;
         //Optional<BankEntity> e = e1;
         this.passWord = e1.isPresent()?e1.get().getPassword():null;
-        for(String s: e1.get().getRoles())
-            roles.add(new SimpleGrantedAuthority(s));
+//        for(String s: e1.get().getRoles())
+//            roles.add(new SimpleGrantedAuthority(s));
 }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        //return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-        return roles;
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+//        return roles.toArray();
     }
 
     @Override

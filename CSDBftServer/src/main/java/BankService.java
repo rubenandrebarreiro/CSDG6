@@ -5,6 +5,7 @@ import bftsmart.tom.server.defaultservices.DefaultReplier;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import src.SmartContract;
 
 import java.io.*;
 import java.util.Iterator;
@@ -14,23 +15,26 @@ import java.util.logging.Logger;
 
 public class BankService extends DefaultSingleRecoverable {
 
-    private BankRepository bankRepo;
+    protected BankRepository bankRepo;
     private int id;
 
-    private final Logger logger;
+    protected final Logger logger;
+    private SmartContractRunner sR;
 
     public BankService(int replicaID) {
         this.id = replicaID;
         this.bankRepo = new BankRepository();
         logger = Logger.getLogger(BankService.class.getName());
-        ServiceReplica s = new ServiceReplica(replicaID, "config", this, this,(RequestVerifier)null, new DefaultReplier());
-        
-        
+        ServiceReplica s = new ServiceReplica(replicaID, "config", this, this, (RequestVerifier) null, new DefaultReplier());
+        this.sR = new SmartContractRunner(this);
+        Thread t = new Thread(sR);
+        t.start();
+
         this.bankRepo.load(id);
     }
 
-	public static void main(String[] args){
-        if(args.length < 1) {
+    public static void main(String[] args) {
+        if (args.length < 1) {
 
         } else {
             new BankService(Integer.parseInt(args[0]));
@@ -48,18 +52,17 @@ public class BankService extends DefaultSingleRecoverable {
         boolean hasRequestReply = false;
 
         try
-        (
+                (
 
-                ByteArrayInputStream receivedRequestByteArrayInputStream = new ByteArrayInputStream(commandBytes);
+                        ByteArrayInputStream receivedRequestByteArrayInputStream = new ByteArrayInputStream(commandBytes);
 
-                ObjectInput receivedRequestObjectInput = new ObjectInputStream(receivedRequestByteArrayInputStream);
+                        ObjectInput receivedRequestObjectInput = new ObjectInputStream(receivedRequestByteArrayInputStream);
 
-                ByteArrayOutputStream requestReplyByteArrayOutputStream = new ByteArrayOutputStream();
+                        ByteArrayOutputStream requestReplyByteArrayOutputStream = new ByteArrayOutputStream();
 
-                ObjectOutput requestReplyObjectOutput = new ObjectOutputStream(requestReplyByteArrayOutputStream)
+                        ObjectOutput requestReplyObjectOutput = new ObjectOutputStream(requestReplyByteArrayOutputStream)
 
-        )
-        {
+                ) {
             String bankServiceRequestType = receivedRequestObjectInput.readObject().toString();
             String username;
             String who;
@@ -71,26 +74,26 @@ public class BankService extends DefaultSingleRecoverable {
 
             Long amount;
             Long auctionID, bidID;
-            
+
             Optional<BankEntity> bankEnt;
             Optional<AuctionEntity> auctionEnt;
             Optional<AuctionEntity> openedAuctionEnt;
             Optional<AuctionEntity> closedAuctionEnt;
             Optional<BidEntity> bidEnt;
-
+            logger.info(bankServiceRequestType);
             switch (bankServiceRequestType) {
 
                 case "REGISTER_USER":
 
                     username = (String) receivedRequestObjectInput.readObject();
-                    if ( !this.bankRepo.findByUserName(username).isPresent() ) {
+                    if (!this.bankRepo.findByUserName(username).isPresent()) {
 
                         password = (String) receivedRequestObjectInput.readObject(); // TODO no plaintext here!!!!
                         amount = (Long) receivedRequestObjectInput.readObject();
                         BankEntity bankEntity = BankServiceHelper.registerUser(username, password, amount, bankRepo);
-                        if ( bankEntity != null ) {
-                            logger.info("Created new user (on replica "+this.id+"): "+bankEntity.getOwnerName());
-                            requestReplyObjectOutput.writeObject( bankEntity.getOwnerName() );
+                        if (bankEntity != null) {
+                            logger.info("Created new user (on replica " + this.id + "): " + bankEntity.getOwnerName());
+                            requestReplyObjectOutput.writeObject(bankEntity.getOwnerName());
                             hasRequestReply = true;
 
                         }
@@ -100,112 +103,158 @@ public class BankService extends DefaultSingleRecoverable {
                     break;
 
                 case "CREATE_MONEY":
+                    Iterator<BankEntity> it = bankRepo.usersIterator();
+                    //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
 
+                    int hash = 0;
+                    JSONArray arr = new JSONArray();
+
+                    while (it.hasNext()) {
+                        BankEntity i = it.next();
+                        hash = hash ^ i.getJSONSecure().toString().hashCode();
+                        arr.put(i.getJSONSecure());
+                    }
+                    logger.info(arr.toString());
                     who = (String) receivedRequestObjectInput.readObject();
                     logger.info(who);
-                    if ( this.bankRepo.findByUserName(who).isPresent() ) {
-                        Long original =  receivedRequestObjectInput.readLong();
-                        amount =  receivedRequestObjectInput.readLong();
+                    if (this.bankRepo.findByUserName(who).isPresent()) {
+                        Long original = receivedRequestObjectInput.readLong();
+                        amount = receivedRequestObjectInput.readLong();
                         logger.info(who);
                         logger.info(String.valueOf(amount));
                         JSONObject jsonObject;
-                        Long orig = bankRepo.compareAmount(who,original);
+                        Long orig = bankRepo.compareAmount(who, original);
                         System.out.println(who + " " + original);
-                        if(orig >= 0)
+                        if (orig >= 0)
                             jsonObject = BankServiceHelper.createMoney(who, amount, bankRepo);
                         else
-                            jsonObject = new JSONObject().put("error","Original amount did not pass verifications").put("amount",-orig);
+                            jsonObject = new JSONObject().put("error", "Original amount did not pass verifications").put("amount", -orig);
                         requestReplyObjectOutput.writeObject(jsonObject.toString());
 
                         hasRequestReply = true;
 
                     }
 
-                break;
+                    break;
 
-        case "TRANSFER_MONEY":
+                case "TRANSFER_MONEY":
 
-        from = (String) receivedRequestObjectInput.readObject();
-        long fromSaldo = receivedRequestObjectInput.readLong();
-        to = (String) receivedRequestObjectInput.readObject();
-        long  toSaldo = receivedRequestObjectInput.readLong();
+                    from = (String) receivedRequestObjectInput.readObject();
+                    long fromSaldo = receivedRequestObjectInput.readLong();
+                    to = (String) receivedRequestObjectInput.readObject();
+                    long toSaldo = receivedRequestObjectInput.readLong();
 
-        long fromAmount = receivedRequestObjectInput.readLong();
-        long toAmount = receivedRequestObjectInput.readLong();
-            System.out.println("From amount final" + fromAmount);
-            System.out.println("To amount final" + toAmount);
+                    long fromAmount = receivedRequestObjectInput.readLong();
+                    long toAmount = receivedRequestObjectInput.readLong();
+                    System.out.println("From amount final" + fromAmount);
+                    System.out.println("To amount final" + toAmount);
 
-            Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
-        Optional<BankEntity> beTo = bankRepo.findByUserName(to);
-        JSONObject jsonObject = new JSONObject();
+                    Optional<BankEntity> beFrom = bankRepo.findByUserName(from);
+                    Optional<BankEntity> beTo = bankRepo.findByUserName(to);
+                    JSONObject jsonObject = new JSONObject();
 
-        if ( ( beFrom.isPresent() ) && ( beTo.isPresent() ) ) {
-            Long sFrom = beFrom.get().getAmount();
-            Long sTo = beTo.get().getAmount();
+                    if ((beFrom.isPresent()) && (beTo.isPresent())) {
+                        Long sFrom = beFrom.get().getAmount();
+                        Long sTo = beTo.get().getAmount();
 
-                if(beFrom.get().getAmount() == fromSaldo && beTo.get().getAmount() == toSaldo) {
+                        if (beFrom.get().getAmount() == fromSaldo && beTo.get().getAmount() == toSaldo) {
 
-                    jsonObject = BankServiceHelper.transferMoney(from, fromAmount, to, toAmount, bankRepo);
-                }else{
-                    jsonObject.put("error",true).put("fromSaldo",sFrom).put("toSaldo",sTo);
-                }
-            System.out.println(jsonObject.toString());
-                requestReplyObjectOutput.writeObject(jsonObject.toString());
+                            jsonObject = BankServiceHelper.transferMoney(from, fromAmount, to, toAmount, bankRepo);
+                        } else {
+                            jsonObject.put("error", true).put("fromSaldo", sFrom).put("toSaldo", sTo);
+                        }
+                        System.out.println(jsonObject.toString());
+                        requestReplyObjectOutput.writeObject(jsonObject.toString());
 
-                hasRequestReply = true;
+                        hasRequestReply = true;
 
-        }
+                    }
 
-        break;
+                    break;
 
-        case "CREATE_AUCTION":
+                case "CREATE_AUCTION":
 
-            who = (String) receivedRequestObjectInput.readObject();
+                    who = (String) receivedRequestObjectInput.readObject();
 
-            bankEnt = bankRepo.findByUserName(who);
+                    bankEnt = bankRepo.findByUserName(who);
 
-            auctionID = (Long) receivedRequestObjectInput.readObject();
+                    auctionID = (Long) receivedRequestObjectInput.readObject();
 
-            auctionEnt = bankRepo.findByAuctionID(auctionID);
+                    auctionEnt = bankRepo.findByAuctionID(auctionID);
 
-            if ( bankEnt.isPresent() )  {
+                    if (bankEnt.isPresent()) {
 
-                if (!auctionEnt.isPresent()) {
+                        if (!auctionEnt.isPresent()) {
 
-                    jsonObject = BankServiceHelper.createAuction(auctionID, who, bankRepo);
+                            jsonObject = BankServiceHelper.createAuction(auctionID, who, bankRepo);
 
-                    requestReplyObjectOutput.writeObject(jsonObject.toString());
+                            requestReplyObjectOutput.writeObject(jsonObject.toString());
 
-                    hasRequestReply = true;
+                            hasRequestReply = true;
 
-                }
+                        }
+
+                    }
+
+                    break;
+
+                case "CREATE_SMART_CONTRACT":
+                    who = (String) receivedRequestObjectInput.readObject();
+
+                    bankEnt = bankRepo.findByUserName(who);
+
+                    int sizeOfCode = receivedRequestObjectInput.readInt();
+                    byte[] code = new byte[sizeOfCode];
+                    receivedRequestObjectInput.readFully(code);
+
+                    if (bankEnt.isPresent()) {
+
+                        //TODO: validate code
+                            jsonObject = BankServiceHelper.validateCode(code);
+                            if(!jsonObject.has("error")){
+                                ClassLoader c = new ClassLoader();
+                                SmartContract sC = null;
+                                try {
+                                    sC = (SmartContract) c.createObjectFromFile(who, code);
+                                } catch (InstantiationException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                }
+                                if(sC != null)
+                                    sR.runContract(sC,who);
+                            }
+
+                            requestReplyObjectOutput.writeObject(jsonObject.toString());
+
+                            hasRequestReply = true;
+
+                    }
+                    break;
+
+
+                default:
+
+                    return appExecuteUnordered(commandBytes, messageContext);
 
             }
 
-            break;
-
-        default:
-
-        	logger.log(Level.WARNING, "Unsupported Ordered Operation!!!");
-
-    }
-
             if (hasRequestReply) {
 
-        requestReplyObjectOutput.flush();
-        requestReplyByteArrayOutputStream.flush();
+                requestReplyObjectOutput.flush();
+                requestReplyByteArrayOutputStream.flush();
 
-        requestReply = requestReplyByteArrayOutputStream.toByteArray();
+                requestReply = requestReplyByteArrayOutputStream.toByteArray();
 
-    }
-            else {
+            } else {
 
-        requestReply = new byte[0];
+                requestReply = new byte[0];
 
-    }
+            }
 
-}
-        catch (IOException | ClassNotFoundException executeOrderedException) {
+        } catch (IOException | ClassNotFoundException executeOrderedException) {
 
             logger.log
                     (
@@ -228,40 +277,40 @@ public class BankService extends DefaultSingleRecoverable {
         boolean hasRequestReply = false;
 
         try
-        (
+                (
 
-                ByteArrayInputStream receivedRequestByteArrayInputStream = new ByteArrayInputStream(commandBytes);
+                        ByteArrayInputStream receivedRequestByteArrayInputStream = new ByteArrayInputStream(commandBytes);
 
-                ObjectInput receivedRequestObjectInput = new ObjectInputStream(receivedRequestByteArrayInputStream);
+                        ObjectInput receivedRequestObjectInput = new ObjectInputStream(receivedRequestByteArrayInputStream);
 
-                ByteArrayOutputStream requestReplyByteArrayOutputStream = new ByteArrayOutputStream();
+                        ByteArrayOutputStream requestReplyByteArrayOutputStream = new ByteArrayOutputStream();
 
-                ObjectOutput requestReplyObjectOutput = new ObjectOutputStream(requestReplyByteArrayOutputStream)
+                        ObjectOutput requestReplyObjectOutput = new ObjectOutputStream(requestReplyByteArrayOutputStream)
 
-        )
-        {
+                ) {
 
             String bankServiceRequestType =
-                     receivedRequestObjectInput.readObject().toString();
+                    receivedRequestObjectInput.readObject().toString();
 
             String username;
 
             String who;
             Long amount;
-            
+
             Long auctionID;
+            logger.info(bankServiceRequestType);
 
             switch (bankServiceRequestType) {
 
-                case "FIND_USER": 
+                case "FIND_USER":
                     username = (String) receivedRequestObjectInput.readObject();
 
-                    if ( this.bankRepo.findByUserName(username).isPresent() ) {
+                    if (this.bankRepo.findByUserName(username).isPresent()) {
 
                         BankEntity userBankEntity = BankServiceHelper.findUser(username, bankRepo);
 
                         requestReplyObjectOutput.writeObject(userBankEntity.getJSON().toString());
-                        logger.info("User tried to login: "+username);
+                        logger.info("User tried to login: " + username);
                         hasRequestReply = true;
 
                     }
@@ -276,9 +325,9 @@ public class BankService extends DefaultSingleRecoverable {
                     int hash = 0;
                     JSONArray arr = new JSONArray();
 
-                    while(it.hasNext()) {
+                    while (it.hasNext()) {
                         BankEntity i = it.next();
-                        hash = hash^i.getJSONSecure().toString().hashCode();
+                        hash = hash ^ i.getJSONSecure().toString().hashCode();
                         arr.put(i.getJSONSecure());
                     }
                     requestReplyObjectOutput.writeObject(hash);
@@ -297,7 +346,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                     who = (String) receivedRequestObjectInput.readObject();
 
-                    if ( this.bankRepo.findByUserName(who).isPresent() ) {
+                    if (this.bankRepo.findByUserName(who).isPresent()) {
 
                         amount = BankServiceHelper.currentAmount(who, bankRepo);
 
@@ -310,15 +359,15 @@ public class BankService extends DefaultSingleRecoverable {
                     break;
 
                 case "LIST_ALL_CURRENT_OPENED_AUCTIONS":
-                	
-                	Iterator<AuctionEntity> openedAuctionsIt = bankRepo.openedAuctionsIterator();
+
+                    Iterator<AuctionEntity> openedAuctionsIt = bankRepo.openedAuctionsIterator();
                     //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
 
                     int numTotalOpenedAuctionsBankEntities = bankRepo.getNumOpenedAuctions();
 
                     requestReplyObjectOutput.writeObject(numTotalOpenedAuctionsBankEntities);
 
-                    while(openedAuctionsIt.hasNext()) {
+                    while (openedAuctionsIt.hasNext()) {
                         AuctionEntity i = openedAuctionsIt.next();
                         requestReplyObjectOutput.writeObject(i.getJSON().toString());
                     }
@@ -328,19 +377,19 @@ public class BankService extends DefaultSingleRecoverable {
                     }*/
 
                     hasRequestReply = true;
-                	
-                	break;
+
+                    break;
 
                 case "LIST_ALL_CURRENT_CLOSED_AUCTIONS":
-                	
-                	Iterator<AuctionEntity> closedAuctionsIt = bankRepo.closedAuctionsIterator();
+
+                    Iterator<AuctionEntity> closedAuctionsIt = bankRepo.closedAuctionsIterator();
                     //Iterable<BankEntity> usersBankEntities = BankServiceHelper.getAllBankAcc(bankRepo);
 
                     int numTotalClosedAuctionsBankEntities = bankRepo.getNumOpenedAuctions();
 
                     requestReplyObjectOutput.writeObject(numTotalClosedAuctionsBankEntities);
 
-                    while(closedAuctionsIt.hasNext()) {
+                    while (closedAuctionsIt.hasNext()) {
                         AuctionEntity i = closedAuctionsIt.next();
                         requestReplyObjectOutput.writeObject(i.getJSON().toString());
                     }
@@ -350,14 +399,14 @@ public class BankService extends DefaultSingleRecoverable {
                     }*/
 
                     hasRequestReply = true;
-                	
-                	break;
+
+                    break;
 
                 case "LIST_ALL_BIDS_FROM_AUCTION":
 
                     auctionID = (Long) receivedRequestObjectInput.readObject();
 
-                    if ( this.bankRepo.findByAuctionID(auctionID).isPresent() ) {
+                    if (this.bankRepo.findByAuctionID(auctionID).isPresent()) {
 
                         Iterator<BidEntity> bidsFromAuctionIt = BankServiceHelper.getBidsFromAuction(auctionID, bankRepo).iterator();
 
@@ -365,11 +414,11 @@ public class BankService extends DefaultSingleRecoverable {
 
                         requestReplyObjectOutput.writeObject(numTotalBidsFromAuctionBankEntities);
 
-                        while(bidsFromAuctionIt.hasNext()) {
+                        while (bidsFromAuctionIt.hasNext()) {
                             BidEntity i = bidsFromAuctionIt.next();
                             requestReplyObjectOutput.writeObject(i.getJSON().toString());
                         }
-                        
+
                         hasRequestReply = true;
 
                     }
@@ -380,7 +429,7 @@ public class BankService extends DefaultSingleRecoverable {
 
                     who = (String) receivedRequestObjectInput.readObject();
 
-                    if ( this.bankRepo.findByUserName(who).isPresent() ) {
+                    if (this.bankRepo.findByUserName(who).isPresent()) {
 
                         Iterator<BidEntity> bidsFromUserIt = BankServiceHelper.getBidsFromUser(who, bankRepo).iterator();
 
@@ -388,11 +437,11 @@ public class BankService extends DefaultSingleRecoverable {
 
                         requestReplyObjectOutput.writeObject(numTotalBidsFromUserBankEntities);
 
-                        while(bidsFromUserIt.hasNext()) {
+                        while (bidsFromUserIt.hasNext()) {
                             BidEntity i = bidsFromUserIt.next();
                             requestReplyObjectOutput.writeObject(i.getJSON().toString());
                         }
-                        
+
                         hasRequestReply = true;
 
                     }
@@ -403,10 +452,10 @@ public class BankService extends DefaultSingleRecoverable {
 
                     auctionID = (Long) receivedRequestObjectInput.readObject();
 
-                    if ( ( this.bankRepo.findByAuctionID(auctionID).isPresent() ) && ( this.bankRepo.findByClosedAuctionID(auctionID).isPresent() ) ) {
+                    if ((this.bankRepo.findByAuctionID(auctionID).isPresent()) && (this.bankRepo.findByClosedAuctionID(auctionID).isPresent())) {
 
                         BidEntity winnerBidFromAuction = BankServiceHelper.getWinnerBidFromAuction(auctionID, bankRepo);
-                        
+
                         requestReplyObjectOutput.writeObject(winnerBidFromAuction);
 
                         hasRequestReply = true;
@@ -414,7 +463,7 @@ public class BankService extends DefaultSingleRecoverable {
                     }
 
                     break;
-                	                    
+
                 default:
 
                     logger.log(Level.WARNING, "Unsupported Unordered Operation!!!");
@@ -428,15 +477,13 @@ public class BankService extends DefaultSingleRecoverable {
 
                 requestReply = requestReplyByteArrayOutputStream.toByteArray();
 
-            }
-            else {
+            } else {
 
                 requestReply = new byte[0];
 
             }
 
-        }
-        catch (IOException | ClassNotFoundException executeOrderedException) {
+        } catch (IOException | ClassNotFoundException executeOrderedException) {
 
             logger.log
                     (
@@ -454,19 +501,17 @@ public class BankService extends DefaultSingleRecoverable {
     public byte[] getSnapshot() {
 
         try
-        (
-                ByteArrayOutputStream snapshotByteArrayOutputStream = new ByteArrayOutputStream();
+                (
+                        ByteArrayOutputStream snapshotByteArrayOutputStream = new ByteArrayOutputStream();
 
-                ObjectOutput snapshotObjectOutput = new ObjectOutputStream(snapshotByteArrayOutputStream)
-        )
-        {
+                        ObjectOutput snapshotObjectOutput = new ObjectOutputStream(snapshotByteArrayOutputStream)
+                ) {
 
             snapshotObjectOutput.writeObject(this.bankRepo.version);
 
             return snapshotByteArrayOutputStream.toByteArray();
 
-        }
-        catch (IOException snapshotException) {
+        } catch (IOException snapshotException) {
 
             logger.log(Level.SEVERE, "Error while taking Snapshot", snapshotException);
 
@@ -480,19 +525,17 @@ public class BankService extends DefaultSingleRecoverable {
     public void installSnapshot(byte[] snapshotStateBytes) {
 
         try
-        (
+                (
 
-                ByteArrayInputStream snapshotByteArrayInputStream = new ByteArrayInputStream(snapshotStateBytes);
+                        ByteArrayInputStream snapshotByteArrayInputStream = new ByteArrayInputStream(snapshotStateBytes);
 
-                ObjectInput snapshotObjectInput = new ObjectInputStream(snapshotByteArrayInputStream)
+                        ObjectInput snapshotObjectInput = new ObjectInputStream(snapshotByteArrayInputStream)
 
-        )
-        {
+                ) {
 
             this.bankRepo.version = (int) snapshotObjectInput.readObject();
 
-        }
-        catch (IOException | ClassNotFoundException snapshotException) {
+        } catch (IOException | ClassNotFoundException snapshotException) {
 
             logger.log(Level.SEVERE, "Error while installing Snapshot", snapshotException);
 

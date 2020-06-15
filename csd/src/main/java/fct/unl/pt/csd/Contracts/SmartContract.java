@@ -9,5 +9,7 @@ public interface SmartContract extends Runnable {
 	public void run();
 	
 	public void terminate();
+
+
 	
 }
