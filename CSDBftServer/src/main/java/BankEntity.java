@@ -21,12 +21,13 @@ public class BankEntity implements Serializable {
         this.auctions = new HashMap<>();
         this.bids = new HashMap<>();
         this.roles = "ROLE_USER";
-        /*if (roles != null)
+        if (roles != null)
             for (int i = 0; i < roles.length; i++) {
                 if (!roles[i].equalsIgnoreCase("ROLE_USER"))
                     this.roles += "@/&@" + roles[i];
             }
-            */
+        else
+            this.roles += "@/&@";
     }
 
     public String getStringRoles() {
