@@ -1,10 +1,7 @@
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class BankEntity implements Serializable {
     private Long id;
@@ -34,11 +31,11 @@ public class BankEntity implements Serializable {
         return this.roles;
     }
 
-    public ArrayList<String> getRoles() {
+    public List<String> getRoles() {
         String[] splitter = roles.split("@/&@");
         if (splitter.length <= 0)
             return null;
-        return (ArrayList<String>) Arrays.asList(splitter);
+        return Arrays.asList(splitter);
     }
 
     public Long getID() {

@@ -76,6 +76,7 @@ public class BankServiceHelper {
            if (!ae.isPresent()) {
         	   
                bankRepo.createAuction(new AuctionEntity(id, who));
+               be.get().addAuction(bankRepo.findByAuctionID(id).get());
 
                return new JSONObject().put("Success", "True").put("id", id);
 
@@ -89,7 +90,25 @@ public class BankServiceHelper {
             return new JSONObject().put("error", "User not found " + who);
     	
     }
-    
+
+    protected static JSONObject bid(BidEntity e, BankRepository bankRepo){
+        Optional<BankEntity> be = bankRepo.findByUserName(e.getUsername());
+        if (be.isPresent()) {
+            Optional<AuctionEntity> ae = bankRepo.findByAuctionID(e.getID());
+            if (ae.isPresent()) {
+                if(ae.get().validBidAmount(e.getAmount())) {
+                    bankRepo.createBid(e);
+                    be.get().makeBidForAuction(ae.get(), e);
+                    return new JSONObject().put("Success", "True").put("id", e.getID());
+                }else
+                    return new JSONObject().put("error", "Invalid Amount").put("id", e.getID());
+            }else
+                return new JSONObject().put("error", "Auction doesn't exist " + e.getID());
+        }else
+
+            return new JSONObject().put("error", "User not found " + e.getUsername());
+    }
+
     protected static JSONObject closeAution(Long id, String who, BankRepository bankRepo) {
 		
     	Optional<BankEntity> be = bankRepo.findByUserName(who);

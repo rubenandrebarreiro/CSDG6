@@ -37,8 +37,10 @@ public class RestAPIController {
         }
 
         @GetMapping(path="/test")
-        public ResponseEntity<String> test() {
-                return new ResponseEntity<>(cR.invokeFindUser("Catarina").getStringRoles(), HttpStatus.OK);
+        public ResponseEntity<String> test(@RequestHeader("Authorization") String bearer) {
+                String username = this.jD.getSubject(bearer);
+//                return new ResponseEntity<>("hey you",HttpStatus.OK);
+                return new ResponseEntity<>(cR.invokeFindUser(username).getStringRoles(), HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
