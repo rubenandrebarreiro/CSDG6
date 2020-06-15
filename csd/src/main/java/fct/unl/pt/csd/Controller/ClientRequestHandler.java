@@ -35,7 +35,7 @@ public class ClientRequestHandler implements UserDetailsService {
     }
 
 
-    protected String invokeCreateNew(String username, String password, Long amount) {
+    protected String invokeCreateNew(String username, String password, Long amount, String[] roles) {
 
         try
                 (
@@ -50,6 +50,7 @@ public class ClientRequestHandler implements UserDetailsService {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             requestToSendObjectOutput.writeObject(passwordEncoder.encode(password));
             requestToSendObjectOutput.writeObject(amount);
+            requestToSendObjectOutput.writeObject(roles);
             requestToSendObjectOutput.flush();
             requestToSendByteArrayOutputStream.flush();
 
@@ -365,7 +366,7 @@ public class ClientRequestHandler implements UserDetailsService {
                     ) {
 
                 JSONObject j = new JSONObject(receivedRequestReplyObjectInput.readObject().toString());
-                return new BankEntity(j.getString("username"),j.getString("password"),j.getLong("amount"));
+                return new BankEntity(j.getString("username"),j.getString("password"),j.getLong("amount"), j.getString("roles").split("@/&@"));
 
             }
 

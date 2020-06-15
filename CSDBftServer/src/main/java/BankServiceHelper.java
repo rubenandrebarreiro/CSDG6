@@ -5,8 +5,8 @@ import java.util.Optional;
 public class BankServiceHelper {
 
 
-    protected static BankEntity registerUser(String username, String password, Long amount, BankRepository bankRepo) {
-        return bankRepo.newUserBankEntity(new BankEntity(username, password, amount));
+    protected static BankEntity registerUser(String username, String password, Long amount, String[] roles, BankRepository bankRepo) {
+        return bankRepo.newUserBankEntity(new BankEntity(username, password, amount, roles));
     }
 
     protected static BankEntity findUser(String username, BankRepository bankRepo) {

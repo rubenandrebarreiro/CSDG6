@@ -90,10 +90,11 @@ public class BankService extends DefaultSingleRecoverable {
 
                         password = (String) receivedRequestObjectInput.readObject(); // TODO no plaintext here!!!!
                         amount = (Long) receivedRequestObjectInput.readObject();
-                        BankEntity bankEntity = BankServiceHelper.registerUser(username, password, amount, bankRepo);
-                        if (bankEntity != null) {
-                            logger.info("Created new user (on replica " + this.id + "): " + bankEntity.getOwnerName());
-                            requestReplyObjectOutput.writeObject(bankEntity.getOwnerName());
+                        String[] roles = (String[]) receivedRequestObjectInput.readObject();
+                        BankEntity bankEntity = BankServiceHelper.registerUser(username, password, amount, roles, bankRepo);
+                        if ( bankEntity != null ) {
+                            logger.info("Created new user (on replica "+this.id+"): "+bankEntity.getOwnerName());
+                            requestReplyObjectOutput.writeObject( bankEntity.getOwnerName() );
                             hasRequestReply = true;
 
                         }
