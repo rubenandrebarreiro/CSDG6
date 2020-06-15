@@ -21,7 +21,7 @@ public class BankServiceHelper {
         this.bankRepo = br ;
     }
 
-    public BankEntity registerUser(String username, String password, Long amount) {
+    /*public BankEntity registerUser(String username, String password, Long amount) {
 
         if(!bankRepo.findByUserName(username).isPresent()) {
 
@@ -36,7 +36,7 @@ public class BankServiceHelper {
 
         }
 
-    }
+    }*/
 
     public BankEntity findUser(String username) {
 

@@ -6,10 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MyUserDetails implements UserDetails {
 
@@ -19,6 +16,7 @@ public class MyUserDetails implements UserDetails {
 
     public MyUserDetails(String userName,Optional<BankEntity> e1){
         this.userName = userName;
+        this.roles = new ArrayList<>();
         //Optional<BankEntity> e = e1;
         this.passWord = e1.isPresent()?e1.get().getPassword():null;
         for(String s: e1.get().getRoles())
@@ -27,7 +25,6 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        //return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
         return roles;
     }
 

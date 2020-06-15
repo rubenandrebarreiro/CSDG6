@@ -20,22 +20,26 @@ public class BankEntity {
 
     protected BankEntity(){};
 
-    public BankEntity(String userName, String password, Long amount){
+    public BankEntity(String userName, String password, Long amount, String[] roles){
         this.userName = userName;
         this.password = password;
         this.amount = amount;
         this.roles = "ROLE_USER";
+        for(int i = 0; i < roles.length;i++)
+            if(!roles[i].equalsIgnoreCase("ROLE_USER"))
+                this.roles += "@/&@"+roles[i];
     }
 
-    public void setNewRole(String newRole){
-        roles+="@/&@"+newRole;
+
+    public String getStringRoles(){
+        return this.roles;
     }
 
     public ArrayList<String> getRoles(){
         String[] splitter = roles.split("@/&@");
         if(splitter.length <= 0)
             return null;
-        return (ArrayList<String>) Arrays.asList(splitter);
+        return new ArrayList<>(Arrays.asList(splitter));
     }
 
     public Long getID(){

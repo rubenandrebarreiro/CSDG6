@@ -32,8 +32,7 @@ public class RestAPIController {
 
         @RequestMapping(method=POST,value="/register",consumes = "application/json")
         public ResponseEntity<String> createNew(@RequestBody RegisterDao dao) {
-
-                if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount).equals(""))
+                if(cR.invokeCreateNew(dao.userName,dao.password, dao.amount, dao.roles).equals(""))
                         return new ResponseEntity<>("A client already exists with the name "+ dao.userName , HttpStatus.CONFLICT);
                 jD.addNewUser(dao.userName,dao.password,dao.amount);
                 return new ResponseEntity<>("Created a new account for "+ dao.userName , HttpStatus.OK);
@@ -41,8 +40,7 @@ public class RestAPIController {
 
         @GetMapping(path="/test")
         public ResponseEntity<String> test() {
-                jD.test();
-                return new ResponseEntity<>("Simple test", HttpStatus.OK);
+                return new ResponseEntity<>(cR.invokeFindUser("Catarina").getStringRoles(), HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/all",produces={"application/json"})
