@@ -610,10 +610,8 @@ public class ClientRequestHandler implements UserDetailsService {
 
         try
                 (
-
                         ByteArrayOutputStream requestToSendByteArrayOutputStream = new ByteArrayOutputStream();
                         ObjectOutput requestToSendObjectOutput = new ObjectOutputStream(requestToSendByteArrayOutputStream)
-
                 ) {
 
             requestToSendObjectOutput.writeObject("LIST_ALL_BIDS_FROM_AUCTION");
