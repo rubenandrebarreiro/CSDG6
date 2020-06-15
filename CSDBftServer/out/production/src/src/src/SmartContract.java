@@ -14,4 +14,5 @@ public interface SmartContract extends Runnable {
 
     public void createMoney(int amount);
     public List<String> getOperations();
+    public void clearOperations();
 }

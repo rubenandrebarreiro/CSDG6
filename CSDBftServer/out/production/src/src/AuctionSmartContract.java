@@ -4,7 +4,7 @@ import java.util.*;
 
 public class AuctionSmartContract implements SmartContract {
 
-    private static List<String> operations;
+    private static volatile List<String> operations;
     private static boolean t;
 
     public void init() throws Exception {
@@ -24,14 +24,18 @@ public class AuctionSmartContract implements SmartContract {
     public final void createMoney(int amount) {
         if(operations == null)
             operations = new ArrayList<>();
-        operations.add("CREATE_MONEY "+amount);
+        boolean flag = operations.add("CREATE_MONEY "+amount);
+        System.out.println("Created money opeartion");
+        System.out.println(flag);
     }
 
     @Override
     public List<String> getOperations() {
-        List<String> temp = operations;
+        return operations;
+    }
+
+    public void clearOperations(){
         operations = new ArrayList<>();
-        return temp;
     }
 
 }

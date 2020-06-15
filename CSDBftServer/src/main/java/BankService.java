@@ -15,8 +15,8 @@ import java.util.logging.Logger;
 
 public class BankService extends DefaultSingleRecoverable {
 
-    protected BankRepository bankRepo;
-    private int id;
+    protected volatile BankRepository bankRepo;
+    protected int id;
 
     protected final Logger logger;
     private SmartContractRunner sR;
@@ -225,7 +225,7 @@ public class BankService extends DefaultSingleRecoverable {
                                     e.printStackTrace();
                                 }
                                 if(sC != null)
-                                    sR.runContract(sC,who);
+                                    sR.runContract(sC,who,messageContext);
                             }
 
                             requestReplyObjectOutput.writeObject(jsonObject.toString());
@@ -237,8 +237,8 @@ public class BankService extends DefaultSingleRecoverable {
 
 
                 default:
-
-                    return appExecuteUnordered(commandBytes, messageContext);
+                    logger.log(Level.WARNING, "Unsupported Unordered Operation!!!");
+                    //return appExecuteUnordered(commandBytes, messageContext);
 
             }
 

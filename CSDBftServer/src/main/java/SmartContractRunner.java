@@ -13,10 +13,12 @@ import java.util.logging.Logger;
 class MappableContract {
     String who;
     SmartContract contract;
+    MessageContext messageContext;
 
-    MappableContract(String who, SmartContract s) {
+    MappableContract(String who, SmartContract s,MessageContext messageContext) {
         this.who = who;
         this.contract = s;
+        this.messageContext=messageContext;
     }
 }
 
@@ -33,10 +35,10 @@ public class SmartContractRunner implements Serializable, Runnable {
         logger = Logger.getLogger(SmartContractRunner.class.getName());
     }
 
-    public int runContract(SmartContract s, String who) {
+    public int runContract(SmartContract s, String who,MessageContext m) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<?> future = executor.submit(s);
-        contracts.put(i, new MappableContract(who, s));
+        contracts.put(i, new MappableContract(who, s,m));
 
         try {
             future.get(SmartContract.MAX_EXECUTION_TIME, TimeUnit.MILLISECONDS);
@@ -50,6 +52,8 @@ public class SmartContractRunner implements Serializable, Runnable {
         } catch (ExecutionException executionException) {
 
             System.out.println("Execution Exception!! Cancelling the runnable Smart Contract...");
+            System.out.println(executionException.getCause());
+            System.out.println(executionException.getMessage());
             future.cancel(true);
 
         } catch (TimeoutException timeoutException) {
@@ -99,13 +103,16 @@ public class SmartContractRunner implements Serializable, Runnable {
                 ops = (ArrayList<String>) contracts.get(i).contract.getOperations();
                 if (ops != null)
                     for (String s : ops) {
+                        System.out.println(s);
+                        contracts.get(i).contract.clearOperations();
                         ss = s.split(" ");
                         switch (ss[0]) {
                             case "CREATE_MONEY":
-                                System.out.println("Created Money");
-                                System.out.flush();
+                                bS.logger.info("Created Money");
+                                bS.logger.info(contracts.get(i).who + " had "+ bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount()+" now has "+(bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount()+Long.parseLong(ss[1])));
                                 BankServiceHelper.createMoney(contracts.get(i).who, bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount()+Long.parseLong(ss[1]), bS.bankRepo);
-//                                bS.appExecuteOrdered(createMoney(contracts.get(i).who,bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount(),Long.parseLong(ss[1])), null);
+                                bS.bankRepo.save(bS.id);
+                                //bS.appExecuteOrdered(createMoney(contracts.get(i).who,bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount(),Long.parseLong(ss[1])), contracts.get(i).messageContext);
                         }
                     }
 
