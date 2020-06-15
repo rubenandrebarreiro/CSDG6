@@ -16,7 +16,7 @@ public class MyUserDetails implements UserDetails {
 
     public MyUserDetails(String userName,Optional<BankEntity> e1){
         this.userName = userName;
-        this.roles = new ArrayList<>();
+       // this.roles = new ArrayList<>();
         //Optional<BankEntity> e = e1;
         this.passWord = e1.isPresent()?e1.get().getPassword():null;
         for(String s: e1.get().getRoles())
