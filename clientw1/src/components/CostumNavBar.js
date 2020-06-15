@@ -48,6 +48,7 @@ class CostumNavBar extends Component {
           <Nav.Link href="create"><b>Create Money</b></Nav.Link>
           <Nav.Link href="transfer"><b>Transfer Money</b></Nav.Link>
           <Nav.Link href="all"><b>List of All Users</b></Nav.Link>
+          <Nav.Link href="smartcontract"><b>Smart Contract</b></Nav.Link>
         </Nav>
         <Form inline>
           <Nav.Link><font style={{ color: 'DarkGoldenRod' }}><b><strong>Balance:</strong> {this.state.amount} NOVA Coins</b></font></Nav.Link>
