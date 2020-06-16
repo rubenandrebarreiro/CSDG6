@@ -1,7 +1,12 @@
+import java.util.*;
+import java.io.File;
+
 public class ClientContract extends AuctionSmartContract {
 
     public ClientContract(String who1) {
         super(who1);
+        File f = new File("");
+        ArrayList<String> j = new ArrayList<>();
     }
 
     public void run() {

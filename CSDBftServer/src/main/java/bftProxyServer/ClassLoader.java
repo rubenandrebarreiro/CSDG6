@@ -21,6 +21,8 @@ public class ClassLoader extends SecureClassLoader {
             classBytes = FileUtils.readFileToByteArray(file);
         }
         Class<?> clazz = defineClass(null, classBytes, 0, classBytes.length);
+        System.out.println(clazz.toGenericString());
+
         return clazz.getDeclaredConstructor(String.class).newInstance(fileName);
     }
 }

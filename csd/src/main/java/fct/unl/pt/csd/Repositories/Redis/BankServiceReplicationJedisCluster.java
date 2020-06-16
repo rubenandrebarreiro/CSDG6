@@ -257,6 +257,7 @@ public class BankServiceReplicationJedisCluster {
 		JSONObject jsonSecure;
 		Map<String, String> userEntry;
 		JSONArray arr = new JSONArray();
+		System.out.println(jedis.keys("users#*"));
 		for(String s : jedis.keys("users#*").toArray(new String[0])){
 				userEntry = this.jedis.hgetAll(s);
 				jsonSecure = new JSONObject().put("username",userEntry.get("username")).put("amount",Long.parseLong(userEntry.get("amount")));

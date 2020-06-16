@@ -32,8 +32,8 @@ public class BankService extends DefaultSingleRecoverable {
     private SmartContractRunner sR;
 
     public BankService(int replicaID) {
-        System.setProperty("java.security.policy", "file:C:\\Users\\35196\\Desktop\\Faculdade\\CSD\\CSDG6\\CSDBftServer\\src\\main\\java\\smartContracts\\grants\\our.policy");
-//        System.setProperty("java.security.policy", "file:C:\\Users\\35196\\Desktop\\Faculdade\\CSD\\CSDG6\\CSDBftServer\\src\\main\\java\\smartContracts\\grants\\main.policy");
+        //System.setProperty("java.security.policy", "file:C:\\Users\\35196\\Desktop\\Faculdade\\CSD\\CSDG6\\CSDBftServer\\src\\main\\java\\smartContracts\\grants\\our.policy");
+        System.setProperty("java.security.policy", "file:C:\\Users\\35196\\Desktop\\Faculdade\\CSD\\CSDG6\\CSDBftServer\\src\\main\\java\\smartContracts\\grants\\main.policy");
 
         // create a security manager
         SecurityManager sm = new SecurityManager();

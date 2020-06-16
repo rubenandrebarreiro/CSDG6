@@ -66,31 +66,39 @@
             <version>2.6</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.ow2.asm/asm -->
-		<dependency>
-  <groupId>org.ow2.asm</groupId>
-  <artifactId>asm</artifactId>
-  <version>8.0.1</version>
-</dependency>
-<dependency>
-  <groupId>org.ow2.asm</groupId>
-  <artifactId>asm-tree</artifactId>
-  <version>8.0.1</version>
-</dependency>
-<dependency>
-  <groupId>org.ow2.asm</groupId>
-  <artifactId>asm-util</artifactId>
-  <version>8.0.1</version>
-</dependency>
-<dependency>
-  <groupId>org.ow2.asm</groupId>
-  <artifactId>asm-commons</artifactId>
-  <version>8.0.1</version>
-</dependency>
-<dependency>
-  <groupId>org.ow2.asm</groupId>
-  <artifactId>asm-analysis</artifactId>
-  <version>8.0.1</version>
-</dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>8.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>8.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>8.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>8.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-analysis</artifactId>
+            <version>8.0.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.bitbucket.mstrobel/procyon-compilertools -->
+        <dependency>
+            <groupId>org.bitbucket.mstrobel</groupId>
+            <artifactId>procyon-compilertools</artifactId>
+            <version>0.5.36</version>
+        </dependency>
+
     </dependencies>
 
 </project>

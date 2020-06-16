@@ -118,7 +118,7 @@ public class ClientRequestHandler implements UserDetailsService {
                     }
 				}
 				
-				int fPlus1Consensus = ( serviceProxy.getViewManager().getCurrentView().getF() + 1 );
+				int fPlus1Consensus = ( serviceProxy.getViewManager().getCurrentView().getF()*2 + 1 );
 				
 				if(numValidReplies >= fPlus1Consensus) {
 				
