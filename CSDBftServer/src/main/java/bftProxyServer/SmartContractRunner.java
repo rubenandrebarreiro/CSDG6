@@ -5,13 +5,15 @@ import src.SmartContract;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 public class SmartContractRunner implements Serializable, Runnable {
-    private volatile Map<Integer, MappableContract> contracts;
-    volatile int i;
+//    private volatile Map<Integer, MappableContract> contracts;
+    private volatile Map<Integer, SmartContract> contracts;
+    private volatile int i;
     private BankService bS;
     Logger logger;
 
@@ -27,7 +29,8 @@ public class SmartContractRunner implements Serializable, Runnable {
             return -1;
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<?> future = executor.submit(s);
-        contracts.put(i, new MappableContract(s,future));
+//        contracts.put(i, new MappableContract(s,future));
+        contracts.put(i, s);
 /*
 
         try {
@@ -98,13 +101,13 @@ public class SmartContractRunner implements Serializable, Runnable {
                 e.printStackTrace();
             }
             for (Integer i : contracts.keySet()) {
-                ops = (ArrayList<String>) contracts.get(i).contract.getOperations();
+                ops = (ArrayList<String>) contracts.get(i).getOperations();
                 if (ops != null){
 
                     for (String s : ops) {
-                        contracts.get(i).contract.clearOperations();
+                        contracts.get(i).clearOperations();
                         ss = s.split(" ");
-                        String www = contracts.get(i).contract.getOwner();
+                        String www = contracts.get(i).getOwner();
                         switch (ss[0]) {
                             case "CREATE_MONEY":
                                 bS.logger.info("Created Money");
@@ -125,19 +128,21 @@ public class SmartContractRunner implements Serializable, Runnable {
                                     j=BankServiceHelper.createAuction(Long.parseLong(i + ""),www, bS.bankRepo);
                                 break;
                             case "BID":
-                                if(!www.equalsIgnoreCase(contracts.get(Integer.parseInt(ss[2])).contract.getOwner()))
-//                                   j= bftProxyServer.BankServiceHelper.bid(new bftProxyServer.BidEntity(Long.parseLong(ss[2]),www,Long.parseLong(ss[1])), bS.bankRepo);
-                                    j = BankServiceHelper.createBid(Long.parseLong(ss[2]),Long.parseLong(ss[2]),Long.parseLong(ss[1]),www,bS.bankRepo);
+                                if(bS.bankRepo.findByAuctionID(Long.parseLong(ss[2])).isPresent())
+                                    if(!www.equalsIgnoreCase(bS.bankRepo.findByAuctionID(Long.parseLong(ss[2])).get().getOwnerUsername()))
+    //                                   j= bftProxyServer.BankServiceHelper.bid(new bftProxyServer.BidEntity(Long.parseLong(ss[2]),www,Long.parseLong(ss[1])), bS.bankRepo);
+                                        j = BankServiceHelper.createBid(Long.parseLong(ss[2]),Long.parseLong(ss[2]),Long.parseLong(ss[1]),www,bS.bankRepo);
                                     break;
                             case "CLOSE_AUCTION":
-                                    if(www.equalsIgnoreCase(contracts.get(Integer.parseInt(ss[2])).contract.getOwner()) || bS.bankRepo.findByUserName(www).get().getRoles().contains("ROLE_AUCTION_MANAGER")){
+                                    if(www.equalsIgnoreCase(contracts.get(Integer.parseInt(ss[2])).getOwner()) || bS.bankRepo.findByUserName(www).get().getRoles().contains("ROLE_AUCTION_MANAGER")){
                                         j = BankServiceHelper.closeAution(Long.parseLong(ss[1]),www,bS.bankRepo);
-                                        contracts.get(Integer.parseInt(ss[2])).future.cancel(true);
+//                                        contracts.get(Integer.parseInt(ss[2])).future.cancel(true);
                                     }
                                 break;
                             case "TERMINATE":
-                                if(contracts.get(Integer.parseInt(ss[2])).contract.getOwner().equals(www))
-                                    contracts.get(Integer.parseInt(ss[2])).future.cancel(true);
+//                                if(contracts.get(Integer.parseInt(ss[2])).getOwner().equals(www))
+//                                    contracts.get(Integer.parseInt(ss[2])).future.cancel(true);
+                                break;
                         }
                         if(!j.has("error"))bS.bankRepo.save(bS.id);
                     }

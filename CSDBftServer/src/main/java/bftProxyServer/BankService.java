@@ -219,7 +219,6 @@ public class BankService extends DefaultSingleRecoverable {
 
                     if (bankEnt.isPresent()) {
 
-                        //TODO: validate code
                         jsonObject = new JSONObject();
                         ClassLoader c = new ClassLoader();
                         SmartContract sC = null;
@@ -238,7 +237,8 @@ public class BankService extends DefaultSingleRecoverable {
                         }
                         if (sC != null) {
                             jsonObject = BankServiceHelper.validateCode(sC.getClass());
-                            sR.runContract(sC, who);
+                            if(!jsonObject.has("error"))
+                                sR.runContract(sC, who);
                         }
 
                         requestReplyObjectOutput.writeObject(jsonObject.toString());

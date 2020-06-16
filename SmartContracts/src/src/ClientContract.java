@@ -5,9 +5,15 @@ public class ClientContract extends AuctionSmartContract {
     }
 
     public void run() {
+<<<<<<< HEAD
          // createMoney(5);
     //      createAuction();
         bid(Long.parseLong("100"),Long.parseLong("0"));
+=======
+        createMoney(100);
+//        createAuction();
+//        bid(Long.parseLong("100"),Long.parseLong("0"));
+>>>>>>> fixGit
 //        System.out.println("YO?");
 //            System.out.println("yoyoyo");
 //        try {

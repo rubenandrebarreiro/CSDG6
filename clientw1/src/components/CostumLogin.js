@@ -16,7 +16,10 @@ class CostumLogin extends Component {
     			},
 				method: "POST",
 				body:JSON.stringify({username:u.value,password:pw1.value})})
-		.then((response)=>{localStorage.setItem("username", u.value);localStorage.setItem("auth",response.headers.get("authorization"));location.replace("http://localhost:3000/")})
+		.then((response)=>{
+			if(response.status >=400)
+				return;
+			localStorage.setItem("username", u.value);localStorage.setItem("auth",response.headers.get("authorization"));location.replace("http://localhost:3000/")})
 		.catch((error)=>{pw1.value="";alert(error.text())})
 	}
 	

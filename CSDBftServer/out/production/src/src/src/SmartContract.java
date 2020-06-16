@@ -2,7 +2,7 @@ package src;
 
 import java.util.List;
 
-public interface SmartContract extends Runnable {
+public interface SmartContract extends Runnable, Cloneable{
 
     public static final long MAX_EXECUTION_TIME = 600_000L;
 
