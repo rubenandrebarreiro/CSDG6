@@ -115,7 +115,7 @@ public class BankServiceHelper {
                         auction.close();
 
                         bankRepo.closeAuction(auction);
-                        createMoney(auction.getOwnerUsername(),auction.getLastBidAmount(),bankRepo);
+                        createMoney(auction.getOwnerUsername(), auction.getLastBidAmount(), bankRepo);
 
                         return new JSONObject().put("Success", "True").put("id", id);
 
@@ -134,6 +134,24 @@ public class BankServiceHelper {
 
             return new JSONObject().put("error", "User not found " + who);
 
+    }
+
+    protected static JSONObject bid(BidEntity e, BankRepository bankRepo) {
+        Optional<BankEntity> be = bankRepo.findByUserName(e.getUsername());
+        if (be.isPresent()) {
+            Optional<AuctionEntity> ae = bankRepo.findByAuctionID(e.getID());
+            if (ae.isPresent()) {
+                if (ae.get().validBidAmount(e.getAmount())) {
+                    bankRepo.createBid(e);
+                    be.get().makeBidForAuction(ae.get(), e);
+                    return new JSONObject().put("Success", "True").put("id", e.getID());
+                } else
+                    return new JSONObject().put("error", "Invalid Amount").put("id", e.getID());
+            } else
+                return new JSONObject().put("error", "Auction doesn't exist " + e.getID());
+        } else
+
+            return new JSONObject().put("error", "User not found " + e.getUsername());
     }
 
     protected static JSONObject createBid(Long bidId, Long auctionId, Long amount, String who, BankRepository bankRepo) {
@@ -161,14 +179,17 @@ public class BankServiceHelper {
 
                                 BankEntity bankEntity = be.get();
 
-                                if (bankEntity.getAmount() >= amount) {
+                                if (bankEntity.getAmount() >= amount && amount<=be.get().getAmount()) {
+
+
 //                                  Defreezing the money of the last top bid
                                     BidEntity lastBid = auction.getLastBid();
-                                    createMoney(lastBid.getUsername(), lastBid.getAmount(), bankRepo);
-
+                                    if (lastBid != null)
+                                        createMoney(lastBid.getUsername(), lastBid.getAmount(), bankRepo);
 
                                     BidEntity bid = new BidEntity(bidId, who, amount);
                                     bankEntity.makeBidForAuction(auction, bid);
+                                    bankRepo.createBid(bid);
 
                                     return new JSONObject().put("Success", "True").put("id", bidId);
 
@@ -235,7 +256,7 @@ public class BankServiceHelper {
             v.verifyFields();
             v.verifyInterfaces();
         } catch (Exception e) {
-            new JSONObject().put("error",e.getMessage());
+            new JSONObject().put("error", e.getMessage());
         }
         return new JSONObject().put("SUCCESS", true);
     }

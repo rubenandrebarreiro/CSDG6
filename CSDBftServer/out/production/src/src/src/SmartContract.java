@@ -16,5 +16,4 @@ public interface SmartContract extends Runnable, Cloneable{
     public List<String> getOperations();
     public void clearOperations();
     String getOwner();
-    public Object clone();
 }

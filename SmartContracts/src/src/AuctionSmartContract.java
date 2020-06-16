@@ -66,13 +66,4 @@ public class AuctionSmartContract implements SmartContract {
         return who;
     }
 
-    @Override
-    public Object clone() {
-        try {
-            return (AuctionSmartContract) super.clone();
-        } catch (CloneNotSupportedException e) {
-            return new AuctionSmartContract(this.who);
-        }
-    }
-
 }
