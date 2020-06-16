@@ -3,7 +3,9 @@ package fct.unl.pt.csd.Controller;
 import fct.unl.pt.csd.Daos.BankAccountDao;
 import fct.unl.pt.csd.Daos.CreateMoneyDao;
 import fct.unl.pt.csd.Daos.RegisterDao;
+import fct.unl.pt.csd.Entities.BidEntity;
 import fct.unl.pt.csd.Repositories.Redis.BankServiceReplicationJedisCluster;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -100,35 +102,76 @@ public class RestAPIController {
                         t = HttpStatus.LOOP_DETECTED;
                 }else
                         return new ResponseEntity<>(js.toString(),t);
-
-
-//                ClassLoader c = new ClassLoader();
-//                try {
-//                        AuctionSmartContract auc = (AuctionSmartContract) c.createObjectFromFile(username,data);
-//                        SmartContractExecutor ex = new SmartContractExecutor(auc);
-//                        ex.start();
-//                } catch (InstantiationException e) {
-//                        e.printStackTrace();
-//                } catch (IOException e) {
-//                        e.printStackTrace();
-//                } catch (IllegalAccessException e) {
-//                        e.printStackTrace();
-//                }
-                /*Long id = this.jD.createAuction(username);
-                if(!id.equals(Long.valueOf("-1")))
-                        return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
-                this.cR.invokeCreateAuction(username, id);
-                return new ResponseEntity<>("Auction was created by user "+username+" with id: "+id, HttpStatus.OK);*/
                 return null;
         }
 
-        @RequestMapping(method = POST, value = "/closeAuction",params ={"username", "id"},consumes = "application/json")
-        public ResponseEntity<String> createMoney(@RequestParam("username") String username, @RequestParam("id") Long id){
-                if(this.jD.closeAuction(username,id)){
-                        this.cR.invokeCloseAuction(username, id);
-                        return new ResponseEntity<>("Auction with id "+id+" was closed", HttpStatus.OK);
-                }
+        @RequestMapping(method = DELETE, value = "/closeAuction",params ={"id"},consumes = "application/json")
+        public ResponseEntity<String> closeAuction(@RequestHeader("Authorization") String bearer, @RequestParam("id") Long id){
+                String username = this.jD.getSubject(bearer);
+                JSONObject j = this.cR.invokeCloseAuction(username, id);
+                if(j.has("UserError"))
+                        return new ResponseEntity<>("User does not have permission to close this auction", HttpStatus.FORBIDDEN);
+                else if(j.has("Id error"))
+                        return new ResponseEntity<>("No auction was found with the given ID", HttpStatus.NOT_FOUND);
                 return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
+        }
+
+        @RequestMapping(method = GET, value = "/openauctions", produces={"application/json"})
+        public ResponseEntity<String> getOpenAuctions(){
+                Iterable j = this.cR.invokeListAllCurrentOpenedAuctions();
+                JSONArray js = new JSONArray(j);
+                if(js.isEmpty())
+                        return new ResponseEntity<>("No auctions active: ", HttpStatus.OK);
+                return new ResponseEntity<>(js.toString(), HttpStatus.OK);
+        }
+
+        @RequestMapping(method = GET, value = "/closedauctions", produces={"application/json"})
+        public ResponseEntity<String> getClosedAuctions(){
+                Iterable j = this.cR.invokeListAllCurrentClosedAuctions();
+                JSONArray js = new JSONArray(j);
+                if(js.isEmpty())
+                        return new ResponseEntity<>("No auctions active: ", HttpStatus.OK);
+                return new ResponseEntity<>(js.toString(), HttpStatus.OK);
+        }
+
+        @RequestMapping(method = GET, value = "/getbid", produces={"application/json"})
+        public ResponseEntity<String> getBidFromUser(@RequestHeader("Authorization") String bearer){
+                String username = this.jD.getSubject(bearer);
+                Iterable j = this.cR.invokeListAllBidsFromUser(username);
+                JSONArray js = new JSONArray(j);
+                if(js.isEmpty())
+                        return new ResponseEntity<>("No bids from user +"+username, HttpStatus.OK);
+                return new ResponseEntity<>(js.toString(), HttpStatus.OK);
+        }
+
+        @RequestMapping(method = GET, value = "/getbidfromauction", produces={"application/json"})
+        public ResponseEntity<String> getBidsFromAuction(@RequestParam("id") Long id){
+                Iterable j = this.cR.invokeListAllBidsFromAuction(id);
+                JSONArray js = new JSONArray(j);
+                if(js.isEmpty())
+                        return new ResponseEntity<>("No bids in this auction with id: "+id, HttpStatus.OK);
+                return new ResponseEntity<>(js.toString(), HttpStatus.OK);
+        }
+
+        @RequestMapping(method = POST, value = "/createbid",consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+        public ResponseEntity<String> createBid(@RequestHeader("Authorization") String bearer, @RequestBody byte[] data){
+                String username = this.jD.getSubject(bearer);
+                //TODO: send code to bft to run
+                JSONObject js = cR.invokeCreateSmartContract(username,data);
+                HttpStatus t = HttpStatus.OK;
+                if(js.has("error")){
+                        t = HttpStatus.LOOP_DETECTED;
+                }else
+                        return new ResponseEntity<>(js.toString(),t);
+                return null;
+        }
+
+        @RequestMapping(method = GET, value = "/checkbidclosed", produces={"application/json"})
+        public ResponseEntity<String> checkBidClosedAuction(@RequestParam("id") Long id){
+                BidEntity bid = this.cR.invokeCheckWinnerBidClosedAuction(id);
+                if(bid == null)
+                        return new ResponseEntity<>("No bid", HttpStatus.OK);
+                return new ResponseEntity<>(bid.getJSON().toString(), HttpStatus.OK);
         }
 
 
