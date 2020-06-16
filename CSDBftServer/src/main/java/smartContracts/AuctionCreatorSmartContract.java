@@ -40,9 +40,9 @@ public class AuctionCreatorSmartContract implements SmartContract, Serializable 
 		this.permissionCollection = new Permissions();
 		
 		
-		Permission permission = new FilePermission(arg0, arg1);
+		//Permission permission = new FilePermission(arg0, arg1);
 		
-		this.permissionCollection.implies(permission);
+//		this.permissionCollection.implies(permission);
 		
 	}
 	

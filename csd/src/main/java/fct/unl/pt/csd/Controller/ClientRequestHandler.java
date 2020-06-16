@@ -1,5 +1,7 @@
 package fct.unl.pt.csd.Controller;
 
+import bftsmart.reconfiguration.util.Configuration;
+import bftsmart.reconfiguration.util.DefaultRSAKeyLoader;
 import bftsmart.reconfiguration.util.RSAKeyUtils;
 import bftsmart.tom.ServiceProxy;
 import bftsmart.tom.core.messages.TOMMessage;
@@ -18,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.util.ArrayList;
@@ -29,8 +33,6 @@ import java.util.Optional;
 @Service
 public class ClientRequestHandler implements UserDetailsService {
 
-    private String username;
-
     private ServiceProxy serviceProxy;
 
     @Autowired
@@ -38,26 +40,34 @@ public class ClientRequestHandler implements UserDetailsService {
 
         //this.username = username;
         // TODO ID Client??
-
-    }
-
-    protected void setUsername(String username) {
-    	
-        this.username = username;
-        
+//        this.serviceProxy = new ServiceProxy(1014, "config");
         Comparator<byte[]> replyComparator = new Comparator<byte[]>() {
 
 			@Override
 			public int compare(byte[] o1, byte[] o2) {
+			    if(o1!=null && o2!=null) {
+                    byte[] o1Content = new byte[o1.length - 128];
+                    byte[] o2Content = new byte[o2.length - 128];
 
-				byte[] o1Content = new byte[o1.length - 20];
-				byte[] o2Content = new byte[o2.length - 20];
-				
-				System.arraycopy(o1, 0, o1Content, 0, (o1.length - 20) );
-				System.arraycopy(o2, 0, o2Content, 0, (o2.length - 20) );
-				
-				return (Arrays.equals(o1Content, o2Content) == true) ? 1 : 0;
-				
+                    System.arraycopy(o1, 0, o1Content, 0, (o1.length - 128));
+                    System.arraycopy(o2, 0, o2Content, 0, (o2.length - 128));
+
+                    try {
+                    ByteArrayInputStream receivedRequestByteArrayInputStream = new ByteArrayInputStream(o1Content);
+                    ObjectInput receivedRequestObjectInput = new ObjectInputStream(receivedRequestByteArrayInputStream);
+                    ByteArrayInputStream receivedRequestByteArrayInputStream2 = new ByteArrayInputStream(o2Content);
+                    ObjectInput receivedRequestObjectInput2 = new ObjectInputStream(receivedRequestByteArrayInputStream2);
+                        Object s1 = receivedRequestObjectInput.readObject();
+                        Object s2 =  receivedRequestObjectInput2.readObject();
+                    return (s1).equals(s2)?0:1;
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    return (Arrays.equals(o1Content, o2Content) == true) ? 0 : 1;
+                }else{
+                    return (Arrays.equals(o1, o2) == true) ? 0 : 1;
+                }
+
 			}
 			
 		};
@@ -66,44 +76,46 @@ public class ClientRequestHandler implements UserDetailsService {
 			
 			@Override
 			public TOMMessage extractResponse(TOMMessage[] replies, int sameContent, int lastReceived) {
-				
+
 				int numValidReplies = 0;
 				
 				for(TOMMessage reply : replies) {
-				
+				    if(reply!=null){
 					byte[] replyBytes = reply.getContent();
 					
 					//byte[] replyBytes = TOMMessage.messageToBytes(reply);
 					
 					try {
-						
-						PublicKey publicKey = RSAKeyUtils.getPublicKeyFromString("config/keys/publickey" + serviceProxy.getProcessId());
-						
-						byte[] replyContentBytes = new byte[(replyBytes.length - 20)];
-						byte[] replySignatureBytes = new byte[20];
+                        byte[] encoded = Files.readAllBytes(Paths.get("config/keys/publickey" + reply.getSender()));
+                        String key = new String(encoded);
+                        PublicKey publicKey = RSAKeyUtils.getPublicKeyFromString(key);
+                        byte[] replyContentBytes = new byte[(replyBytes.length - 128)];
+                        byte[] replySignatureBytes = new byte[128];
 
-						System.arraycopy(replyBytes, 0, replyContentBytes, 0, replyContentBytes.length);
-						System.arraycopy(replyBytes, (replyBytes.length - 20), replySignatureBytes, 0, 20);
-						
-						//Signature signature = Signature.getInstance("SHA256withRSA");
-						
-						//signature.initVerify(publicKey);
-						
-						boolean isReplyValid = TOMUtil.verifySignature(publicKey, replyContentBytes, replySignatureBytes);
-						
-						if(isReplyValid) {
-							
-							numValidReplies++;
-							
-						}
-						
+                        System.arraycopy(replyBytes, 0, replyContentBytes, 0, replyContentBytes.length);
+                        System.arraycopy(replyBytes, (replyBytes.length - 128), replySignatureBytes, 0, 128);
+
+                        //Signature signature = Signature.getInstance("SHA256withRSA");
+
+                        //signature.initVerify(publicKey);
+//                        boolean isReplyValid = TOMUtil.verifySignature(publicKey, replyContentBytes, replySignatureBytes);
+
+                        Signature sha_rsa = Signature.getInstance("SHA512withRSA");
+                        sha_rsa.initVerify(publicKey);
+                        sha_rsa.update(replyContentBytes);
+                        boolean isReplyValid = sha_rsa.verify(replySignatureBytes);
+                        if (isReplyValid) {
+
+                            numValidReplies++;
+
+                        }
 					}
 					catch (Exception exception) {
 						
 						exception.printStackTrace();
 					
 					}
-					
+                    }
 				}
 				
 				int fPlus1Consensus = ( serviceProxy.getViewManager().getCurrentView().getF() + 1 );
@@ -114,9 +126,9 @@ public class ClientRequestHandler implements UserDetailsService {
 	
 					byte[] lastReplyBytes = lastReply.getContent();
 					
-					byte[] lastReplyContent = new byte[lastReplyBytes.length - 32];
+					byte[] lastReplyContent = new byte[lastReplyBytes.length - 128];
 					
-					System.arraycopy(lastReplyBytes, 0, lastReplyContent, 0, (lastReplyBytes.length - 32) );
+					System.arraycopy(lastReplyBytes, 0, lastReplyContent, 0, (lastReplyBytes.length - 128) );
 					
 					return new TOMMessage(lastReply.getSender(), lastReply.getSession(), replies[lastReceived].getSequence(), replies[lastReceived].getOperationId(),
 										  lastReplyContent, replies[lastReceived].getViewID(), replies[lastReceived].getReqType());
@@ -133,9 +145,10 @@ public class ClientRequestHandler implements UserDetailsService {
 			}
 			
         };
-		
-        
-        this.serviceProxy = new ServiceProxy(1014, "config/system.config", "config/hosts.config", "config/keys/", replyComparator, replyExtractor);
+
+        this.serviceProxy = new ServiceProxy(1014,"config/system.config","config/hosts.config","config",replyComparator,replyExtractor);
+
+//        this.serviceProxy = new ServiceProxy(1014, "config/system.config", "config/hosts.config", "config/keys/", replyComparator, replyExtractor);
         
         
     }

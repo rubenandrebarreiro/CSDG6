@@ -1,13 +1,18 @@
+import bftsmart.reconfiguration.util.RSAKeyUtils;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.RequestVerifier;
 import bftsmart.tom.server.defaultservices.DefaultReplier;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
+import bftsmart.tom.util.TOMUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import src.SmartContract;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.*;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -48,6 +53,7 @@ public class BankService extends DefaultSingleRecoverable {
         logger.info("Ordered");
 
         byte[] requestReply = null;
+        byte[] finalReply = null;
 
         boolean hasRequestReply = false;
 
@@ -237,8 +243,8 @@ public class BankService extends DefaultSingleRecoverable {
 
 
                 default:
-                    logger.log(Level.WARNING, "Unsupported Unordered Operation!!!");
-                    //return appExecuteUnordered(commandBytes, messageContext);
+                    //logger.log(Level.WARNING, "Unsupported ordered Operation!!!");
+                    return appExecuteUnordered(commandBytes, messageContext);
 
             }
 
@@ -249,23 +255,47 @@ public class BankService extends DefaultSingleRecoverable {
 
                 requestReply = requestReplyByteArrayOutputStream.toByteArray();
 
-            } else {
+                try {
+                    byte[] encoded = Files.readAllBytes(Paths.get("config/keys/privatekey" + this.id));
+                    String key = new String(encoded);
+                    PrivateKey privateKey = RSAKeyUtils.getPrivateKeyFromString(key);
+//                    byte[] signature = TOMUtil.signMessage(privateKey, requestReply);
+                    Signature sha_rsa = Signature.getInstance("SHA512withRSA");
+                    sha_rsa.initSign(privateKey);
+                    sha_rsa.update(requestReply);
+                    byte[] signature = sha_rsa.sign();
+
+                    finalReply = new byte[requestReply.length + 128];
+
+                    System.arraycopy(requestReply, 0, finalReply, 0, requestReply.length);
+                    System.arraycopy(signature, 0, finalReply, requestReply.length, 128);
+
+                }
+                catch (Exception exception) {
+
+                    exception.printStackTrace();
+
+                }
+
+            }
+            else {
 
                 requestReply = new byte[0];
 
             }
 
-        } catch (IOException | ClassNotFoundException executeOrderedException) {
+        }
+        catch (IOException | ClassNotFoundException executeOrderedException) {
 
             logger.log
                     (
-                            Level.SEVERE, "Occurred an exception during an Execution of an Ordered Operation",
+                            Level.SEVERE, "Occurred an exception during an Execution of an Unordered Operation",
                             executeOrderedException
                     );
 
         }
         bankRepo.save(this.id);
-        return requestReply;
+        return finalReply;
 
     }
 
@@ -274,6 +304,7 @@ public class BankService extends DefaultSingleRecoverable {
 
         logger.info("UnOrdered");
         byte[] requestReply = null;
+        byte[] finalReply = null;
 
         boolean hasRequestReply = false;
 
@@ -467,7 +498,9 @@ public class BankService extends DefaultSingleRecoverable {
 
                 default:
 
+                    logger.log(Level.WARNING,"Methodcall"+bankServiceRequestType);
                     logger.log(Level.WARNING, "Unsupported Unordered Operation!!!");
+                    break;
 
             }
 
@@ -478,13 +511,36 @@ public class BankService extends DefaultSingleRecoverable {
 
                 requestReply = requestReplyByteArrayOutputStream.toByteArray();
 
-            } else {
+                try {
+                    byte[] encoded = Files.readAllBytes(Paths.get("config/keys/privatekey" + this.id));
+                    String key = new String(encoded);
+                    PrivateKey privateKey = RSAKeyUtils.getPrivateKeyFromString(key);
+//                    byte[] signature = TOMUtil.signMessage(privateKey, requestReply);
+                    Signature sha_rsa = Signature.getInstance("SHA512withRSA");
+                    sha_rsa.initSign(privateKey);
+                    sha_rsa.update(requestReply);
+                    byte[] signature = sha_rsa.sign();
+
+                    finalReply = new byte[requestReply.length + 128];
+
+                    System.arraycopy(requestReply, 0, finalReply, 0, requestReply.length);
+                    System.arraycopy(signature, 0, finalReply, requestReply.length, 128);
+                }
+                catch (Exception exception) {
+
+                    exception.printStackTrace();
+
+                }
+
+            }
+            else {
 
                 requestReply = new byte[0];
 
             }
 
-        } catch (IOException | ClassNotFoundException executeOrderedException) {
+        }
+        catch (IOException | ClassNotFoundException executeOrderedException) {
 
             logger.log
                     (
@@ -494,7 +550,7 @@ public class BankService extends DefaultSingleRecoverable {
 
         }
         bankRepo.save(this.id);
-        return requestReply;
+        return finalReply;
 
     }
 

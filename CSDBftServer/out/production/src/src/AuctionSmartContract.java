@@ -7,8 +7,8 @@ public class AuctionSmartContract implements SmartContract {
     private static volatile List<String> operations;
     private static boolean t;
 
-    public void init() throws Exception {
-        System.out.println("Init");
+    public final void init() throws Exception {
+
     }
 
     public void run() {
