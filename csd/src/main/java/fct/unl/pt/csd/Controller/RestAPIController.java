@@ -125,7 +125,7 @@ public class RestAPIController {
         @RequestMapping(method = GET, value = "/closedauctions", produces={"application/json"})
         public ResponseEntity<String> getClosedAuctions(){
                 Iterable j = this.cR.invokeListAllCurrentClosedAuctions();
-                JSONArray js = new JSONArray(j);
+                JSONArray js = new JSONArray().put(j);
                 if(js.isEmpty())
                         return new ResponseEntity<>("No auctions active: ", HttpStatus.OK);
                 return new ResponseEntity<>(js.toString(), HttpStatus.OK);
