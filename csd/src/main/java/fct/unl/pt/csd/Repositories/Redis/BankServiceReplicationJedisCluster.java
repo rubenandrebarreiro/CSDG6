@@ -5,6 +5,10 @@ import java.util.Map.Entry;
 import fct.unl.pt.csd.Entities.AuctionEntity;
 import fct.unl.pt.csd.Entities.BankEntity;
 import fct.unl.pt.csd.Entities.BidEntity;
+import fct.unl.pt.csd.Security.SecurityConstants;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -240,7 +244,11 @@ public class BankServiceReplicationJedisCluster {
 	}
 
 	public void test(){
-		System.out.println(this.jedis.scan("").getResult());
+		//System.out.println(this.jedis.scan("").getResult());
+		String[] arr = jedis.keys("users#*").toArray(new String[0]);
+		for(String s : arr){
+			System.out.println(s);
+		}
 	}
 
 	public JSONObject getJSONArrayAndHash(){
@@ -249,13 +257,11 @@ public class BankServiceReplicationJedisCluster {
 		JSONObject jsonSecure;
 		Map<String, String> userEntry;
 		JSONArray arr = new JSONArray();
-		for(String s : result){
-			if(s.startsWith("users#")){
+		for(String s : jedis.keys("users#*").toArray(new String[0])){
 				userEntry = this.jedis.hgetAll(s);
 				jsonSecure = new JSONObject().put("username",userEntry.get("username")).put("amount",Long.parseLong(userEntry.get("amount")));
 				hash = hash^jsonSecure.toString().hashCode();
 				arr.put(jsonSecure);
-			}
 		}
 		return new JSONObject().put("arr",arr).put("hash",hash);
 	}
@@ -336,6 +342,10 @@ public class BankServiceReplicationJedisCluster {
 		
 		return Long.valueOf("-1");
 		
+	}
+
+	public boolean validateByteCode(byte[] b){
+		return true;
 	}
 	
 	public boolean closeAuction(String username, Long id) {
@@ -658,5 +668,15 @@ public class BankServiceReplicationJedisCluster {
 		return null;
 		
 	}
-	
+
+	public String getSubject(String token) {
+		byte[] signingKey = SecurityConstants.JWT_SECRET.getBytes();
+		Jws parsedToken = Jwts.parser()
+				.setSigningKey(signingKey)
+				.parseClaimsJws(token.replace("Bearer ", ""));
+		Claims claims = (Claims) parsedToken.getBody();
+		System.out.println(claims.getSubject());
+		return claims
+				.getSubject();
+	}
 }
