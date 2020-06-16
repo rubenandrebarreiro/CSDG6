@@ -24,6 +24,8 @@ class CostumNavBar extends Component {
 
   update(){
      fetch("amount?who="+localStorage.getItem("username"),{headers:{"authorization":localStorage.getItem("auth")}}).then((response)=>{
+       // if(response.status >=400)
+       //   location.reload();
         return response.text()
       }).then((text) =>this.setState({amount:text}))
       .catch((error)=>{alert(error.text());location.replace("/login")})
@@ -48,6 +50,7 @@ class CostumNavBar extends Component {
           <Nav.Link href="create"><b>Create Money</b></Nav.Link>
           <Nav.Link href="transfer"><b>Transfer Money</b></Nav.Link>
           <Nav.Link href="all"><b>List of All Users</b></Nav.Link>
+          <Nav.Link href="openauctions"><b>List of Open Auctions</b></Nav.Link>
           <Nav.Link href="smartcontract"><b>Smart Contract</b></Nav.Link>
         </Nav>
         <Form inline>

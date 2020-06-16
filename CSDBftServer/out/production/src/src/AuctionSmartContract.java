@@ -10,6 +10,8 @@ public class AuctionSmartContract implements SmartContract {
 
     public AuctionSmartContract(String who1){
         who=who1;
+//        SecurityManager s = new SecurityManager();
+//        System.setSecurityManager(s);
     }
 
     public final void init() throws Exception {
@@ -62,6 +64,15 @@ public class AuctionSmartContract implements SmartContract {
     @Override
     public final String getOwner() {
         return who;
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return (AuctionSmartContract) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return new AuctionSmartContract(this.who);
+        }
     }
 
 }
