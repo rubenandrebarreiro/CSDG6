@@ -105,7 +105,8 @@ public class AuctionEntity implements Serializable {
     }
     
 	public Long getLastBidAmount() {
-		
+		if(this.getBids() == null || this.getBids().get(new Long( ( this.bids.size() - 1 ) ) )==null)
+			return Long.parseLong("0");
 		return this.getBids().get(new Long( ( this.bids.size() - 1 ) ) )
 							 .getAmount();
 		

@@ -1,4 +1,4 @@
-import bftsmart.tom.MessageContext;
+import org.json.JSONObject;
 import src.SmartContract;
 
 import java.io.*;
@@ -7,21 +7,9 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.logging.Logger;
 
-class MappableContract {
-    String who;
-    SmartContract contract;
-    MessageContext messageContext;
-
-    MappableContract(String who, SmartContract s, MessageContext messageContext) {
-        this.who = who;
-        this.contract = s;
-        this.messageContext = messageContext;
-    }
-}
-
 public class SmartContractRunner implements Serializable, Runnable {
-    private Map<Integer, MappableContract> contracts;
-    int i;
+    private volatile Map<Integer, SmartContract> contracts;
+    volatile int i;
     private BankService bS;
     Logger logger;
 
@@ -32,10 +20,12 @@ public class SmartContractRunner implements Serializable, Runnable {
         logger = Logger.getLogger(SmartContractRunner.class.getName());
     }
 
-    public int runContract(SmartContract s, String who, MessageContext m) {
+    public int runContract(SmartContract s, String who) {
+        if(s.getOwner()!=who)
+            return -1;
+        contracts.put(i, s);
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<?> future = executor.submit(s);
-        contracts.put(i, new MappableContract(who, s, m));
+        Future<?> future = executor.submit(contracts.get(i));
 
         try {
             future.get(SmartContract.MAX_EXECUTION_TIME, TimeUnit.MILLISECONDS);
@@ -61,7 +51,7 @@ public class SmartContractRunner implements Serializable, Runnable {
 
         }
 
-        //executor.shutdown();
+        executor.shutdown();
         return i++;
     }
 
@@ -96,39 +86,47 @@ public class SmartContractRunner implements Serializable, Runnable {
     public void run() {
         ArrayList<String> ops;
         String[] ss = new String[0];
+        JSONObject j = new JSONObject();
         while (true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             for (Integer i : contracts.keySet()) {
-                ops = (ArrayList<String>) contracts.get(i).contract.getOperations();
-                if (ops != null)
+                ops = (ArrayList<String>) contracts.get(i).getOperations();
+                if (ops != null){
+
                     for (String s : ops) {
-                        System.out.println(s);
-                        contracts.get(i).contract.clearOperations();
+                        contracts.get(i).clearOperations();
                         ss = s.split(" ");
+                        String www = contracts.get(i).getOwner();
                         switch (ss[0]) {
                             case "CREATE_MONEY":
                                 bS.logger.info("Created Money");
-                                bS.logger.info(contracts.get(i).who + " had " + bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount() + " now has " + (bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount() + Long.parseLong(ss[1])));
-                                BankServiceHelper.createMoney(contracts.get(i).who, bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount() + Long.parseLong(ss[1]), bS.bankRepo);
-                                bS.bankRepo.save(bS.id);
+                                bS.logger.info(www + " had " + bS.bankRepo.findByUserName(www).get().getAmount() + " now has " + (bS.bankRepo.findByUserName(www).get().getAmount() + Long.parseLong(ss[1])));
+                                j=BankServiceHelper.createMoney(www, bS.bankRepo.findByUserName(www).get().getAmount() + Long.parseLong(ss[1]), bS.bankRepo);
+
                                 //bS.appExecuteOrdered(createMoney(contracts.get(i).who,bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount(),Long.parseLong(ss[1])), contracts.get(i).messageContext);
                                 break;
                             case "TRANSFER_MONEY":
                                 bS.logger.info("TRANSFER Money");
-                                if (bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount() - Long.parseLong(ss[2]) >= 0) {
-                                    BankServiceHelper.transferMoney(contracts.get(i).who, bS.bankRepo.findByUserName(contracts.get(i).who).get().getAmount() - Long.parseLong(ss[2]), ss[1], Long.parseLong(ss[2]) + bS.bankRepo.findByUserName(ss[1]).get().getAmount(), bS.bankRepo);
-                                    bS.bankRepo.save(bS.id);
+                                if (bS.bankRepo.findByUserName(www).get().getAmount() - Long.parseLong(ss[2]) >= 0) {
+                                    j=BankServiceHelper.transferMoney(www, bS.bankRepo.findByUserName(www).get().getAmount() - Long.parseLong(ss[2]), ss[1], Long.parseLong(ss[2]) + bS.bankRepo.findByUserName(ss[1]).get().getAmount(), bS.bankRepo);
+
                                 }
                                 break;
                             case "CREATE_AUCTION":
-                                if (bS.bankRepo.findByUserName(contracts.get(i).who).get().getRoles().contains("ROLE_AUCTION_MAKER"))
-                                    BankServiceHelper.createAuction(Long.parseLong(bS.bankRepo.getNumAuctions() + ""), contracts.get(i).who, bS.bankRepo);
+                                if (bS.bankRepo.findByUserName(www).get().getRoles().contains("ROLE_AUCTION_MAKER"))
+                                    j=BankServiceHelper.createAuction(Long.parseLong(i + ""),www, bS.bankRepo);
                                 break;
                             case "BID":
-                                if(!contracts.get(i).who.equalsIgnoreCase(contracts.get(ss[2]).who))
-                                    BankServiceHelper.bid(new BidEntity(Long.parseLong(ss[2]),contracts.get(i).who,Long.parseLong(ss[1])), bS.bankRepo);
+                                if(!www.equalsIgnoreCase(contracts.get(Integer.parseInt(ss[2])).getOwner()))
+                                   j= BankServiceHelper.bid(new BidEntity(Long.parseLong(ss[2]),www,Long.parseLong(ss[1])), bS.bankRepo);
                         }
+                        if(!j.has("error"))bS.bankRepo.save(bS.id);
                     }
-
+                }
             }
         }
     }

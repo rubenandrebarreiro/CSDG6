@@ -4,8 +4,13 @@ import java.util.*;
 
 public class AuctionSmartContract implements SmartContract {
 
-    private static volatile List<String> operations;
+    private static volatile List<String> operations= new ArrayList<>();
     private static boolean t;
+    private static String who;
+
+    public AuctionSmartContract(String who1){
+        who=who1;
+    }
 
     public final void init() throws Exception {
 
@@ -24,33 +29,25 @@ public class AuctionSmartContract implements SmartContract {
     public final void createMoney(int amount) {
         if(operations == null)
             operations = new ArrayList<>();
-        boolean flag = operations.add("CREATE_MONEY "+amount);
-        System.out.println("Created money operation");
-        System.out.println(flag);
+        operations.add("CREATE_MONEY "+amount);
     }
 
     public final void tranferMoney(String to,int amount) {
         if(operations == null)
             operations = new ArrayList<>();
-        boolean flag = operations.add("TRANSFER_MONEY " + to + " " +amount);
-        System.out.println("Created transfer operation");
-        System.out.println(flag);
+        operations.add("TRANSFER_MONEY " + to + " " +amount);
     }
 
     public final void createAuction(){
         if(operations == null)
             operations = new ArrayList<>();
-        boolean flag = operations.add("CREATE_AUCTION ");
-        System.out.println("Created auction operation");
-        System.out.println(flag);
+        operations.add("CREATE_AUCTION ");
     }
 
     public final void bid(Long amount, Long id){
         if(operations == null)
             operations = new ArrayList<>();
-        boolean flag = operations.add("BID "+amount + " " + id);
-        System.out.println("Created bid operation");
-        System.out.println(flag);
+        operations.add("BID "+amount + " " + id);
     }
 
     @Override
@@ -60,6 +57,11 @@ public class AuctionSmartContract implements SmartContract {
 
     public void clearOperations(){
         operations = new ArrayList<>();
+    }
+
+    @Override
+    public final String getOwner() {
+        return who;
     }
 
 }

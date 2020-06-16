@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import src.SmartContract;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
@@ -229,9 +230,13 @@ public class BankService extends DefaultSingleRecoverable {
                                     e.printStackTrace();
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();
+                                } catch (NoSuchMethodException e) {
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
                                 }
                                 if(sC != null)
-                                    sR.runContract(sC,who,messageContext);
+                                    sR.runContract(sC,who);
                             }
 
                             requestReplyObjectOutput.writeObject(jsonObject.toString());

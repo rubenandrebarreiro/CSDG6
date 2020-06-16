@@ -119,7 +119,7 @@ public class RestAPIController {
         @RequestMapping(method = GET, value = "/openauctions", produces={"application/json"})
         public ResponseEntity<String> getOpenAuctions(){
                 Iterable j = this.cR.invokeListAllCurrentOpenedAuctions();
-                JSONArray js = new JSONArray(j);
+                JSONArray js = new JSONArray().put(j);
                 if(js.isEmpty())
                         return new ResponseEntity<>("No auctions active: ", HttpStatus.OK);
                 return new ResponseEntity<>(js.toString(), HttpStatus.OK);
