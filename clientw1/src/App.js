@@ -20,7 +20,7 @@ class App extends Component {
         <BrowserRouter>
             <Switch>
               <Route exact path="/">
-                <Home />
+                <CostumLogin />
               </Route>
               <Route path="/create">
                 <CostumCreateMoney />
