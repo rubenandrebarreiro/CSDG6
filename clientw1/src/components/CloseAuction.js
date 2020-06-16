@@ -4,40 +4,29 @@ import {Form,Button} from 'react-bootstrap';
 import '../login.css'
 import '../App.css';
 
-class CostumSmartContract extends Component {
+class CloseAuction extends Component {
     componentDidMount(){
         if(localStorage.getItem("username") === "")
             location.replace("/login");
     }
 
-    sendContract(e){
+    createMoney(e){
         e.preventDefault();
-        var file =document.getElementById("contract").files[0];
-        var reader = new FileReader();
-        reader.onload = function() {
-
-            var arrayBuffer = this.result,
-                array = new Uint8Array(arrayBuffer),
-                binaryString = String.fromCharCode.apply(null, array);
-
-            fetch("smartcontract",
+        let money = document.getElementById("money");
+        console.log("DELETE THIS");
+        if(money.value >= 0)
+            fetch("closeauction?id="+money.value,
                 {
-                    headers: {
+                    headers: {'Content-Type': 'application/json',
                         "authorization":localStorage.getItem("auth")
                     },
-                    method:"POST",
-                    body : file
+                    method:"DELETE"
                 })
                 .then((response)=>{return response.text()})
                 .then((json)=>window.location = "/")
                 .catch((error)=>alert(error.text()))
-
-        }
-        var bytes = reader.readAsArrayBuffer(file)
-        //console.log(bytes)
-
+        money.value = 0;
     }
-
     render() {
         return (
             <div className="div2">
@@ -45,16 +34,13 @@ class CostumSmartContract extends Component {
                 <div className="App horizontalOnlyMargin30">
                     <img src="/nova-crypto-banking-service.png" width="380px" />
                     <br /><br />
-                    <Form onSubmit={(e)=>this.sendContract(e)}>
+                    <Form onSubmit={(e)=>this.createMoney(e)}>
                         <Form.Group>
-                            <Form.Label><b>Load Smart Contract</b></Form.Label>
-                            <Form.Control style={{"box-sizing":"border-box","border": "1px solid "}} id="contract" type="file" accept=".class" placeholder="0" />
-                            <Form.Text className="text-muted">
-                                .class File required
-                            </Form.Text>
+                            <Form.Label><b>ID Of Auction:</b></Form.Label>
+                            <Form.Control id="money" type="number" placeholder="0" />
                         </Form.Group>
                         <Button variant="warning" type="submit">
-                            <b>Send Smart Contract</b>
+                            <b>Close</b>
                         </Button>
                     </Form>
                     <br /><br />
@@ -70,4 +56,4 @@ class CostumSmartContract extends Component {
     }
 }
 
-export default CostumSmartContract;
+export default CloseAuction;

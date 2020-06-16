@@ -208,6 +208,16 @@ public class BankService extends DefaultSingleRecoverable {
 
                     break;
 
+                case "CLOSE_AUCTION":
+                    who = (String) receivedRequestObjectInput.readObject();
+                    auctionID = (Long) receivedRequestObjectInput.readObject();
+                    logger.info("Closing down this auction ("+auctionID+")");
+                    jsonObject = BankServiceHelper.closeAution(auctionID, who, bankRepo);
+                    requestReplyObjectOutput.writeObject(jsonObject.toString());
+
+                    hasRequestReply = true;
+                    break;
+
                 case "CREATE_SMART_CONTRACT":
                     who = (String) receivedRequestObjectInput.readObject();
 
@@ -237,7 +247,7 @@ public class BankService extends DefaultSingleRecoverable {
                         }
                         if (sC != null) {
                             jsonObject = BankServiceHelper.validateCode(sC.getClass());
-                            if(!jsonObject.has("error"))
+                            if (!jsonObject.has("error"))
                                 sR.runContract(sC, who);
                         }
 

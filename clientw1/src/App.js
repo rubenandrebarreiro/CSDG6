@@ -12,6 +12,7 @@ import CostumLogin from './components/CostumLogin';
 import All from './components/All';
 import CostumSmartContract from "./components/CostumSmartContract";
 import AllAuctions from "./components/AllAuctions";
+import CloseAuction from "./components/CloseAuction";
 
 class App extends Component {
   render() {
@@ -38,6 +39,9 @@ class App extends Component {
               </Route>
               <Route path="/openauctions">
                 <AllAuctions/>
+              </Route>
+              <Route path="/closeauction">
+                <CloseAuction/>
               </Route>
             <Route path="/all">
               <All />

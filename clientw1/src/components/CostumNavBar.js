@@ -52,6 +52,7 @@ class CostumNavBar extends Component {
           <Nav.Link href="all"><b>List of All Users</b></Nav.Link>
           <Nav.Link href="openauctions"><b>List of Open Auctions</b></Nav.Link>
           <Nav.Link href="smartcontract"><b>Smart Contract</b></Nav.Link>
+          <Nav.Link href="closeauction"><b>Close Auction</b></Nav.Link>
         </Nav>
         <Form inline>
           <Nav.Link><font style={{ color: 'DarkGoldenRod' }}><b><strong>Balance:</strong> {this.state.amount} NOVA Coins</b></font></Nav.Link>

@@ -92,10 +92,9 @@ public class RestAPIController {
                 return new ResponseEntity<>(js.getLong("amount")+"", HttpStatus.OK);
         }
 
-        @RequestMapping(method = POST, value = "/createauction",consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-        public ResponseEntity<String> createAuction(@RequestHeader("Authorization") String bearer, @RequestBody byte[] data){
+        @RequestMapping(method = POST, value = "/smartcontract",consumes = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+        public ResponseEntity<String> smartContract(@RequestHeader("Authorization") String bearer, @RequestBody byte[] data){
                 String username = this.jD.getSubject(bearer);
-                //TODO: send code to bft to run
                 JSONObject js = cR.invokeCreateSmartContract(username,data);
                 HttpStatus t = HttpStatus.OK;
                 if(js.has("error")){
@@ -105,15 +104,13 @@ public class RestAPIController {
                 return null;
         }
 
-        @RequestMapping(method = DELETE, value = "/closeAuction",params ={"id"},consumes = "application/json")
+        @RequestMapping(method = DELETE, value = "/closeauction",params ={"id"},consumes = "application/json")
         public ResponseEntity<String> closeAuction(@RequestHeader("Authorization") String bearer, @RequestParam("id") Long id){
                 String username = this.jD.getSubject(bearer);
                 JSONObject j = this.cR.invokeCloseAuction(username, id);
-                if(j.has("UserError"))
-                        return new ResponseEntity<>("User does not have permission to close this auction", HttpStatus.FORBIDDEN);
-                else if(j.has("Id error"))
-                        return new ResponseEntity<>("No auction was found with the given ID", HttpStatus.NOT_FOUND);
-                return new ResponseEntity<>("Auction Failed to create, user wasnt found", HttpStatus.NOT_FOUND);
+                if(j.has("error"))
+                        return new ResponseEntity<>(j.get("error").toString(), HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>("Auction Closed", HttpStatus.OK);
         }
 
         @RequestMapping(method = GET, value = "/openauctions", produces={"application/json"})

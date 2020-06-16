@@ -108,14 +108,14 @@ public class BankServiceHelper {
                 AuctionEntity auction = ae.get();
                 AuctionEntity openedAuction = oae.get();
 
-                if ((auction.getOwnerUsername().equalsIgnoreCase(who)) && (openedAuction.getOwnerUsername().equalsIgnoreCase(who))) {
+                if (((auction.getOwnerUsername().equalsIgnoreCase(who)) && (openedAuction.getOwnerUsername().equalsIgnoreCase(who))) || be.get().getRoles().contains("ROLE_AUCTION_MAKER")) {
 
                     if ((!auction.isClosed()) && (!openedAuction.isClosed())) {
 
                         auction.close();
 
                         bankRepo.closeAuction(auction);
-                        createMoney(auction.getOwnerUsername(), auction.getLastBidAmount(), bankRepo);
+                        createMoney(auction.getOwnerUsername(), auction.getLastBidAmount()+bankRepo.findByUserName(auction.getOwnerUsername()).get().getAmount(), bankRepo);
 
                         return new JSONObject().put("Success", "True").put("id", id);
 
