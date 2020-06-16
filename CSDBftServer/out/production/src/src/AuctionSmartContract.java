@@ -10,6 +10,8 @@ public class AuctionSmartContract implements SmartContract {
 
     public AuctionSmartContract(String who1){
         who=who1;
+//        SecurityManager s = new SecurityManager();
+//        System.setSecurityManager(s);
     }
 
     public final void init() throws Exception {

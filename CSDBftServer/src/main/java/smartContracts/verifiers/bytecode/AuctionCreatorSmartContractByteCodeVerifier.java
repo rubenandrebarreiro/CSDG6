@@ -1,11 +1,11 @@
 package smartContracts.verifiers.bytecode;
 
+import src.SmartContract;
+
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
-
-import smartContracts.SmartContract;
 
 public class AuctionCreatorSmartContractByteCodeVerifier implements ByteCodeVerifier {
 

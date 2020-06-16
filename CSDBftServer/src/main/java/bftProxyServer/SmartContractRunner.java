@@ -1,3 +1,5 @@
+package bftProxyServer;
+
 import org.json.JSONObject;
 import src.SmartContract;
 
@@ -8,7 +10,7 @@ import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 public class SmartContractRunner implements Serializable, Runnable {
-    private volatile Map<Integer, SmartContract> contracts;
+    private volatile Map<Integer, MappableContract> contracts;
     volatile int i;
     private BankService bS;
     Logger logger;
@@ -23,9 +25,10 @@ public class SmartContractRunner implements Serializable, Runnable {
     public int runContract(SmartContract s, String who) {
         if(s.getOwner()!=who)
             return -1;
-        contracts.put(i, s);
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<?> future = executor.submit(contracts.get(i));
+        Future<?> future = executor.submit(s);
+        contracts.put(i, new MappableContract(s,future));
+/*
 
         try {
             future.get(SmartContract.MAX_EXECUTION_TIME, TimeUnit.MILLISECONDS);
@@ -50,6 +53,7 @@ public class SmartContractRunner implements Serializable, Runnable {
             future.cancel(true);
 
         }
+*/
 
         executor.shutdown();
         return i++;
@@ -94,13 +98,13 @@ public class SmartContractRunner implements Serializable, Runnable {
                 e.printStackTrace();
             }
             for (Integer i : contracts.keySet()) {
-                ops = (ArrayList<String>) contracts.get(i).getOperations();
+                ops = (ArrayList<String>) contracts.get(i).contract.getOperations();
                 if (ops != null){
 
                     for (String s : ops) {
-                        contracts.get(i).clearOperations();
+                        contracts.get(i).contract.clearOperations();
                         ss = s.split(" ");
-                        String www = contracts.get(i).getOwner();
+                        String www = contracts.get(i).contract.getOwner();
                         switch (ss[0]) {
                             case "CREATE_MONEY":
                                 bS.logger.info("Created Money");
@@ -121,8 +125,19 @@ public class SmartContractRunner implements Serializable, Runnable {
                                     j=BankServiceHelper.createAuction(Long.parseLong(i + ""),www, bS.bankRepo);
                                 break;
                             case "BID":
-                                if(!www.equalsIgnoreCase(contracts.get(Integer.parseInt(ss[2])).getOwner()))
-                                   j= BankServiceHelper.bid(new BidEntity(Long.parseLong(ss[2]),www,Long.parseLong(ss[1])), bS.bankRepo);
+                                if(!www.equalsIgnoreCase(contracts.get(Integer.parseInt(ss[2])).contract.getOwner()))
+//                                   j= bftProxyServer.BankServiceHelper.bid(new bftProxyServer.BidEntity(Long.parseLong(ss[2]),www,Long.parseLong(ss[1])), bS.bankRepo);
+                                    j = BankServiceHelper.createBid(Long.parseLong(ss[2]),Long.parseLong(ss[2]),Long.parseLong(ss[1]),www,bS.bankRepo);
+                                    break;
+                            case "CLOSE_AUCTION":
+                                    if(www.equalsIgnoreCase(contracts.get(Integer.parseInt(ss[2])).contract.getOwner()) || bS.bankRepo.findByUserName(www).get().getRoles().contains("ROLE_AUCTION_MANAGER")){
+                                        j = BankServiceHelper.closeAution(Long.parseLong(ss[1]),www,bS.bankRepo);
+                                        contracts.get(Integer.parseInt(ss[2])).future.cancel(true);
+                                    }
+                                break;
+                            case "TERMINATE":
+                                if(contracts.get(Integer.parseInt(ss[2])).contract.getOwner().equals(www))
+                                    contracts.get(Integer.parseInt(ss[2])).future.cancel(true);
                         }
                         if(!j.has("error"))bS.bankRepo.save(bS.id);
                     }
