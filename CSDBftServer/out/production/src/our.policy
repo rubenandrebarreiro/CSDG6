@@ -1,0 +1,29 @@
+/*grant {
+  permission java.io.FilePermission "\users0.ser", "read,write";
+  permission java.io.FilePermission "\users1.ser", "read,write";
+  permission java.io.FilePermission "\users2.ser", "read,write";
+  permission java.io.FilePermission "\users3.ser", "read,write";
+  permission java.io.FilePermission "config\keys\privatekey3", "read";
+  permission java.io.FilePermission "config\keys\privatekey1", "read";
+  permission java.io.FilePermission "config\keys\privatekey2", "read";
+  permission java.io.FilePermission "config\keys\privatekey0", "read";
+  permission java.io.FilePermission "config\system.config", "read";
+  permission java.io.PropertyPermission "java.security.policy", "write";
+  permission java.lang.RuntimePermission "modifyThread";
+  };
+  */
+  grant codeBase "file:/C:\Users\35196\Desktop\Faculdade\CSD\CSDG6\CSDBftServer\src\main\java\bftProxyServer\BankRepository.java" {
+      permission java.security.AllPermission;
+    };
+  grant codeBase "file:/C:\Users\35196\Desktop\Faculdade\CSD\CSDG6\CSDBftServer\src\main\java\bftProxyServer\BankService.java" {
+    permission java.security.AllPermission;
+  };
+  grant codeBase "file:/C:\Users\35196\Desktop\Faculdade\CSD\CSDG6\CSDBftServer\src\main\java\bftProxyServer\SmartContractRunner.java" {
+    permission java.security.AllPermission;
+  };
+  grant codeBase "C:\Users\35196\.m2\repository\com\jd\blockchain\bft-smart\0.0.8.RELEASE\bft-smart-0.0.8.RELEASE.jar" {
+    permission java.security.AllPermission;
+  };
+  grant codeBase "C:\Users\35196\.m2\repository\com\yahoo\ycsb\core\0.1.4\core-0.1.4.jar" {
+    permission java.security.AllPermission;
+  };

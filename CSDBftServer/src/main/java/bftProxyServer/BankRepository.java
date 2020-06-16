@@ -17,6 +17,7 @@ public class BankRepository implements Serializable {
     public int version;
 
     public BankRepository() {
+
         this.users = new HashMap<String, BankEntity>();
         this.auctions = new HashMap<Long, AuctionEntity>();
         this.openedAuctions = new HashMap<Long, AuctionEntity>();

@@ -20,12 +20,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="85224ffb-39d9-4dd9-a759-4b5d657f5208" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/components/CloseAuction.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../CSDBftServer/src/main/java/smartContracts/grants/our.policy" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SmartContracts/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../SmartContracts/src/src/our.policy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CSDBftServer/out/production/src/AuctionSmartContract.class" beforeDir="false" afterPath="$PROJECT_DIR$/../CSDBftServer/out/production/src/AuctionSmartContract.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CSDBftServer/out/production/src/src/AuctionSmartContract.java" beforeDir="false" afterPath="$PROJECT_DIR$/../CSDBftServer/out/production/src/src/AuctionSmartContract.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Redis/redis-6.0.5/dump.rdb" beforeDir="false" afterPath="$PROJECT_DIR$/../Redis/redis-6.0.5/dump.rdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/CostumNavBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/CostumNavBar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/CostumSmartContract.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/CostumSmartContract.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../csd/src/main/java/fct/unl/pt/csd/Controller/RestAPIController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../csd/src/main/java/fct/unl/pt/csd/Controller/RestAPIController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SmartContracts/src/src/AuctionSmartContract.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SmartContracts/src/src/AuctionSmartContract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +72,7 @@
       <workItem from="1592164242086" duration="3149000" />
       <workItem from="1592225472934" duration="2613000" />
       <workItem from="1592314441185" duration="7597000" />
+      <workItem from="1592333481529" duration="1021000" />
     </task>
     <servers />
   </component>

@@ -1,5 +1,6 @@
 import src.SmartContract;
 
+import java.io.FilePermission;
 import java.util.*;
 
 public class AuctionSmartContract implements SmartContract {
@@ -7,15 +8,24 @@ public class AuctionSmartContract implements SmartContract {
     private static volatile List<String> operations= new ArrayList<>();
     private static boolean t;
     private static String who;
+    private static SecurityManager sm;
 
     public AuctionSmartContract(String who1){
         who=who1;
 //        SecurityManager s = new SecurityManager();
 //        System.setSecurityManager(s);
+        // set the policy file as the system securuty policy
+        System.setProperty("java.security.policy", "file:C:\\Users\\35196\\Desktop\\Faculdade\\CSD\\CSDG6\\CSDBftServer\\src\\main\\java\\smartContracts\\grants\\our.policy");
+
+        // create a security manager
+        sm = new SecurityManager();
+
+        // set the system security manager
+        System.setSecurityManager(sm);
     }
 
     public final void init() throws Exception {
-
+        sm.checkPermission(new FilePermission("*", "read,write"));
     }
 
     public void run() {

@@ -14,6 +14,8 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.AccessControlContext;
+import java.security.AccessController;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.Iterator;
@@ -30,6 +32,14 @@ public class BankService extends DefaultSingleRecoverable {
     private SmartContractRunner sR;
 
     public BankService(int replicaID) {
+        System.setProperty("java.security.policy", "file:C:\\Users\\35196\\Desktop\\Faculdade\\CSD\\CSDG6\\CSDBftServer\\src\\main\\java\\smartContracts\\grants\\our.policy");
+//        System.setProperty("java.security.policy", "file:C:\\Users\\35196\\Desktop\\Faculdade\\CSD\\CSDG6\\CSDBftServer\\src\\main\\java\\smartContracts\\grants\\main.policy");
+
+        // create a security manager
+        SecurityManager sm = new SecurityManager();
+
+        // set the system security manager
+        System.setSecurityManager(sm);
         this.id = replicaID;
         this.bankRepo = new BankRepository();
         logger = Logger.getLogger(BankService.class.getName());
