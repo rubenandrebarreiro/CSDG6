@@ -118,12 +118,15 @@ public class SmartContractRunner implements Serializable, Runnable {
                                 break;
                             case "TRANSFER_MONEY":
                                 bS.logger.info("TRANSFER Money");
+                                bS.logger.info(""+bS.bankRepo.findByUserName(www).get().getAmount());
+                                bS.logger.info(""+Long.parseLong(ss[2]));
                                 if (bS.bankRepo.findByUserName(www).get().getAmount() - Long.parseLong(ss[2]) >= 0) {
                                     j=BankServiceHelper.transferMoney(www, bS.bankRepo.findByUserName(www).get().getAmount() - Long.parseLong(ss[2]), ss[1], Long.parseLong(ss[2]) + bS.bankRepo.findByUserName(ss[1]).get().getAmount(), bS.bankRepo);
 
                                 }
                                 break;
                             case "CREATE_AUCTION":
+                                bS.logger.info("Created Auction");
                                 if (bS.bankRepo.findByUserName(www).get().getRoles().contains("ROLE_AUCTION_MAKER"))
                                     j=BankServiceHelper.createAuction(Long.parseLong(i + ""),www, bS.bankRepo);
                                 break;
